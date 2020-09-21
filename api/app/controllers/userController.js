@@ -24,18 +24,17 @@ const createUser = async (req, res) => {
 	const { email, full_name, password } = req.body;
 
 	const flag_active = 1;
-	const created_at = moment(new Date());
-	const modified_at = moment(new Date());
+	const created_at = null; // moment(new Date());
+	const modified_at = null; // moment(new Date());
 	const modified_by = null;
 
 	if (
 		isEmpty(email) ||
-		isEmpty(first_name) ||
-		isEmpty(last_name) ||
+		isEmpty(full_name) ||
 		isEmpty(password)
 	) {
 		errorMessage.error =
-			"Email, password, first name and last name field cannot be empty";
+			"Email, password, and full name field cannot be empty";
 		return res.status(status.bad).send(errorMessage);
 	}
 	if (!isValidEmail(email)) {
@@ -51,7 +50,7 @@ const createUser = async (req, res) => {
 	const user_uuid = generateUUID(email + full_name);
 
 	const createUserQuery = `INSERT INTO
-      user(uuid, email, full_name, password, flag_active, created_at, modified_at, modified_by)
+      leaderboard_dev.user (uuid, email, full_name, password, flag_active, created_at, modified_at, modified_by)
       VALUES($1, $2, $3, $4, $5, $6, $7, $8)
       returning *`;
 	const values = [
@@ -85,6 +84,7 @@ const createUser = async (req, res) => {
 			return res.status(status.conflict).send(errorMessage);
 		}
 		errorMessage.error = "Operation was not successful";
+		errorMessage.stacktrace = error;
 		return res.status(status.error).send(errorMessage);
 	}
 };

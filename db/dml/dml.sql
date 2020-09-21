@@ -1,5 +1,14 @@
 create schema leaderboard_dev;
 
+
+-- # DROP TABLES
+drop table leaderboard_dev.user_game;
+drop table leaderboard_dev.game
+drop table leaderboard_dev.user_leaderboard
+drop table leaderboard_dev.leaderboard
+drop table leaderboard_dev.user;
+
+
 ---------------------------
 ------- USERS TABLE -------
 ---------------------------
@@ -10,7 +19,7 @@ create table leaderboard_dev.user (
 	  id			serial
 	, uuid			varchar unique
 	, email 		varchar unique
-	, full_name			varchar
+	, full_name		varchar
 	, password 		varchar
 	, flag_active	bit
 	, created_at 	timestamptz
@@ -132,8 +141,8 @@ from leaderboard_dev.user_game
 
 
 	  
-	
-
+INSERT INTO leaderboard_dev.user (uuid, email, full_name, password, flag_active, created_at, modified_at, modified_by)
+      VALUES("asas", "asas", "asas", 1, null, null, null, null)
 
 
 

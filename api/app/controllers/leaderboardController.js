@@ -32,10 +32,10 @@ const createLeaderboard = async (req, res) => {
 	const modified_by = req.user.email;
 
 	// TODO: sistema le costanti
-	min_users = min_users ? min_users : 1;
-	max_users = max_users ? max_users : 99;
-	start_date = start_date ? start_date : new Date();
-	flag_public = flag_public ? flag_public : 1;
+	const min_users_check = min_users ? min_users : 1;
+	const max_users_check = max_users ? max_users : 99;
+	const start_date_check = start_date ? start_date : new Date();
+	const flag_public_check = flag_public ? flag_public : 1;
 
 	if (isEmpty(title)) {
 		errorMessage.error = "Title must not be empty";
@@ -55,11 +55,11 @@ const createLeaderboard = async (req, res) => {
 		title,
 		place,
 		note,
-		min_users,
-		max_users,
-		start_date,
+		min_users_check,
+		max_users_check,
+		start_date_check,
 		end_date,
-		flag_public,
+		flag_public_check,
 		flag_active,
 		created_at,
 		created_by,
