@@ -6,7 +6,10 @@ drop table leaderboard_dev.user_game;
 drop table leaderboard_dev.game
 drop table leaderboard_dev.user_leaderboard
 drop table leaderboard_dev.leaderboard
-drop table leaderboard_dev.user;
+drop table leaderboard_dev.users;
+
+-- SEARCHPATH 
+set search_path to 'leaderboard_dev';
 
 
 ---------------------------
@@ -15,7 +18,7 @@ drop table leaderboard_dev.user;
 
 -- drop table leaderboard_dev.user;
 
-create table leaderboard_dev.user (
+create table leaderboard_dev.users (
 	  id			serial
 	, uuid			varchar unique
 	, email 		varchar unique
@@ -82,7 +85,7 @@ create table leaderboard_dev.user_leaderboard (
 	, modified_by		varchar
 	
 	, primary key(id)
-	, foreign key(user_id) references leaderboard_dev.user(id)
+	, foreign key(user_id) references leaderboard_dev.users(id)
 	, foreign key(leaderboard_id) references leaderboard_dev.leaderboard(id)
 );
 
@@ -129,28 +132,13 @@ create table leaderboard_dev.user_game (
 	, modified_by		varchar
 	
 	, primary key (id)
-	, foreign key (user_id) references leaderboard_dev.user(id)
+	, foreign key (user_id) references leaderboard_dev.users(id)
 	, foreign key (game_id) references leaderboard_dev.game(id)
 );
 
 select *
 from leaderboard_dev.user_game
 ;
-
-
-
-
-	  
-INSERT INTO leaderboard_dev.user (uuid, email, full_name, password, flag_active, created_at, modified_at, modified_by)
-      VALUES("asas", "asas", "asas", 1, null, null, null, null)
-
-
-
-
-
-
-
-
 
 
 

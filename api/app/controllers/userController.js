@@ -49,10 +49,9 @@ const createUser = async (req, res) => {
 	const hashed_password = hashPassword(password);
 	const user_uuid = generateUUID(email + full_name);
 
-	const createUserQuery = `INSERT INTO
-      leaderboard_dev.user (uuid, email, full_name, password, flag_active, created_at, modified_at, modified_by)
-      VALUES($1, $2, $3, $4, $5, $6, $7, $8)
-      returning *`;
+	const createUserQuery = `INSERT INTO users 
+	   (uuid, email, full_name, password, flag_active, created_at, modified_at, modified_by) 
+		VALUES($1, $2, $3, $4, $5, $6, $7, $8) returning *`;
 	const values = [
 		user_uuid,
 		email,
@@ -108,7 +107,7 @@ const siginUser = async (req, res) => {
 		return res.status(status.bad).send(errorMessage);
 	}
 
-	const signinUserQuery = "SELECT * FROM user WHERE email = $1";
+	const signinUserQuery = `SELECT * FROM users WHERE email = $1`;
 
 	try {
 		const { rows } = await dbQuery.query(signinUserQuery, [email]);
