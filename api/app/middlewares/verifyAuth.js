@@ -3,13 +3,13 @@ import env from "../../env";
 import { errorMessage, status } from "../helpers/status";
 
 /**
- * Verify Token
+ * Verify Auth
  * @param {object} req
  * @param {object} res
  * @param {object} next
  * @returns {object|void} response object
  */
-const verifyToken = async(req, res, next) => {
+const verifyAuth = async(req, res, next) => {
    const token = req.headers;
 
    if (!token) {
@@ -21,11 +21,10 @@ const verifyToken = async(req, res, next) => {
       const decoded = jwt.verify(token, env.secret);
       // TODO: change with user information
       req.user = {
-         email: decoded.email,
-         user_id: decoded.user_id,
-         is_admin: decoded.is_admin,
-         first_name: decoded.first_name,
-         last_name: decoded.last_name,
+         id: decoded.user_id,
+			email: decoded.email,
+			uuid: decoded.uuid,
+         full_name: decoded.full_name,
       };
       next();
    } catch(error) {
@@ -35,4 +34,4 @@ const verifyToken = async(req, res, next) => {
 
 };
 
-export default verifyToken;
+export default verifyAuth;

@@ -38,9 +38,12 @@ create table leaderboard_dev.leaderboard (
 	, note 			varchar
 	, min_users		integer
 	, max_users		integer
+	, start_date	timestamptz
+	, end_date		timestamptz
 	, flag_public	bit
 	, flag_active 	bit
 	, created_at 	timestamptz
+	, created_by	timestamptz
 	, modified_at 	timestamptz
 	, modified_by	varchar
 	

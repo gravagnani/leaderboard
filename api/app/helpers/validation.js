@@ -70,26 +70,40 @@ const empty = (input) => {
 };
 
 /**
+ * Generate UUID
+ * @param {string} input
+ * @returns {string} uuid
+ */
+const generateUUID = (input, len = 10) => {
+	var uuid = "";
+
+	var characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+	var charactersLength = characters.length;
+	for (var i = 0; i < len; i++) {
+		uuid += characters.charAt(Math.floor(Math.random() * charactersLength));
+	}
+
+	return uuid;
+};
+
+/**
  * Generate Token
  * @param {string} id
  * @returns {string} token
  */
-const generateUserToken = (email, id, is_admin, first_name, last_name) => {
-	// TODO: change with user information
+const generateUserToken = (id, uuid, email, full_name) => {
 	const token = jwt.sign(
 		{
-			email,
 			user_id: id,
-			is_admin,
-			first_name,
-			last_name,
+			email,
+			uuid,
+			full_name,
 		},
 		env.secret,
 		{ expiresIn: "3d" }
 	);
 	return token;
 };
-
 
 export {
 	hashPassword,
@@ -98,5 +112,6 @@ export {
 	validatePassword,
 	isEmpty,
 	empty,
+	generateUUID,
 	generateUserToken,
 };

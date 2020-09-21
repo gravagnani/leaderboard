@@ -5,6 +5,8 @@ import cors from "cors";
 import env from "./env";
 
 import userRoute from "./app/routes/userRoute";
+import leaderboardUser from "./app/routes/leaderboardRoute";
+
 import adminRoute from "./app/routes/adminRoute";
 
 const app = express();
@@ -15,6 +17,7 @@ app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 
 app.use("/api/v1", userRoute);
+app.use("/api/v1", leaderboardUser);
 app.use("/api/v1", adminRoute);
 
 app.listen(env.port).on("listening", () => {
