@@ -7,6 +7,7 @@ import {
 	comparePassword,
 	isValidEmail,
 	validatePassword,
+	validateFullName,
 	isEmpty,
 	generateUUID,
 	generateUserToken,
@@ -24,21 +25,21 @@ const createUser = async (req, res) => {
 	const { email, full_name, password } = req.body;
 
 	const flag_active = 1;
-	const created_at = null; // moment(new Date());
-	const modified_at = null; // moment(new Date());
+	const created_at = moment(new Date());
+	const modified_at = moment(new Date());
 	const modified_by = null;
 
-	if (
-		isEmpty(email) ||
-		isEmpty(full_name) ||
-		isEmpty(password)
-	) {
+	if (isEmpty(email) || isEmpty(full_name) || isEmpty(password)) {
 		errorMessage.error =
 			"Email, password, and full name field cannot be empty";
 		return res.status(status.bad).send(errorMessage);
 	}
 	if (!isValidEmail(email)) {
 		errorMessage.error = "Please enter a valid Email";
+		return res.status(status.bad).send(errorMessage);
+	}
+	if (!validateFullName(full_name)) {
+		errorMessage.error = "Full Name must be more than three(3) characters";
 		return res.status(status.bad).send(errorMessage);
 	}
 	if (!validatePassword(password)) {
@@ -50,7 +51,7 @@ const createUser = async (req, res) => {
 	const user_uuid = generateUUID(email + full_name);
 
 	const createUserQuery = `INSERT INTO users 
-	   (uuid, email, full_name, password, flag_active, created_at, modified_at, modified_by) 
+		(uuid, email, full_name, password, flag_active, created_at, modified_at, modified_by) 
 		VALUES($1, $2, $3, $4, $5, $6, $7, $8) returning *`;
 	const values = [
 		user_uuid,
@@ -126,7 +127,7 @@ const siginUser = async (req, res) => {
 			dbResponse.id,
 			dbResponse.email,
 			dbResponse.uuid,
-			dbResponse.full_name,
+			dbResponse.full_name
 		);
 
 		delete dbResponse.password;
@@ -141,4 +142,115 @@ const siginUser = async (req, res) => {
 	}
 };
 
-export { createUser, siginUser };
+/**
+ * Get user by UUID
+ * @param {object} req
+ * @param {object} res
+ */
+const getUserByUUID = async (req, res) => {
+	const uuid = req.params.uuid;
+
+	const findUserQuery =
+		"SELECT uuid, email, full_name FROM users WHERE uuid=$1";
+	const values = [uuid];
+
+	try {
+		const { rows } = await dbQuery.query(findUserQuery, values);
+		const dbResponse = rows[0];
+		if (!dbResponse) {
+			errorMessage.error = "User Cannot be found";
+			return res.status(status.notfound).send(errorMessage);
+		}
+		successMessage.data = dbResponse;
+		return res.status(status.success).send(successMessage);
+	} catch (error) {
+		console.log(error);
+		errorMessage.error = "Operation was not successful";
+		return res.status(status.error).send(errorMessage);
+	}
+};
+
+/**
+ * Modify user (only itself)
+ * @param {object} req
+ * @param {object} res
+ * @returns {object} reflection object
+ */
+const modifyUser = async (req, res) => {
+	const { email, full_name, password } = req.body;
+
+	const req_user_id = req.user.id;
+
+	const email_check = email ? email : req.user.email;
+	const full_name_check = full_name ? full_name : req.user.full_name;
+	const password_check = password ? hashPassword(password) : req.user.password;
+
+	if (!isValidEmail(email)) {
+		errorMessage.error = "Please enter a valid Email";
+		return res.status(status.bad).send(errorMessage);
+	}
+	if (!validateFullName(full_name)) {
+		errorMessage.error = "Full Name must be more than three(3) characters";
+		return res.status(status.bad).send(errorMessage);
+	}
+	if (!validatePassword(password)) {
+		errorMessage.error = "Password must be more than five(5) characters";
+		return res.status(status.bad).send(errorMessage);
+	}
+
+	const updateUserQuery = `UPDATE users SET email = $1, full_name = $2, password = $3 WHERE id = $4 returning *`;
+	const values = [email_check, full_name_check, password_check, req_user_id];
+
+	try {
+		const { rows } = await dbQuery.query(updateUserQuery, values);
+		const dbResponse = rows[0];
+
+		if (!dbResponse) {
+			errorMessage.error = "User Cannot be found";
+			return res.status(status.notfound).send(errorMessage);
+		}
+
+		delete dbResponse.password;
+
+		successMessage.data = dbResponse;
+
+		return res.status(status.success).send(successMessage);
+	} catch (error) {
+		errorMessage.error = "Operation was not successful";
+		return res.status(status.error).send(errorMessage);
+	}
+};
+
+/**
+ * Delete user (only itself)
+ * @param {object} req
+ * @param {object} res
+ * @returns {object} reflection object
+ */
+const deleteUser = async (req, res) => {
+	const req_user_id = req.user.id;
+
+	const deleteUserQuery = `DELETE FROM users WHERE id = $1 returning *`;
+	values = [req_user_id];
+
+	try {
+		const { rows } = await dbQuery.query(deleteUserQuery, values);
+		const dbResponse = rows[0];
+
+		if (!dbResponse) {
+			errorMessage.error = "User Cannot be found";
+			return res.status(status.notfound).send(errorMessage);
+		}
+
+		delete dbResponse.password;
+
+		successMessage.data = dbResponse;
+
+		return res.status(status.success).send(successMessage);
+	} catch (error) {
+		errorMessage.error = "Operation was not successful";
+		return res.status(status.error).send(errorMessage);
+	}
+};
+
+export { createUser, siginUser, modifyUser, deleteUser, getUserByUUID };

@@ -44,6 +44,18 @@ const validatePassword = (password) => {
 };
 
 /**
+ * validateFullName helper method
+ * @param {string} fill_name
+ * @returns {Boolean} True or False
+ */
+const validateFullName = (full_name) => {
+	if (full_name.length <= 3 || full_name === "") {
+		return false;
+	}
+	return true;
+};
+
+/**
  * isEmpty helper method
  * @param {string, integer} input
  * @returns {Boolean} True or False
@@ -110,6 +122,7 @@ export {
 	comparePassword,
 	isValidEmail,
 	validatePassword,
+	validateFullName,
 	isEmpty,
 	empty,
 	generateUUID,

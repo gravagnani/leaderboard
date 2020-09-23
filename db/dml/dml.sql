@@ -3,9 +3,9 @@ create schema leaderboard_dev;
 
 -- # DROP TABLES
 drop table leaderboard_dev.user_game;
-drop table leaderboard_dev.game
-drop table leaderboard_dev.user_leaderboard
-drop table leaderboard_dev.leaderboard
+drop table leaderboard_dev.game;
+drop table leaderboard_dev.user_leaderboard;
+drop table leaderboard_dev.leaderboard;
 drop table leaderboard_dev.users;
 
 -- SEARCHPATH 
@@ -48,14 +48,14 @@ create table leaderboard_dev.leaderboard (
 	, title 		varchar
 	, place 		varchar
 	, note 			varchar
-	, min_users		integer
-	, max_users		integer
+	, min_users		int
+	, max_users		int
 	, start_date	timestamptz
 	, end_date		timestamptz
 	, flag_public	bit
 	, flag_active 	bit
 	, created_at 	timestamptz
-	, created_by	timestamptz
+	, created_by	varchar
 	, modified_at 	timestamptz
 	, modified_by	varchar
 	

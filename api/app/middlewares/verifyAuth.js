@@ -10,7 +10,9 @@ import { errorMessage, status } from "../helpers/status";
  * @returns {object|void} response object
  */
 const verifyAuth = async(req, res, next) => {
-   const token = req.headers;
+   
+   // header called "token"
+   const token = req.headers.token;
 
    if (!token) {
       errorMessage.error = 'Token not provided';

@@ -13,6 +13,7 @@ import { errorMessage, successMessage, status } from "../helpers/status";
  * @returns {object} reflection object
  */
 const createLeaderboard = async (req, res) => {
+
 	const {
 		title,
 		place,
@@ -24,6 +25,7 @@ const createLeaderboard = async (req, res) => {
 		flag_public,
 	} = req.body;
 
+
 	const flag_active = 1;
 	const created_at = moment(new Date());
 	const modified_at = moment(new Date());
@@ -34,7 +36,7 @@ const createLeaderboard = async (req, res) => {
 	// TODO: sistema le costanti
 	const min_users_check = min_users ? min_users : 1;
 	const max_users_check = max_users ? max_users : 99;
-	const start_date_check = start_date ? start_date : new Date();
+	const start_date_check = start_date ? start_date : moment(new Date());
 	const flag_public_check = flag_public ? flag_public : 1;
 
 	if (isEmpty(title)) {
@@ -42,7 +44,7 @@ const createLeaderboard = async (req, res) => {
 		return res.status(status.bad).send(errorMessage);
 	}
 
-	const leaderboard_uuid = generateUUID(title + created_by + new Date());
+	const leaderboard_uuid = generateUUID(title + created_by);
 
 	const createLeaderboardQuery = `INSERT INTO
 		leaderboard(uuid, title, place, note, min_users, max_users
