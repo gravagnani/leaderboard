@@ -142,4 +142,4 @@ from leaderboard_dev.user_game
 
 
 
-
+select * from users where uuid = 'P53J99OE4H';

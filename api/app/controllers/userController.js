@@ -143,6 +143,22 @@ const siginUser = async (req, res) => {
 };
 
 /**
+ * Logout
+ * @param {object} req
+ * @param {object} res
+ */
+const logoutUser = async (req, res) => {
+	// TODO: implement logout function
+	try {
+		successMessage.data = "logout";
+		return res.status(status.success).send(successMessage);
+	} catch (error) {
+		errorMessage.error = "Operation was not successful";
+		return res.status(status.error).send(errorMessage);
+	}
+};
+
+/**
  * Get user by UUID
  * @param {object} req
  * @param {object} res
@@ -171,6 +187,32 @@ const getUserByUUID = async (req, res) => {
 };
 
 /**
+ * Get user belonging to the leaderboard with UUID
+ * @param {object} req
+ * @param {object} res
+ */
+const getUsersOfLeaderboardUUID = async (req, res) => {
+	const uuid = req.params.uuid;
+
+	const findUserQuery = `SELECT u.uuid, u.email, u.full_name FROM users u 
+			INNER JOIN user_leaderboard ul ON u.user_id = ul.user_id 
+			INNER JOIN leaderboard l ON ul.leaderboard_id = l.leaderboard_id 
+			WHERE l.uuid=$1`;
+	const values = [uuid];
+
+	try {
+		const { rows } = await dbQuery.query(findUserQuery, values);
+
+		successMessage.data = rows;
+		return res.status(status.success).send(successMessage);
+	} catch (error) {
+		console.log(error);
+		errorMessage.error = "Operation was not successful";
+		return res.status(status.error).send(errorMessage);
+	}
+};
+
+/**
  * Modify user (only itself)
  * @param {object} req
  * @param {object} res
@@ -185,6 +227,9 @@ const modifyUser = async (req, res) => {
 	const full_name_check = full_name ? full_name : req.user.full_name;
 	const password_check = password ? hashPassword(password) : req.user.password;
 
+	const modified_at = moment(new Date());
+	const modified_by = req.user.uuid;
+
 	if (!isValidEmail(email)) {
 		errorMessage.error = "Please enter a valid Email";
 		return res.status(status.bad).send(errorMessage);
@@ -198,8 +243,17 @@ const modifyUser = async (req, res) => {
 		return res.status(status.bad).send(errorMessage);
 	}
 
-	const updateUserQuery = `UPDATE users SET email = $1, full_name = $2, password = $3 WHERE id = $4 returning *`;
-	const values = [email_check, full_name_check, password_check, req_user_id];
+	const updateUserQuery = `UPDATE users 
+		SET email = $1, full_name = $2, password = $3, modified_at = $4, modified_by = $5 
+		WHERE id = $6 returning *`;
+	const values = [
+		email_check,
+		full_name_check,
+		password_check,
+		modified_at,
+		modified_by,
+		req_user_id,
+	];
 
 	try {
 		const { rows } = await dbQuery.query(updateUserQuery, values);
@@ -253,4 +307,12 @@ const deleteUser = async (req, res) => {
 	}
 };
 
-export { createUser, siginUser, modifyUser, deleteUser, getUserByUUID };
+export {
+	createUser,
+	siginUser,
+	logoutUser,
+	modifyUser,
+	deleteUser,
+	getUserByUUID,
+	getUsersOfLeaderboardUUID,
+};
