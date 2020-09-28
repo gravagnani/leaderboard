@@ -1,37 +1,48 @@
-import React, { Fragment, Suspense, lazy } from "react";
-import { MuiThemeProvider, CssBaseline } from "@material-ui/core";
-import { BrowserRouter, Route, Switch } from "react-router-dom";
-import theme from "./theme";
-import GlobalStyles from "./GlobalStyles";
-import * as serviceWorker from "./serviceWorker";
-import Pace from "./shared/components/Pace";
+import React, { useRef, useEffect } from 'react';
+import { useLocation, Switch } from 'react-router-dom';
+import AppRoute from './utils/AppRoute';
+import ScrollReveal from './utils/ScrollReveal';
+import ReactGA from 'react-ga';
 
-const LoggedInComponent = lazy(() => import("./logged_in/components/Main"));
+// Layouts
+import LayoutDefault from './layouts/LayoutDefault';
+import LayoutAuth from './layouts/LayoutAuth';
 
-const LoggedOutComponent = lazy(() => import("./logged_out/components/Main"));
+// Views 
+import Home from './views/Home';
+import Login from './views/Login';
 
-function App() {
+// Initialize Google Analytics
+ReactGA.initialize(process.env.REACT_APP_GA_CODE);
+
+const trackPage = page => {
+  ReactGA.set({ page });
+  ReactGA.pageview(page);
+};
+
+const App = () => {
+
+  const childRef = useRef();
+  let location = useLocation();
+
+  useEffect(() => {
+    const page = location.pathname;
+    document.body.classList.add('is-loaded')
+    childRef.current.init();
+    trackPage(page);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [location]);
+
   return (
-    <BrowserRouter>
-      <MuiThemeProvider theme={theme}>
-        <CssBaseline />
-        <GlobalStyles />
-        <Pace color={theme.palette.primary.light} />
-        <Suspense fallback={<Fragment />}>
-          <Switch>
-            <Route path="/c">
-              <LoggedInComponent />
-            </Route>
-            <Route>
-              <LoggedOutComponent />
-            </Route>
-          </Switch>
-        </Suspense>
-      </MuiThemeProvider>
-    </BrowserRouter>
+    <ScrollReveal
+      ref={childRef}
+      children={() => (
+        <Switch>
+          <AppRoute exact path="/" component={Home} layout={LayoutDefault} />
+          <AppRoute exact path="/signin" component={Login} layout={LayoutAuth} />
+        </Switch>
+      )} />
   );
 }
-
-serviceWorker.register();
 
 export default App;
