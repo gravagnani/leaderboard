@@ -71,41 +71,8 @@ export default ({
   ];
   return (
     <>
+      {/* DA AGGIUNGERE BLOCCO INFO UTENTE */}
       <Header links={navLinks} />
-      <Container>
-        <ContentWithVerticalPadding>
-          <Row>
-            <TextColumn>
-              <Heading>{heading}</Heading>
-              <Description>{description}</Description>
-              <PrimaryButton as="a" href={primaryButtonUrl} css={buttonRoundedCss}>
-                {primaryButtonText}
-              </PrimaryButton>
-              <FeatureList>
-                {features.map((feature, index) => (
-                  <Feature key={index}>
-                    <FeatureIcon />
-                    <FeatureText>{feature}</FeatureText>
-                  </Feature>
-                ))}
-              </FeatureList>
-            </TextColumn>
-            <ImageColumn>
-              <ImageContainer>
-                <Image src={imageSrc} />
-                {imageDecoratorBlob && <ImageDecoratorBlob />}
-                <Testimonial>
-                  <QuotesLeftIcon/>
-                  <Quote>{testimonial.quote}</Quote>
-                  <CustomerName>{testimonial.customerName}</CustomerName>
-                  <CustomerCompany>{testimonial.customerCompany}</CustomerCompany>
-                </Testimonial>
-              </ImageContainer>
-              <Offsetbackground />
-            </ImageColumn>
-          </Row>
-        </ContentWithVerticalPadding>
-      </Container>
     </>
   );
 };

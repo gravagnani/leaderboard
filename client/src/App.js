@@ -88,12 +88,16 @@ import { css } from "styled-components/macro"; //eslint-disable-line
 // import AgencyLandingPage from "demos/AgencyLandingPage.js";
 // import SaaSProductLandingPage from "demos/SaaSProductLandingPage.js";
 // import RestaurantLandingPage from "demos/RestaurantLandingPage.js";
-import ServiceLandingPage from "demos/ServiceLandingPage.js";
+import LandingPage from "views/LandingPage.js";
+import LeaderboardPage from "views/LeaderboardPage.js";
 // import HostingCloudLandingPage from "demos/HostingCloudLandingPage.js";
 
 /* Inner Pages */
-// import LoginPage from "pages/Login.js";
-// import SignupPage from "pages/Signup.js";
+import LoginPage from "views/Login.js";
+import SignupPage from "views/Signup.js";
+import NewLeaderboardInfo from "views/NewLeaderboardInfo.js";
+import NewLeaderboardOptions from "views/NewLeaderboardOptions.js";
+import NewLeaderboardUserInfo from "views/NewLeaderboardUserInfo.js";
 // import PricingPage from "pages/Pricing.js";
 // import AboutUsPage from "pages/AboutUs.js";
 // import ContactUsPage from "pages/ContactUs.js";
@@ -104,15 +108,36 @@ import ServiceLandingPage from "demos/ServiceLandingPage.js";
 // import ComponentRenderer from "ComponentRenderer.js";
 // import MainLandingPage from "MainLandingPage.js";
 
-import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
+import { BrowserRouter as Router, Switch, Route, Redirect } from "react-router-dom";
 
 export default function App() {
   // return <AnimationRevealPage disabled></AnimationRevealPage>;
   return (
     <Router>
       <Switch>
+        <Route path="/signin">
+          <LoginPage />
+        </Route>
+        <Route path="/signup">
+          <SignupPage />
+        </Route>
+        <Route path="/new/info">
+          <NewLeaderboardInfo />
+        </Route>
+        <Route path="/new/options">
+          <NewLeaderboardOptions />
+        </Route>
+        <Route path="/new/userinfo">
+          <NewLeaderboardUserInfo />
+        </Route>
+        <Route path="/new">
+          <Redirect to="/new/info" />
+        </Route>
+        <Route path="/leaderboard">
+          <LeaderboardPage />
+        </Route>
         <Route path="/">
-          <ServiceLandingPage />
+          <LandingPage />
         </Route>
       </Switch>
     </Router>
