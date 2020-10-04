@@ -1,7 +1,7 @@
-import React from "react";
+import React, { useState } from "react";
 import styled from "styled-components";
 import tw from "twin.macro";
-import { useHistory } from "react-router-dom";
+import { useHistory, useLocation } from "react-router-dom";
 import { css } from "styled-components/macro"; //eslint-disable-line
 import { ReactComponent as SvgDotPatternIcon } from "../../images/dot-pattern.svg";
 
@@ -34,23 +34,80 @@ const Input = tw.input``;
 const TextArea = tw.textarea`h-24 sm:h-full resize-none`;
 const ButtonLeft = tw.button`w-full sm:w-32 mt-6 py-3 bg-gray-100 text-primary-500 rounded-full font-bold tracking-wide shadow-lg uppercase text-sm transition duration-300 transform focus:outline-none focus:shadow-outline hover:bg-gray-300 hover:text-primary-700 hocus:-translate-y-px hocus:shadow-xl`;
 const ButtonRight = tw.button`w-full float-right sm:w-32 mt-6 py-3 bg-gray-100 text-primary-500 rounded-full font-bold tracking-wide shadow-lg uppercase text-sm transition duration-300 transform focus:outline-none focus:shadow-outline hover:bg-gray-300 hover:text-primary-700 hocus:-translate-y-px hocus:shadow-xl`;
+const TabsControl = tw.div`flex flex-wrap bg-gray-200 px-2 py-2 rounded leading-none mt-12 xl:mt-0`;
+
+const TabControl = styled.div`
+  ${tw`cursor-pointer px-6 py-3 mt-2 sm:mt-0 last:mr-0 text-gray-600 font-medium rounded-sm transition duration-300 text-sm sm:text-base w-1/2 text-center`}
+  &:hover {
+    ${tw`bg-gray-300 text-gray-700`}
+  }
+  ${(props) => props.active && tw`bg-primary-500! text-gray-100!`}
+  }
+`;
 
 const SvgDotPattern1 = tw(
 	SvgDotPatternIcon
 )`absolute bottom-0 right-0 transform translate-y-1/2 translate-x-1/2 -z-10 opacity-50 text-primary-500 fill-current w-24`;
 
-/*
-  Options:
+const setLocalStorage = () => {
+	sessionStorage.setItem(
+		"min-users-input",
+		document.getElementById("min-users-input").value
+	);
+	sessionStorage.setItem(
+		"max-users-input",
+		document.getElementById("max-users-input").value
+	);
+	sessionStorage.setItem(
+		"start-date-input",
+		document.getElementById("start-date-input").value
+	);
+	sessionStorage.setItem(
+		"end-date-input",
+		document.getElementById("end-date-input").value
+	);
+	//sessionStorage.setItem(
+	//	"mode",
+	//	tabs[activeTab].description.value
+	//);
+};
 
-    min_users		int
-	, max_users		int
-	, start_date	timestamptz
-	, end_date		timestamptz
-	, flag_public	bit
-	, 
-*/
-export default () => {
+export default ({
+	tabs = {
+		classical: {
+			mode: "Classical",
+			value: "classical",
+			description: "Classical Description",
+		},
+		trueskill: {
+			mode: "TrueSkill",
+			value: "trueskill",
+			description: "TrueSkill Description",
+		},
+	},
+}) => {
 	const history = useHistory();
+
+	const minUsersInputSS = sessionStorage.getItem("min-users-input")
+		? sessionStorage.getItem("min-users-input")
+		: "";
+	const maxUsersInputSS = sessionStorage.getItem("max-users-input")
+		? sessionStorage.getItem("max-users-input")
+		: "";
+	const startDateInputSS = sessionStorage.getItem("start-date-input")
+		? sessionStorage.getItem("start-date-input")
+		: "";
+	const endDateInputSS = sessionStorage.getItem("end-date-input")
+		? sessionStorage.getItem("end-date-input")
+		: "";
+
+	const [minUsersInput, setMinUsersInput] = useState(minUsersInputSS);
+	const [maxUsersInput, setMaxUsersInput] = useState(maxUsersInputSS);
+	const [startDateInput, setStartDateInput] = useState(startDateInputSS);
+	const [endDateInput, setEndDateInput] = useState(endDateInputSS);
+	const tabsKeys = Object.keys(tabs);
+	const [activeTab, setActiveTab] = useState(tabsKeys[0]);
+
 	return (
 		<Container>
 			<Content>
@@ -61,57 +118,81 @@ export default () => {
 							<TwoColumn>
 								<Column>
 									<InputContainer>
-										<Label htmlFor="name-input">Min Users</Label>
+										<Label htmlFor="min-users-input">Min Users</Label>
 										<Input
-											id="name-input"
+											id="min-users-input"
 											type="number"
-											name="name"
 											placeholder="1"
+											value={minUsersInput}
+											onChange={(e) => {
+												setMinUsersInput(e.target.value);
+											}}
 										/>
 									</InputContainer>
 									<InputContainer>
-										<Label htmlFor="email-input">Max Users</Label>
+										<Label htmlFor="max-users-input">Max Users</Label>
 										<Input
-											id="name-input"
+											id="max-users-input"
 											type="number"
-											name="name"
 											placeholder="10"
+											value={maxUsersInput}
+											onChange={(e) => {
+												setMaxUsersInput(e.target.value);
+											}}
 										/>
 									</InputContainer>
 								</Column>
 								<Column>
 									<InputContainer tw="flex-1">
-										<Label htmlFor="name-input">Start Date</Label>
+										<Label htmlFor="start-date-input">
+											Start Date
+										</Label>
 										<Input
-											id="name-input"
+											id="start-date-input"
 											type="date"
-											name="name"
+											value={startDateInput}
+											onChange={(e) => {
+												setStartDateInput(e.target.value);
+											}}
 										/>
 									</InputContainer>
 									<InputContainer>
-										<Label htmlFor="email-input">End Date</Label>
+										<Label htmlFor="end-date-input">End Date</Label>
 										<Input
-											id="name-input"
+											id="end-date-input"
 											type="date"
-											name="name"
+											value={endDateInput}
+											onChange={(e) => {
+												setEndDateInput(e.target.value);
+											}}
 										/>
 									</InputContainer>
 								</Column>
 							</TwoColumn>
-              {/*
-                TODO
-                
-                checkbox  public / private
-                select    classic / altro algoritmo
-               */}
+
+							<TabsControl>
+								{Object.keys(tabs).map((tab, index) => (
+									<TabControl
+										key={index}
+										active={activeTab === tab}
+										onClick={() => setActiveTab(tab)}
+									>
+										{tabs[tab].mode}
+									</TabControl>
+								))}
+							</TabsControl>
+							<InputContainer>
+								<p id="tab-description" type="text" name="name">
+									{tabs[activeTab].description}
+								</p>
+							</InputContainer>
 
 							<ButtonLeft
 								onClick={(e) => {
 									e.preventDefault();
+									setLocalStorage();
 									history.push({
 										pathname: "/new/info",
-										//search: "?query=abc",
-										//state: { detail: "ciao" },
 									});
 								}}
 								value="Back"
@@ -121,10 +202,9 @@ export default () => {
 							<ButtonRight
 								onClick={(e) => {
 									e.preventDefault();
+									setLocalStorage();
 									history.push({
 										pathname: "/new/userinfo",
-										//search: "?query=abc",
-										//state: { detail: "ciao" },
 									});
 								}}
 								value="Next"

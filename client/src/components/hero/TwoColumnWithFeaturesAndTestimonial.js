@@ -42,7 +42,7 @@ export default ({
   imageSrc = "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=634&q=80",
   imageDecoratorBlob = true,
   primaryButtonUrl = "/new",
-  primaryButtonText = "Get Started",
+  primaryButtonText = "Create a new Leaderboard",
   buttonRounded = true,
   features = ["Available in 7 Locations", "Premium Internet Backbone", "99.99% Uptime SLA"],
   testimonial = {
@@ -51,7 +51,7 @@ export default ({
     customerCompany: "Delos Inc."
   }
 }) => {
-  const buttonRoundedCss = buttonRounded && tw`rounded-full`;
+  const buttonRoundedCss = buttonRounded && tw`rounded-full w-auto`;
   const navLinks = [
     <NavLinks key={1}>
       <NavLink href="/#">About</NavLink>

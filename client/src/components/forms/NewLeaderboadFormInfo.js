@@ -1,7 +1,7 @@
-import React from "react";
+import React, { useState } from "react";
 import styled from "styled-components";
 import tw from "twin.macro";
-import { useHistory } from "react-router-dom";
+import { useHistory, useLocation } from "react-router-dom";
 import { css } from "styled-components/macro"; //eslint-disable-line
 import { ReactComponent as SvgDotPatternIcon } from "../../images/dot-pattern.svg";
 
@@ -38,8 +38,38 @@ const SvgDotPattern1 = tw(
 	SvgDotPatternIcon
 )`absolute bottom-0 right-0 transform translate-y-1/2 translate-x-1/2 -z-10 opacity-50 text-primary-500 fill-current w-24`;
 
+const setLocalStorage = () => {
+	sessionStorage.setItem(
+		"title-input",
+		document.getElementById("title-input").value
+	);
+	sessionStorage.setItem(
+		"place-input",
+		document.getElementById("place-input").value
+	);
+	sessionStorage.setItem(
+		"note-input",
+		document.getElementById("note-input").value
+	);
+};
+
 export default () => {
 	const history = useHistory();
+
+	const titleInputSS = sessionStorage.getItem("title-input")
+		? sessionStorage.getItem("title-input")
+		: "";
+	const placeInputSS = sessionStorage.getItem("place-input")
+		? sessionStorage.getItem("place-input")
+		: "";
+	const noteInputSS = sessionStorage.getItem("note-input")
+		? sessionStorage.getItem("note-input")
+		: "";
+
+	const [titleInput, setTitleInput] = useState(titleInputSS);
+	const [placeInput, setPlaceInput] = useState(placeInputSS);
+	const [noteInput, setNoteInput] = useState(noteInputSS);
+
 	return (
 		<Container>
 			<Content>
@@ -49,40 +79,47 @@ export default () => {
 						<form action="/new/options">
 							<Column>
 								<InputContainer>
-									<Label htmlFor="name-input">Title</Label>
+									<Label htmlFor="title-input">Title</Label>
 									<Input
-										id="name-input"
+										id="title-input"
 										type="text"
-										name="name"
 										placeholder="E.g. Title Leaderboard"
+										value={titleInput}
+										onChange={(e) => {
+											setTitleInput(e.target.value);
+										}}
 									/>
 								</InputContainer>
 								<InputContainer>
-									<Label htmlFor="email-input">Place</Label>
+									<Label htmlFor="place-input">Place</Label>
 									<Input
-										id="email-input"
-										type="email"
-										name="email"
+										id="place-input"
+										type="text"
 										placeholder="E.g. New York"
+										value={placeInput}
+										onChange={(e) => {
+											setPlaceInput(e.target.value);
+										}}
 									/>
 								</InputContainer>
 								<InputContainer tw="flex-1">
-									<Label htmlFor="name-input">Note</Label>
+									<Label htmlFor="note-input">Note</Label>
 									<TextArea
-										id="message-input"
-										name="message"
+										id="note-input"
 										placeholder="E.g. Details about your event"
+										value={noteInput}
+										onChange={(e) => {
+											setNoteInput(e.target.value);
+										}}
 									/>
 								</InputContainer>
 							</Column>
 
-              <ButtonLeft
+							<ButtonLeft
 								onClick={(e) => {
 									e.preventDefault();
 									history.push({
 										pathname: "/",
-										//search: "?query=abc",
-										//state: { detail: "ciao" },
 									});
 								}}
 								value="Back"
@@ -92,10 +129,9 @@ export default () => {
 							<ButtonRight
 								onClick={(e) => {
 									e.preventDefault();
+									setLocalStorage();
 									history.push({
 										pathname: "/new/options",
-										//search: "?query=abc",
-										//state: { detail: "ciao" },
 									});
 								}}
 								value="Next"
