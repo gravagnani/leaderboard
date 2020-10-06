@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import styled from "styled-components";
 import tw from "twin.macro";
 import { useHistory } from "react-router-dom";
@@ -26,14 +26,49 @@ const FormContainer = styled.div`
 	}
 `;
 
-const TwoColumn = tw.div`flex flex-col sm:flex-row justify-between`;
 const Column = tw.div` flex flex-col`;
 const InputContainer = tw.div`relative py-5 mt-6`;
 const Label = tw.label`absolute top-0 left-0 tracking-wide font-semibold text-sm`;
 const Input = tw.input``;
-const TextArea = tw.textarea`h-24 sm:h-full resize-none`;
 const ButtonLeft = tw.button`w-full sm:w-32 mt-6 py-3 bg-gray-100 text-primary-500 rounded-full font-bold tracking-wide shadow-lg uppercase text-sm transition duration-300 transform focus:outline-none focus:shadow-outline hover:bg-gray-300 hover:text-primary-700 hocus:-translate-y-px hocus:shadow-xl`;
 const ButtonRight = tw.button`w-full float-right sm:w-32 mt-6 py-3 bg-gray-100 text-primary-500 rounded-full font-bold tracking-wide shadow-lg uppercase text-sm transition duration-300 transform focus:outline-none focus:shadow-outline hover:bg-gray-300 hover:text-primary-700 hocus:-translate-y-px hocus:shadow-xl`;
+
+const setLocalStorage = () => {
+	sessionStorage.setItem(
+		"name-input",
+		document.getElementById("name-input").value
+	);
+	sessionStorage.setItem(
+		"email-input",
+		document.getElementById("email-input").value
+	);
+};
+
+const createLeaderboard = () => {
+	let title = sessionStorage.getItem("title-input");
+	let place = sessionStorage.getItem("place-input");
+	let note = sessionStorage.getItem("note-input");
+	let min_users = sessionStorage.getItem("min-users-input");
+	let max_users = sessionStorage.getItem("max-users-input");
+	let start_date = sessionStorage.getItem("start-date-input");
+	let end_date = sessionStorage.getItem("end-date-input");
+	let active_tab = sessionStorage.getItem("active-tab");
+	let name = sessionStorage.getItem("name-input");
+	let email = sessionStorage.getItem("email-input");
+
+	console.log({
+		title,
+		place,
+		note,
+		min_users,
+		max_users,
+		start_date,
+		end_date,
+		active_tab,
+		name,
+		email,
+	});
+};
 
 const SvgDotPattern1 = tw(
 	SvgDotPatternIcon
@@ -41,63 +76,71 @@ const SvgDotPattern1 = tw(
 
 export default () => {
 	const history = useHistory();
+
+	const nameInputSS = sessionStorage.getItem("name-input")
+		? sessionStorage.getItem("name-input")
+		: "";
+	const emailInputSS = sessionStorage.getItem("email-input")
+		? sessionStorage.getItem("email-input")
+		: "";
+
+	//const [nameInput, setNameInput] = useState(nameInputSS);
+	//const [emailInput, setEmailInput] = useState(emailInputSS);
+
 	return (
 		<Container>
 			<Content>
 				<FormContainer>
 					<div tw="mx-auto max-w-4xl">
 						<h2>Your Info</h2>
-						<form action="/leaderboard">
-							<Column>
-								<InputContainer>
-									<Label htmlFor="name-input">Your Name</Label>
-									<Input
-										id="name-input"
-										type="text"
-										name="name"
-										placeholder="E.g. John Doe"
-									/>
-								</InputContainer>
-								<InputContainer>
-									<Label htmlFor="email-input">
-										Your Email Address
-									</Label>
-									<Input
-										id="email-input"
-										type="email"
-										name="email"
-										placeholder="E.g. john@mail.com"
-									/>
-								</InputContainer>
-							</Column>
+						<Column>
+							<InputContainer>
+								<Label htmlFor="name-input">Your Name</Label>
+								<Input
+									id="name-input"
+									type="text"
+									placeholder="E.g. John Doe"
+									defaultValue={nameInputSS}
+								/>
+							</InputContainer>
+							<InputContainer>
+								<Label htmlFor="email-input">Your Email Address</Label>
+								<Input
+									id="email-input"
+									type="email"
+									placeholder="E.g. john@mail.com"
+									defaultValue={emailInputSS}
+								/>
+							</InputContainer>
+						</Column>
 
-							<ButtonLeft
-								onClick={(e) => {
-									e.preventDefault();
-									history.push({
-										pathname: "/new/options",
-										//search: "?query=abc",
-										//state: { detail: "ciao" },
-									});
-								}}
-								value="Back"
-							>
-								Back
-							</ButtonLeft>
-							<ButtonRight
-								onClick={(e) => {
-									e.preventDefault();
+						<ButtonLeft
+							onClick={(e) => {
+								e.preventDefault();
+								setLocalStorage();
+								history.push({
+									pathname: "/new/options",
+								});
+							}}
+							value="Back"
+						>
+							Back
+						</ButtonLeft>
+						<ButtonRight
+							onClick={(e) => {
+								e.preventDefault();
+								setLocalStorage();
+								createLeaderboard();
+								/*
 									history.push({
 										pathname: "/leaderboard",
-										//search: "?query=abc",
-										//state: { detail: "ciao" },
 									});
-								}}
-								value="Done"
-							>
-								Done
-							</ButtonRight>
-						</form>
+									*/
+							}}
+							value="Done"
+						>
+							Done
+						</ButtonRight>
 					</div>
 					<SvgDotPattern1 />
 				</FormContainer>

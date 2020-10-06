@@ -66,79 +66,64 @@ export default () => {
 		? sessionStorage.getItem("note-input")
 		: "";
 
-	const [titleInput, setTitleInput] = useState(titleInputSS);
-	const [placeInput, setPlaceInput] = useState(placeInputSS);
-	const [noteInput, setNoteInput] = useState(noteInputSS);
-
 	return (
 		<Container>
 			<Content>
 				<FormContainer>
 					<div tw="mx-auto max-w-4xl">
 						<h2>What Leaderboard?</h2>
-						<form action="/new/options">
-							<Column>
-								<InputContainer>
-									<Label htmlFor="title-input">Title</Label>
-									<Input
-										id="title-input"
-										type="text"
-										placeholder="E.g. Title Leaderboard"
-										value={titleInput}
-										onChange={(e) => {
-											setTitleInput(e.target.value);
-										}}
-									/>
-								</InputContainer>
-								<InputContainer>
-									<Label htmlFor="place-input">Place</Label>
-									<Input
-										id="place-input"
-										type="text"
-										placeholder="E.g. New York"
-										value={placeInput}
-										onChange={(e) => {
-											setPlaceInput(e.target.value);
-										}}
-									/>
-								</InputContainer>
-								<InputContainer tw="flex-1">
-									<Label htmlFor="note-input">Note</Label>
-									<TextArea
-										id="note-input"
-										placeholder="E.g. Details about your event"
-										value={noteInput}
-										onChange={(e) => {
-											setNoteInput(e.target.value);
-										}}
-									/>
-								</InputContainer>
-							</Column>
+						<Column>
+							<InputContainer>
+								<Label htmlFor="title-input">Title</Label>
+								<Input
+									id="title-input"
+									type="text"
+									placeholder="E.g. Title Leaderboard"
+									defaultValue={titleInputSS}
+								/>
+							</InputContainer>
+							<InputContainer>
+								<Label htmlFor="place-input">Place</Label>
+								<Input
+									id="place-input"
+									type="text"
+									placeholder="E.g. New York"
+									defaultValue={placeInputSS}
+								/>
+							</InputContainer>
+							<InputContainer tw="flex-1">
+								<Label htmlFor="note-input">Note</Label>
+								<TextArea
+									id="note-input"
+									placeholder="E.g. Details about your event"
+									defaultValue={noteInputSS}
+								/>
+							</InputContainer>
+						</Column>
 
-							<ButtonLeft
-								onClick={(e) => {
-									e.preventDefault();
-									history.push({
-										pathname: "/",
-									});
-								}}
-								value="Back"
-							>
-								Back
-							</ButtonLeft>
-							<ButtonRight
-								onClick={(e) => {
-									e.preventDefault();
-									setLocalStorage();
-									history.push({
-										pathname: "/new/options",
-									});
-								}}
-								value="Next"
-							>
-								Next
-							</ButtonRight>
-						</form>
+						<ButtonLeft
+							onClick={(e) => {
+								e.preventDefault();
+								history.push({
+									pathname: "/",
+								});
+							}}
+							value="Back"
+						>
+							Back
+						</ButtonLeft>
+						<ButtonRight
+							onClick={(e) => {
+								e.preventDefault();
+								setLocalStorage();
+								history.push({
+									pathname: "/new/options",
+								});
+							}}
+							value="Next"
+						>
+							Next
+						</ButtonRight>
 					</div>
 					<SvgDotPattern1 />
 				</FormContainer>

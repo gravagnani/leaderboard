@@ -100,13 +100,15 @@ export default ({
 	const endDateInputSS = sessionStorage.getItem("end-date-input")
 		? sessionStorage.getItem("end-date-input")
 		: "";
+	const activeTabIndexSS = sessionStorage.getItem("active-tab-index")
+		? sessionStorage.getItem("active-tab-index")
+		: "";
 
-	const [minUsersInput, setMinUsersInput] = useState(minUsersInputSS);
-	const [maxUsersInput, setMaxUsersInput] = useState(maxUsersInputSS);
-	const [startDateInput, setStartDateInput] = useState(startDateInputSS);
-	const [endDateInput, setEndDateInput] = useState(endDateInputSS);
+	// todo: save informaton about selected tab
 	const tabsKeys = Object.keys(tabs);
-	const [activeTab, setActiveTab] = useState(tabsKeys[0]);
+	const [activeTab, setActiveTab] = useState(
+		tabsKeys[activeTabIndexSS ? activeTabIndexSS : 0]
+	);
 
 	return (
 		<Container>
@@ -114,104 +116,92 @@ export default ({
 				<FormContainer>
 					<div tw="mx-auto max-w-4xl">
 						<h2>Leaderboard Options</h2>
-						<form action="/new/userinfo">
-							<TwoColumn>
-								<Column>
-									<InputContainer>
-										<Label htmlFor="min-users-input">Min Users</Label>
-										<Input
-											id="min-users-input"
-											type="number"
-											placeholder="1"
-											value={minUsersInput}
-											onChange={(e) => {
-												setMinUsersInput(e.target.value);
-											}}
-										/>
-									</InputContainer>
-									<InputContainer>
-										<Label htmlFor="max-users-input">Max Users</Label>
-										<Input
-											id="max-users-input"
-											type="number"
-											placeholder="10"
-											value={maxUsersInput}
-											onChange={(e) => {
-												setMaxUsersInput(e.target.value);
-											}}
-										/>
-									</InputContainer>
-								</Column>
-								<Column>
-									<InputContainer tw="flex-1">
-										<Label htmlFor="start-date-input">
-											Start Date
-										</Label>
-										<Input
-											id="start-date-input"
-											type="date"
-											value={startDateInput}
-											onChange={(e) => {
-												setStartDateInput(e.target.value);
-											}}
-										/>
-									</InputContainer>
-									<InputContainer>
-										<Label htmlFor="end-date-input">End Date</Label>
-										<Input
-											id="end-date-input"
-											type="date"
-											value={endDateInput}
-											onChange={(e) => {
-												setEndDateInput(e.target.value);
-											}}
-										/>
-									</InputContainer>
-								</Column>
-							</TwoColumn>
+						<TwoColumn>
+							<Column>
+								<InputContainer>
+									<Label htmlFor="min-users-input">Min Users</Label>
+									<Input
+										id="min-users-input"
+										type="number"
+										placeholder="1"
+										defaultValue={minUsersInputSS}
+									/>
+								</InputContainer>
+								<InputContainer>
+									<Label htmlFor="max-users-input">Max Users</Label>
+									<Input
+										id="max-users-input"
+										type="number"
+										placeholder="10"
+										defaultValue={maxUsersInputSS}
+									/>
+								</InputContainer>
+							</Column>
+							<Column>
+								<InputContainer tw="flex-1">
+									<Label htmlFor="start-date-input">Start Date</Label>
+									<Input
+										id="start-date-input"
+										type="date"
+										defaultValue={startDateInputSS}
+									/>
+								</InputContainer>
+								<InputContainer>
+									<Label htmlFor="end-date-input">End Date</Label>
+									<Input
+										id="end-date-input"
+										type="date"
+										defaultValue={endDateInputSS}
+									/>
+								</InputContainer>
+							</Column>
+						</TwoColumn>
 
-							<TabsControl>
-								{Object.keys(tabs).map((tab, index) => (
-									<TabControl
-										key={index}
-										active={activeTab === tab}
-										onClick={() => setActiveTab(tab)}
-									>
-										{tabs[tab].mode}
-									</TabControl>
-								))}
-							</TabsControl>
-							<InputContainer>
-								<p id="tab-description" type="text" name="name">
-									{tabs[activeTab].description}
-								</p>
-							</InputContainer>
+						<TabsControl>
+							{Object.keys(tabs).map((tab, index) => (
+								<TabControl
+									key={index}
+									active={activeTab === tab}
+									onClick={() => {
+										setActiveTab(tab);
+										sessionStorage.setItem("active-tab-index", index);
+										sessionStorage.setItem("active-tab", tab);
+									}}
+								>
+									{tabs[tab].mode}
+								</TabControl>
+							))}
+						</TabsControl>
+						<InputContainer>
+							<p id="tab-description" type="text" name="name">
+								{tabs[activeTab].description}
+							</p>
+						</InputContainer>
 
-							<ButtonLeft
-								onClick={(e) => {
-									e.preventDefault();
-									setLocalStorage();
-									history.push({
-										pathname: "/new/info",
-									});
-								}}
-								value="Back"
-							>
-								Back
-							</ButtonLeft>
-							<ButtonRight
-								onClick={(e) => {
-									e.preventDefault();
-									setLocalStorage();
-									history.push({
-										pathname: "/new/userinfo",
-									});
-								}}
-								value="Next"
-							>
-								Next
-							</ButtonRight>
-						</form>
+						<ButtonLeft
+							onClick={(e) => {
+								e.preventDefault();
+								setLocalStorage();
+								history.push({
+									pathname: "/new/info",
+								});
+							}}
+							value="Back"
+						>
+							Back
+						</ButtonLeft>
+						<ButtonRight
+							onClick={(e) => {
+								e.preventDefault();
+								setLocalStorage();
+								history.push({
+									pathname: "/new/userinfo",
+								});
+							}}
+							value="Next"
+						>
+							Next
+						</ButtonRight>
 					</div>
 					<SvgDotPattern1 />
 				</FormContainer>
