@@ -1,7 +1,7 @@
 import React from "react";
 import tw from "twin.macro";
 import styled from "styled-components";
-import { css } from "styled-components/macro"; //eslint-disable-line
+import { useHistory } from "react-router-dom";
 import {
 	SectionHeading,
 	Subheading as SubheadingBase,
@@ -9,9 +9,8 @@ import {
 import { PrimaryButton as PrimaryButtonBase } from "components/misc/Buttons.js";
 
 const Container = tw.div`relative`;
-const TwoColumn = tw.div`flex flex-col md:flex-row justify-between max-w-screen-xl mx-auto pt-20 md:pt-24`;
+const TwoColumn = tw.div`flex flex-col md:flex-row justify-between max-w-screen-xl mx-auto pt-20 md:pt-20`;
 const Column = tw.div`w-full max-w-md mx-auto md:max-w-none md:mx-0`;
-const ImageColumn = tw(Column)`md:w-5/12 flex-shrink-0 h-80 md:h-auto`;
 const TextColumn = styled(Column)((props) => [
 	tw` mt-16 md:mt-0`,
 	props.textOnLeft
@@ -43,17 +42,19 @@ const copyClipboard = () => {
 };
 
 export default ({
+
 	heading = (
 		<>
-			Invite new <span tw="text-primary-500">Participants</span>
+			<span tw="text-primary-500 cursor-pointer hover:underline">Sign In</span> to Participate
 			<wbr />.
 		</>
 	),
-	description = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
 	submitButtonText = "Copy",
 	formMethod = "get",
 	textOnLeft = true,
 }) => {
+
+	const history = useHistory();
 	// The textOnLeft boolean prop can be used to display either the text on left or right side of the image.
 
 	return (
@@ -61,20 +62,15 @@ export default ({
 			<TwoColumn>
 				<TextColumn textOnLeft={textOnLeft}>
 					<TextContent>
-						<Heading>{heading}</Heading>
-						<Description>{description}</Description>
-						<Input
-							type="text"
-							id="link-leaderboard"
-							defaultValue="http://localhost:3001/leaderboard/sdhcbqwdhsfobq"
-						/>
-						<SubmitButton
+						<Heading
 							onClick={() => {
-								copyClipboard();
+								history.push({
+									pathname: "/signin",
+								});
 							}}
 						>
-							{submitButtonText}
-						</SubmitButton>
+							{heading}
+						</Heading>
 					</TextContent>
 				</TextColumn>
 			</TwoColumn>

@@ -35,22 +35,16 @@ const Input = tw.input`w-6/12 border-2 px-5 py-3 rounded focus:outline-none font
 
 const SubmitButton = tw(PrimaryButtonBase)`inline-block lg:ml-6 mt-6 sm:mt-3`;
 
-const copyClipboard = () => {
-	let copyText = document.getElementById("link-leaderboard");
-	copyText.select();
-	copyText.setSelectionRange(0, 99999); /*For mobile devices*/
-	document.execCommand("copy");
-};
-
 export default ({
 	heading = (
 		<>
-			Invite new <span tw="text-primary-500">Participants</span>
+			Choose your <span tw="text-primary-500">name</span> and join the
+			competition
 			<wbr />.
 		</>
 	),
 	description = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
-	submitButtonText = "Copy",
+	submitButtonText = "Join",
 	formMethod = "get",
 	textOnLeft = true,
 }) => {
@@ -66,12 +60,10 @@ export default ({
 						<Input
 							type="text"
 							id="link-leaderboard"
-							defaultValue="http://localhost:3001/leaderboard/sdhcbqwdhsfobq"
+							defaultValue="User Full Name"
 						/>
 						<SubmitButton
-							onClick={() => {
-								copyClipboard();
-							}}
+							onClick={() => {}}
 						>
 							{submitButtonText}
 						</SubmitButton>
