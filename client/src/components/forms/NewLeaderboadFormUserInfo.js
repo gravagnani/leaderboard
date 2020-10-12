@@ -131,11 +131,9 @@ export default () => {
 								e.preventDefault();
 								setLocalStorage();
 								createLeaderboard();
-								/*
-									history.push({
-										pathname: "/leaderboard",
-									});
-									*/
+								history.push({
+									pathname: "/leaderboard",
+								});
 							}}
 							value="Done"
 						>
