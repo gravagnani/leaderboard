@@ -5,7 +5,7 @@ import AnimationRevealPage from "helpers/AnimationRevealPage.js";
 
 import Hero from "components/hero/TwoColumnWithFeaturesAndTestimonialLeaderboard.js";
 import LeaderboardList from "components/blogs/LeaderboardList.js";
-import Footer from "components/footers/FiveColumnWithInputForm.js";
+import Footer from "components/footers/MiniCenteredFooter.js";
 import LeaderboardShare from "components/forms/LeaderboardShare.js";
 import LeaderboardSignIn from "components/forms/LeaderboardSignIn.js";
 import LeaderboardChooseName from "components/forms/LeaderboardChooseName.js";
@@ -13,8 +13,8 @@ import LeaderboardChooseName from "components/forms/LeaderboardChooseName.js";
 const HighlightedText = tw.span`text-primary-500`;
 
 var userIsCreator = false;
-var userIsSignedIn = true;
-var userIsAlreadyPlaying = false;
+var userIsSignedIn = false;
+var userIsAlreadyPlaying = true;
 
 export default () => {
 	return (

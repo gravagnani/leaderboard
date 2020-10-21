@@ -66,16 +66,16 @@ export default ({
 			text: "Sign Up With Google",
 			url: "https://google.com",
 		},
-		{
+		/*{
 			iconImageSrc: twitterIconImageSrc,
 			text: "Sign Up With Twitter",
 			url: "https://twitter.com",
-		},
+		},*/
 	],
 	submitButtonText = "Sign Up",
 	SubmitButtonIcon = SignUpIcon,
-	tosUrl = "#",
-	privacyPolicyUrl = "#",
+	tosUrl = "/terms-of-service",
+	privacyPolicyUrl = "/privacy-policy",
 	signInUrl = "/signin",
 }) => {
 	const history = useHistory();
@@ -114,6 +114,7 @@ export default ({
 								</DividerTextContainer>
 								<Form>
 									<Input type="email" placeholder="Email" />
+									<Input type="text" placeholder="Full Name" />
 									<Input type="password" placeholder="Password" />
 									<SubmitButton
 										onClick={() => {

@@ -72,7 +72,8 @@ export default ({
   return (
     <>
       {/* DA AGGIUNGERE BLOCCO INFO UTENTE */}
-      <Header links={navLinks} />
+      <Header />
+      {/*<Header links={navLinks} />*/}
     </>
   );
 };

@@ -29,6 +29,7 @@ const Heading = tw(
 	SectionHeading
 )`mt-4 font-black text-left text-3xl sm:text-4xl lg:text-5xl text-center md:text-left leading-tight`;
 const Description = tw.p`mt-4 mb-4 text-center md:text-left text-sm md:text-base lg:text-lg font-medium leading-relaxed text-secondary-100`;
+const HeadingLink = tw.span`text-primary-500 cursor-pointer hover:underline`;
 
 const Input = tw.input`w-6/12 border-2 px-5 py-3 rounded focus:outline-none font-medium transition duration-300 hocus:border-primary-500`;
 
@@ -41,35 +42,26 @@ const copyClipboard = () => {
 	document.execCommand("copy");
 };
 
-export default ({
-
-	heading = (
-		<>
-			<span tw="text-primary-500 cursor-pointer hover:underline">Sign In</span> to Participate
-			<wbr />.
-		</>
-	),
-	submitButtonText = "Copy",
-	formMethod = "get",
-	textOnLeft = true,
-}) => {
-
+export default () => {
 	const history = useHistory();
 	// The textOnLeft boolean prop can be used to display either the text on left or right side of the image.
 
 	return (
 		<Container>
 			<TwoColumn>
-				<TextColumn textOnLeft={textOnLeft}>
+				<TextColumn>
 					<TextContent>
-						<Heading
-							onClick={() => {
-								history.push({
-									pathname: "/signin",
-								});
-							}}
-						>
-							{heading}
+						<Heading>
+							<HeadingLink
+								onClick={() => {
+									history.push({
+										pathname: "/signin",
+									});
+								}}
+							>
+								Sign In
+							</HeadingLink>{" "}
+							to Participate.
 						</Heading>
 					</TextContent>
 				</TextColumn>

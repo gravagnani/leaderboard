@@ -18,6 +18,7 @@ app.use(express.json());
 
 app.use("/api/v1", userRoute);
 app.use("/api/v1", leaderboardUser);
+
 app.use("/api/v1", adminRoute);
 
 app.listen(env.port).on("listening", () => {

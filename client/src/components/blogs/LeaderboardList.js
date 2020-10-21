@@ -30,6 +30,7 @@ const InputName = tw.input` appearance-none border-2 border-gray-200 rounded w-f
 const AuthorImage = tw.img`w-12 h-12 rounded-full`;
 const AuthorNameAndProfession = tw.div`ml-4`;
 const GameScore = tw.h6`font-semibold text-lg`;
+const GameDate = tw.h6`font-semibold text-lg`;
 const AuthorProfile = tw.p`text-secondary-100 text-sm`;
 const Table = tw.table`min-w-full divide-y divide-gray-200 mt-16 mr-20`;
 const TableHead = tw.thead``;
@@ -73,6 +74,9 @@ const LastGamesContainer = styled.div`
 	}
 	${GameScore} {
 		${tw`mt-3 text-sm text-secondary-100 font-normal leading-none`}
+	}
+	${GameDate} {
+		${tw`mt-5 text-sm text-secondary-100 font-normal leading-none`}
 	}
 `;
 
@@ -237,6 +241,13 @@ export default () => {
 									<Score>{user.score}</Score>
 								</User>
 							))}
+							<User key={10}>
+								{/*<Position>{10}</Position>*/}
+								<Position>10</Position>
+								<Image imageSrc={null} />
+								<UserName>{"Test"}</UserName>
+								<Score>{37}</Score>
+							</User>
 						</UsersContainer>
 					</LeaderboardContainer>
 					<LastGamesContainer>
@@ -244,6 +255,9 @@ export default () => {
 						<GamesContainer>
 							{recentGames.map((game, index) => (
 								<Game key={index} className="group">
+									<GameTextContainer>
+										<GameDate>{new Date().toDateString()}</GameDate>
+									</GameTextContainer>
 									<GameTextContainer>
 										<Player>{game.player1}</Player>
 										<GameScore>{game.score1}</GameScore>

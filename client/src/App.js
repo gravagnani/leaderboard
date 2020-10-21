@@ -98,6 +98,8 @@ import SignupPage from "views/Signup.js";
 import NewLeaderboardInfo from "views/NewLeaderboardInfo.js";
 import NewLeaderboardOptions from "views/NewLeaderboardOptions.js";
 import NewLeaderboardUserInfo from "views/NewLeaderboardUserInfo.js";
+import TermsOfServicePage from "views/TermsOfService.js";
+import PrivacyPolicyPage from "views/PrivacyPolicy.js";
 // import PricingPage from "pages/Pricing.js";
 // import AboutUsPage from "pages/AboutUs.js";
 // import ContactUsPage from "pages/ContactUs.js";
@@ -135,6 +137,12 @@ export default function App() {
         </Route>
         <Route path="/leaderboard">
           <LeaderboardPage />
+        </Route>
+        <Route path="/terms-of-service">
+          <TermsOfServicePage />
+        </Route>
+        <Route path="/privacy-policy">
+          <PrivacyPolicyPage />
         </Route>
         <Route path="/">
           <LandingPage />
