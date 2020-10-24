@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import tw from "twin.macro";
 import styled from "styled-components";
 import { motion } from "framer-motion";
@@ -38,6 +38,10 @@ const TableBody = tw.tbody`bg-white divide-y divide-gray-200`;
 const TableRow = tw.tr``;
 const TableHeadItem = tw.th`px-6 py-3 text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider`;
 const TableRowItem = tw.td`px-6 py-4 whitespace-no-wrap`;
+
+const Win = tw.div`bg-green-400 hover:bg-green-500 hover:cursor-pointer text-white w-12 h-12 text-center font-bold rounded-full flex items-center justify-center`;
+const Lose = tw.div`bg-red-400 hover:bg-red-500 hover:cursor-pointer text-white w-12 h-12 text-center font-bold rounded-full flex items-center justify-center`;
+const NotPart = tw.div`bg-gray-400 hover:bg-gray-500 hover:cursor-pointer text-white w-12 h-12 text-center font-bold rounded-full flex items-center justify-center`;
 
 const LeaderboardContainer = styled.div`
 	${tw`lg:w-2/3 md:pr-20`}
@@ -82,7 +86,150 @@ const LastGamesContainer = styled.div`
 
 const GameTextContainer = tw.div``;
 
+/*
+const popularGames = [
+	{
+		postImageSrc:
+			"https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=640&q=80",
+		authorImageSrc:
+			"https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=3.25&w=512&h=512&q=80",
+		title: "Tips on how to travel safely in foreign countries",
+		description:
+			"Lorem ipsum dolor sit amet, consecteturious adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua now ele.",
+		authorName: "Charlotte Delos",
+		authorProfile: "Travel Advocate",
+		url: "https://timerse.com",
+	},
+	{
+		postImageSrc:
+			"https://images.unsplash.com/photo-1563784462041-5f97ac9523dd?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=640&q=80",
+		authorImageSrc:
+			"https://images.unsplash.com/photo-1531427186611-ecfd6d936c79?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2.25&w=512&h=512&q=80",
+		title: "Enjoying the beach life while on a vacation",
+		description:
+			"Lorem ipsum dolor sit amet, consecteturious adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua now ele.",
+		authorName: "Adam Cuppy",
+		authorProfile: "Vlogger",
+		url: "https://reddit.com",
+	},
+];
+
+const recentGamesOld = [
+	{
+		postImageSrc:
+			"https://images.unsplash.com/photo-1552733407-5d5c46c3bb3b?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=256&q=80",
+		title: "Gilda (+10) Beppe (-15)",
+		authorName: "10.10.2020 12:45",
+		url: "https://reddit.com",
+	},
+	{
+		postImageSrc:
+			"https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=256&q=80",
+		title: "Choosing the perfect Safaris in Africa",
+		authorName: "Sam Phipphen",
+		url: "https://reddit.com",
+	},
+	{
+		postImageSrc:
+			"https://images.unsplash.com/photo-1503220317375-aaad61436b1b?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=256&q=80",
+		title: "Hiking during the monsoon in Asia",
+		authorName: "Tony Hawk",
+		url: "https://timerse.com",
+	},
+	{
+		postImageSrc:
+			"https://images.unsplash.com/photo-1504609773096-104ff2c73ba4?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=256&q=80",
+		title: "Must carry items while travelling to Thailand",
+		authorName: "Himali Turn",
+		url: "https://timerse.com",
+	},
+	{
+		postImageSrc:
+			"https://images.unsplash.com/photo-1546971587-02375cbbdade?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=641&q=80",
+		title: "An extremely funny trip to the Swiss Alps",
+		authorName: "Naomi Watts",
+		url: "https://timerse.com",
+	},
+];*/
+
+const recentGames = [
+	{
+		date: "Sat Oct 24 2020",
+		player1: "Gilda",
+		score1: "+10",
+		player2: "Beppe",
+		score2: "-5",
+	},
+	{
+		date: "Sat Oct 24 2020",
+		player1: "Gilda",
+		score1: "+10",
+		player2: "Beppe",
+		score2: "-5",
+	},
+	{
+		date: "Sat Oct 24 2020",
+		player1: "Gilda",
+		score1: "+10",
+		player2: "Beppe",
+		score2: "-5",
+	},
+	{
+		date: "Sat Oct 24 2020",
+		player1: "Gilda",
+		score1: "+10",
+		player2: "Beppe",
+		score2: "-5",
+	},
+];
+
+const participants = [
+	{
+		position: 1,
+		name: "Ivo",
+		score: 123,
+		image:
+			"https://images.unsplash.com/photo-1546971587-02375cbbdade?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=641&q=80",
+	},
+	{
+		position: 2,
+		name: "Gilda",
+		score: 98,
+		image:
+			"https://images.unsplash.com/photo-1504609773096-104ff2c73ba4?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=256&q=80",
+	},
+	{
+		position: 3,
+		name: "Ciccio",
+		score: 46,
+		image:
+			"https://images.unsplash.com/photo-1503220317375-aaad61436b1b?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=256&q=80",
+	},
+	{
+		position: 4,
+		name: "Beppe",
+		score: 15,
+		image:
+			"https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=256&q=80",
+	},
+];
+
 export default () => {
+	const [newGameMode, setNewGameMode] = useState(false);
+	const [winList, setWinList] = useState([]);
+	const [loseList, setLoseList] = useState([]);
+
+	const handleWinBtn = (position) => {
+		setWinList(winList.filter((e) => e != position));
+		setLoseList([...loseList, position]);
+	};
+	const handleLoseBtn = (position) => {
+		setLoseList(loseList.filter((e) => e != position));
+	};
+	const handleNoPartBtn = (position) => {
+		setWinList([...winList, position]);
+	};
+
 	// This setting is for animating the Game background image on hover
 	const gameBackgroundSizeAnimation = {
 		rest: {
@@ -93,130 +240,6 @@ export default () => {
 		},
 	};
 
-	//Recommended: Only 2 Items
-	const popularGames = [
-		{
-			postImageSrc:
-				"https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=640&q=80",
-			authorImageSrc:
-				"https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=3.25&w=512&h=512&q=80",
-			title: "Tips on how to travel safely in foreign countries",
-			description:
-				"Lorem ipsum dolor sit amet, consecteturious adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua now ele.",
-			authorName: "Charlotte Delos",
-			authorProfile: "Travel Advocate",
-			url: "https://timerse.com",
-		},
-		{
-			postImageSrc:
-				"https://images.unsplash.com/photo-1563784462041-5f97ac9523dd?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=640&q=80",
-			authorImageSrc:
-				"https://images.unsplash.com/photo-1531427186611-ecfd6d936c79?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2.25&w=512&h=512&q=80",
-			title: "Enjoying the beach life while on a vacation",
-			description:
-				"Lorem ipsum dolor sit amet, consecteturious adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua now ele.",
-			authorName: "Adam Cuppy",
-			authorProfile: "Vlogger",
-			url: "https://reddit.com",
-		},
-	];
-
-	const recentGamesOld = [
-		{
-			postImageSrc:
-				"https://images.unsplash.com/photo-1552733407-5d5c46c3bb3b?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=256&q=80",
-			title: "Gilda (+10) Beppe (-15)",
-			authorName: "10.10.2020 12:45",
-			url: "https://reddit.com",
-		},
-		{
-			postImageSrc:
-				"https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=256&q=80",
-			title: "Choosing the perfect Safaris in Africa",
-			authorName: "Sam Phipphen",
-			url: "https://reddit.com",
-		},
-		{
-			postImageSrc:
-				"https://images.unsplash.com/photo-1503220317375-aaad61436b1b?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=256&q=80",
-			title: "Hiking during the monsoon in Asia",
-			authorName: "Tony Hawk",
-			url: "https://timerse.com",
-		},
-		{
-			postImageSrc:
-				"https://images.unsplash.com/photo-1504609773096-104ff2c73ba4?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=256&q=80",
-			title: "Must carry items while travelling to Thailand",
-			authorName: "Himali Turn",
-			url: "https://timerse.com",
-		},
-		{
-			postImageSrc:
-				"https://images.unsplash.com/photo-1546971587-02375cbbdade?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=641&q=80",
-			title: "An extremely funny trip to the Swiss Alps",
-			authorName: "Naomi Watts",
-			url: "https://timerse.com",
-		},
-	];
-
-	const recentGames = [
-		{
-			player1: "Gilda",
-			score1: "+10",
-			player2: "Beppe",
-			score2: "-5",
-		},
-		{
-			player1: "Gilda",
-			score1: "+10",
-			player2: "Beppe",
-			score2: "-5",
-		},
-		{
-			player1: "Gilda",
-			score1: "+10",
-			player2: "Beppe",
-			score2: "-5",
-		},
-		{
-			player1: "Gilda",
-			score1: "+10",
-			player2: "Beppe",
-			score2: "-5",
-		},
-	];
-
-	const participants = [
-		{
-			position: 1,
-			name: "Ivo",
-			score: 123,
-			image:
-				"https://images.unsplash.com/photo-1546971587-02375cbbdade?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=641&q=80",
-		},
-		{
-			position: 2,
-			name: "Gilda",
-			score: 98,
-			image:
-				"https://images.unsplash.com/photo-1504609773096-104ff2c73ba4?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=256&q=80",
-		},
-		{
-			position: 3,
-			name: "Ciccio",
-			score: 46,
-			image:
-				"https://images.unsplash.com/photo-1503220317375-aaad61436b1b?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=256&q=80",
-		},
-		{
-			position: 4,
-			name: "Beppe",
-			score: 15,
-			image:
-				"https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=256&q=80",
-		},
-	];
-
 	return (
 		<Container>
 			<ContentWithPaddingXl>
@@ -226,10 +249,12 @@ export default () => {
 							<Heading>Leaderboard</Heading>
 							<HeadingButton
 								onClick={() => {
-									console.log("ciao");
+									setWinList([]);
+									setLoseList([]);
+									setNewGameMode(!newGameMode);
 								}}
 							>
-								New Game
+								{!newGameMode ? "New Game" : "Save"}
 							</HeadingButton>
 						</HeadingRow>
 						<UsersContainer>
@@ -238,16 +263,56 @@ export default () => {
 									<Position>{user.position}</Position>
 									<Image imageSrc={user.image} />
 									<UserName>{user.name}</UserName>
-									<Score>{user.score}</Score>
+									<Score>
+										{!newGameMode ? (
+											user.score
+										) : winList.includes(user.position) ? (
+											<Win
+												onClick={() => {
+													handleWinBtn(user.position);
+												}}
+											>
+												W
+											</Win>
+										) : loseList.includes(user.position) ? (
+											<Lose
+												onClick={() => {
+													handleLoseBtn(user.position);
+												}}
+											>
+												L
+											</Lose>
+										) : (
+											<NotPart
+												onClick={() => {
+													handleNoPartBtn(user.position);
+												}}
+											/>
+										)}
+									</Score>
 								</User>
 							))}
+							{/*
+							{"Qui sotto test"}
 							<User key={10}>
-								{/*<Position>{10}</Position>*/}
 								<Position>10</Position>
 								<Image imageSrc={null} />
 								<UserName>{"Test"}</UserName>
-								<Score>{37}</Score>
+								<Score>{false ? 37 : <Win>W</Win>}</Score>
 							</User>
+							<User key={11}>
+								<Position>10</Position>
+								<Image imageSrc={null} />
+								<UserName>{"Test"}</UserName>
+								<Score>{false ? 37 : <Lose>L</Lose>}</Score>
+							</User>
+							<User key={12}>
+								<Position>10</Position>
+								<Image imageSrc={null} />
+								<UserName>{"Test"}</UserName>
+								<Score>{false ? 37 : <NotPart />}</Score>
+							</User>
+							*/}
 						</UsersContainer>
 					</LeaderboardContainer>
 					<LastGamesContainer>
@@ -256,7 +321,7 @@ export default () => {
 							{recentGames.map((game, index) => (
 								<Game key={index} className="group">
 									<GameTextContainer>
-										<GameDate>{new Date().toDateString()}</GameDate>
+										<GameDate>{game.date}</GameDate>
 									</GameTextContainer>
 									<GameTextContainer>
 										<Player>{game.player1}</Player>
