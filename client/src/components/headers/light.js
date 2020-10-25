@@ -1,4 +1,5 @@
 import React from "react";
+import { useHistory } from "react-router-dom";
 import { motion } from "framer-motion";
 import tw from "twin.macro";
 import styled from "styled-components";
@@ -30,7 +31,7 @@ export const PrimaryLink = tw(NavLink)`
   lg:mx-0
   px-8 py-3 rounded bg-primary-500 text-gray-100
   hocus:bg-primary-700 hocus:text-gray-200 focus:shadow-outline
-  border-b-0
+  border-b-0 cursor-pointer
 `;
 
 export const LogoLink = styled(NavLink)`
@@ -76,18 +77,50 @@ export default ({
 	 * changing the defaultLinks variable below below.
 	 * If you manipulate links here, all the styling on the links is already done for you. If you pass links yourself though, you are responsible for styling the links or use the helper styled components that are defined here (NavLink)
 	 */
+
+	const history = useHistory();
+
+	const user = JSON.parse(localStorage.getItem("user"));
+
+	const handleLogout = () => {
+		localStorage.removeItem("user");
+		history.go(0);
+	};
+
 	const defaultLinks = [
 		<NavLinks key={1}>
 			<NavLink href="/#">About</NavLink>
-      <NavLink href="/#">Blog</NavLink>
-      <NavLink href="/#">Pricing</NavLink>
-      <NavLink href="/#">Contact Us</NavLink>
-			<NavLink href="/signin" tw="lg:ml-12!">
-				Login
-			</NavLink>
-			<PrimaryLink css={roundedHeaderButton && tw`rounded-full`} href="/signup">
-				Sign Up
-			</PrimaryLink>
+			<NavLink href="/#">Blog</NavLink>
+			<NavLink href="/#">Pricing</NavLink>
+			<NavLink href="/#">Contact Us</NavLink>
+			{!user && (
+				<>
+					<NavLink href="/signin" tw="lg:ml-12!">
+						Login
+					</NavLink>
+					<PrimaryLink
+						css={roundedHeaderButton && tw`rounded-full`}
+						href="/signup"
+					>
+						Sign Up
+					</PrimaryLink>
+				</>
+			)}
+			{user && (
+				<>
+					<NavLink href="/profile" tw="lg:ml-12!">
+						{user.email}
+					</NavLink>
+					<PrimaryLink
+						css={roundedHeaderButton && tw`rounded-full`}
+						onClick={() => {
+							handleLogout();
+						}}
+					>
+						Logout
+					</PrimaryLink>
+				</>
+			)}
 		</NavLinks>,
 	];
 

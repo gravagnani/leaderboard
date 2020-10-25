@@ -243,9 +243,9 @@ const modifyLeaderboard = async (req, res) => {
 			modified_by,
 		];
 
-		const { rows } = await dbQuery.query(modifyLeaderboardQuery, values);
-		const dbResponse = rows[0];
-		successMessage.data = dbResponse;
+		const { rowsMod } = await dbQuery.query(modifyLeaderboardQuery, values);
+		const dbResponseMod = rows[0];
+		successMessage.data = dbResponseMod;
 
 		return res.status(status.created).send(successMessage);
 	} catch (error) {

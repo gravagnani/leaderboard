@@ -12,9 +12,11 @@ import LeaderboardChooseName from "components/forms/LeaderboardChooseName.js";
 
 const HighlightedText = tw.span`text-primary-500`;
 
-var userIsCreator = false;
-var userIsSignedIn = false;
-var userIsAlreadyPlaying = true;
+const user = JSON.parse(localStorage.getItem("user"));
+
+var userIsCreator = true || !user;
+var userIsSignedIn = !!user;
+var userIsAlreadyPlaying = false || user;
 
 export default () => {
 	return (

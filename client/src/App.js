@@ -100,6 +100,9 @@ import NewLeaderboardOptions from "views/NewLeaderboardOptions.js";
 import NewLeaderboardUserInfo from "views/NewLeaderboardUserInfo.js";
 import TermsOfServicePage from "views/TermsOfService.js";
 import PrivacyPolicyPage from "views/PrivacyPolicy.js";
+import Profile from "views/Profile.js";
+import ChangePassword from "views/ChangePassword.js";
+
 // import PricingPage from "pages/Pricing.js";
 // import AboutUsPage from "pages/AboutUs.js";
 // import ContactUsPage from "pages/ContactUs.js";
@@ -114,6 +117,7 @@ import { BrowserRouter as Router, Switch, Route, Redirect } from "react-router-d
 
 export default function App() {
   // return <AnimationRevealPage disabled></AnimationRevealPage>;
+  // TODO: aggiungere pagine MODIFICA INFO UTENTE (/profile), MODIFICA PASSWORD, FORGOT PASSWORD
   return (
     <Router>
       <Switch>
@@ -137,6 +141,12 @@ export default function App() {
         </Route>
         <Route path="/leaderboard">
           <LeaderboardPage />
+        </Route>
+        <Route path="/profile">
+          <Profile />
+        </Route>
+        <Route path="/changepw">
+          <ChangePassword />
         </Route>
         <Route path="/terms-of-service">
           <TermsOfServicePage />

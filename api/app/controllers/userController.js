@@ -24,6 +24,8 @@ import { errorMessage, successMessage, status } from "../helpers/status";
 const createUser = async (req, res) => {
 	const { email, full_name, password } = req.body;
 
+	console.log({ email, full_name, password });
+
 	const flag_active = 1;
 	const created_at = moment(new Date());
 	const modified_at = moment(new Date());
@@ -180,7 +182,6 @@ const getUserByUUID = async (req, res) => {
 		successMessage.data = dbResponse;
 		return res.status(status.success).send(successMessage);
 	} catch (error) {
-		console.log(error);
 		errorMessage.error = "Operation was not successful";
 		return res.status(status.error).send(errorMessage);
 	}
@@ -206,7 +207,6 @@ const getUsersOfLeaderboardUUID = async (req, res) => {
 		successMessage.data = rows;
 		return res.status(status.success).send(successMessage);
 	} catch (error) {
-		console.log(error);
 		errorMessage.error = "Operation was not successful";
 		return res.status(status.error).send(errorMessage);
 	}

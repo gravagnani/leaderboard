@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import AnimationRevealPage from "helpers/AnimationRevealPage.js";
 import { Container as ContainerBase } from "components/misc/Layouts";
 import tw from "twin.macro";
@@ -10,6 +10,9 @@ import logo from "images/logo.svg";
 import googleIconImageSrc from "images/google-icon.png";
 import twitterIconImageSrc from "images/twitter-icon.png";
 import { ReactComponent as SignUpIcon } from "feather-icons/dist/icons/user-plus.svg";
+import ErrorAlert from "../alerts/ErrorAlert";
+
+import { signUp } from "../controllers/userController";
 
 const Container = tw(
 	ContainerBase
@@ -80,11 +83,38 @@ export default ({
 }) => {
 	const history = useHistory();
 
+	const [errorMessage, setErrorMessage] = useState(null);
+
+	const handleSignUp = () => {
+		var email = document.getElementById("signup_email").value;
+		var full_name = document.getElementById("signup_name").value;
+		var password = document.getElementById("signup_password").value;
+
+		signUp({ email, full_name, password })
+			.then((e) => {
+				if (e.status == "error") {
+					throw new Error(e.error);
+				}
+				history.push({
+					pathname: "/",
+				});
+			})
+			.catch((e) => {
+				setErrorMessage(e);
+			});
+	};
+
 	return (
 		<AnimationRevealPage>
 			<Container>
 				<Content>
 					<MainContainer>
+						{errorMessage && (
+							<ErrorAlert
+								message={errorMessage}
+								setMessage={setErrorMessage}
+							/>
+						)}
 						<LogoLink href={logoLinkUrl}>
 							<LogoImage src={logo} />
 						</LogoLink>
@@ -113,14 +143,27 @@ export default ({
 									</DividerText>
 								</DividerTextContainer>
 								<Form>
-									<Input type="email" placeholder="Email" />
-									<Input type="text" placeholder="Full Name" />
-									<Input type="password" placeholder="Password" />
+									<Input
+										type="email"
+										placeholder="Email"
+										id="signup_email"
+										defaultValue="giuseppe.ravagnani@gmail.com"
+									/>
+									<Input
+										type="text"
+										placeholder="Full Name"
+										id="signup_name"
+										defaultValue="Giuseppe"
+									/>
+									<Input
+										type="password"
+										placeholder="Password"
+										id="signup_password"
+										defaultValue="gercegumni"
+									/>
 									<SubmitButton
 										onClick={() => {
-											history.push({
-												pathname: "/",
-											});
+											handleSignUp();
 										}}
 									>
 										<SubmitButtonIcon className="icon" />

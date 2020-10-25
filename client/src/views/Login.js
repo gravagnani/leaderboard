@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import AnimationRevealPage from "helpers/AnimationRevealPage.js";
 import { Container as ContainerBase } from "components/misc/Layouts";
 import tw from "twin.macro";
@@ -10,6 +10,9 @@ import logo from "images/logo.svg";
 import googleIconImageSrc from "images/google-icon.png";
 import twitterIconImageSrc from "images/twitter-icon.png";
 import { ReactComponent as LoginIcon } from "feather-icons/dist/icons/log-in.svg";
+
+import ErrorAlert from "../alerts/ErrorAlert";
+import { doLogin } from "../controllers/userController";
 
 const Container = tw(
 	ContainerBase
@@ -78,12 +81,41 @@ export default ({
 	signupUrl = "/signup",
 }) => {
 	const history = useHistory();
+	const location = useLocation();
+
+	const [errorMessage, setErrorMessage] = useState(null);
+
+	const handleSignIn = () => {
+		var email = document.getElementById("signin_email").value;
+		var password = document.getElementById("signin_password").value;
+
+		doLogin({ email, password })
+			.then((e) => {
+				if (e.status == "error") {
+					throw new Error(e.error);
+				}
+				localStorage.setItem("user", JSON.stringify(e.data));
+				history.push({
+					// if coming from new leaderboard -> history.push with parameter calling_page
+					pathname: location.calling_page ? location.calling_page : "/",
+				});
+			})
+			.catch((e) => {
+				setErrorMessage(e);
+			});
+	};
 
 	return (
 		<AnimationRevealPage>
 			<Container>
 				<Content>
 					<MainContainer>
+						{errorMessage && (
+							<ErrorAlert
+								message={errorMessage}
+								setMessage={setErrorMessage}
+							/>
+						)}
 						<LogoLink href={logoLinkUrl}>
 							<LogoImage src={logo} />
 						</LogoLink>
@@ -112,13 +144,21 @@ export default ({
 									</DividerText>
 								</DividerTextContainer>
 								<Form>
-									<Input type="email" placeholder="Email" />
-									<Input type="password" placeholder="Password" />
+									<Input
+										type="email"
+										placeholder="Email"
+										id="signin_email"
+										defaultValue="giuseppe.ravagnani@gmail.com"
+									/>
+									<Input
+										type="password"
+										placeholder="Password"
+										id="signin_password"
+										defaultValue="gercegumni"
+									/>
 									<SubmitButton
 										onClick={() => {
-											history.push({
-												pathname: "/",
-											});
+											handleSignIn();
 										}}
 									>
 										<SubmitButtonIcon className="icon" />
