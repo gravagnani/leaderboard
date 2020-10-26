@@ -110,7 +110,7 @@ const siginUser = async (req, res) => {
 		return res.status(status.bad).send(errorMessage);
 	}
 
-	const signinUserQuery = `SELECT * FROM users WHERE email = $1`;
+	const signinUserQuery = `SELECT id, uuid, email, password, full_name FROM users WHERE email = $1`;
 
 	try {
 		const { rows } = await dbQuery.query(signinUserQuery, [email]);
@@ -129,9 +129,11 @@ const siginUser = async (req, res) => {
 			dbResponse.id,
 			dbResponse.email,
 			dbResponse.uuid,
-			dbResponse.full_name
+			dbResponse.full_name,
+			dbResponse.password
 		);
 
+		delete dbResponse.id;
 		delete dbResponse.password;
 
 		successMessage.data = dbResponse;
@@ -230,22 +232,43 @@ const modifyUser = async (req, res) => {
 	const modified_at = moment(new Date());
 	const modified_by = req.user.uuid;
 
-	if (!isValidEmail(email)) {
+	if (!isValidEmail(email_check)) {
 		errorMessage.error = "Please enter a valid Email";
 		return res.status(status.bad).send(errorMessage);
 	}
-	if (!validateFullName(full_name)) {
+	if (!validateFullName(full_name_check)) {
 		errorMessage.error = "Full Name must be more than three(3) characters";
 		return res.status(status.bad).send(errorMessage);
 	}
-	if (!validatePassword(password)) {
+	if (!validatePassword(password_check)) {
 		errorMessage.error = "Password must be more than five(5) characters";
 		return res.status(status.bad).send(errorMessage);
 	}
 
+	const checkMailQuery = `SELECT * from users 
+		WHERE email = $1 AND id <> $2`;
+	const values_mail = [
+		email_check,
+		req_user_id,
+	];
+
+	// check mail already used
+	try {
+		const { rows } = await dbQuery.query(checkMailQuery, values_mail);
+		const dbResponse = rows[0];
+
+		if (dbResponse) {
+			errorMessage.error = "Mail already used";
+			return res.status(status.conflict).send(errorMessage);
+		}
+	} catch (error) {
+		errorMessage.error = "Operation was not successful";
+		return res.status(status.error).send(errorMessage);
+	}
+
 	const updateUserQuery = `UPDATE users 
 		SET email = $1, full_name = $2, password = $3, modified_at = $4, modified_by = $5 
-		WHERE id = $6 returning *`;
+		WHERE id = $6 returning uuid, email, full_name, modified_at`;
 	const values = [
 		email_check,
 		full_name_check,
@@ -254,6 +277,8 @@ const modifyUser = async (req, res) => {
 		modified_by,
 		req_user_id,
 	];
+
+	// TODO: send notification mail
 
 	try {
 		const { rows } = await dbQuery.query(updateUserQuery, values);

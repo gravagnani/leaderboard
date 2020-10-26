@@ -117,7 +117,7 @@ import { BrowserRouter as Router, Switch, Route, Redirect } from "react-router-d
 
 export default function App() {
   // return <AnimationRevealPage disabled></AnimationRevealPage>;
-  // TODO: aggiungere pagine MODIFICA INFO UTENTE (/profile), MODIFICA PASSWORD, FORGOT PASSWORD
+  // TODO: creare route visibili solo se utente loggato
   return (
     <Router>
       <Switch>

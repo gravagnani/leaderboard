@@ -9,31 +9,30 @@ import { errorMessage, status } from "../helpers/status";
  * @param {object} next
  * @returns {object|void} response object
  */
-const verifyAuth = async(req, res, next) => {
-   
-   // header called "token"
-   const token = req.headers.token;
+const verifyAuth = async (req, res, next) => {
+	// header called "token"
+	const token = req.headers.token;
 
-   if (!token) {
-      errorMessage.error = 'Token not provided';
-      return res.status(status.bad).send(errorMessage);
-   }
+	if (!token) {
+		errorMessage.error = "Token not provided";
+		return res.status(status.bad).send(errorMessage);
+	}
 
-   try {
-      const decoded = jwt.verify(token, env.secret);
-      // TODO: change with user information
-      req.user = {
-         id: decoded.user_id,
+	try {
+		const decoded = jwt.verify(token, env.secret);
+		// TODO: change with user information
+		req.user = {
+			id: decoded.user_id,
 			email: decoded.email,
 			uuid: decoded.uuid,
-         full_name: decoded.full_name,
-      };
-      next();
-   } catch(error) {
-      errorMessage.error = 'Authentication Failed';
-      return res.status(status.unauthorized).send(errorMessage);
-   }
-
+			full_name: decoded.full_name,
+			password: decoded.password,
+		};
+		next();
+	} catch (error) {
+		errorMessage.error = "Authentication Failed";
+		return res.status(status.unauthorized).send(errorMessage);
+	}
 };
 
 export default verifyAuth;

@@ -5,6 +5,10 @@ import { useHistory } from "react-router-dom";
 import { css } from "styled-components/macro"; //eslint-disable-line
 import { ReactComponent as SvgDotPatternIcon } from "../../images/dot-pattern.svg";
 
+import ErrorAlert from "../../alerts/ErrorAlert";
+
+import { modifyUser } from "../../controllers/userController";
+
 const Container = tw.div`relative`;
 const Content = tw.div`max-w-screen-xl mx-auto py-20 lg:py-24`;
 
@@ -43,12 +47,39 @@ export default () => {
 
 	const user = JSON.parse(localStorage.getItem("user"));
 
+	const [errorMessage, setErrorMessage] = useState(null);
+
 	const nameInputSS = user ? user.full_name : "";
 	const emailInputSS = user ? user.email : "";
+
+	const handleModifyUser = () => {
+		const email = document.getElementById("email-input").value;
+		const full_name = document.getElementById("name-input").value;
+		modifyUser({ email, full_name }, user.token)
+			.then((e) => {
+				console.log(e);
+				if (e.status == "error") {
+					throw new Error(e.error);
+				}
+				user.email = e.data.email;
+				user.full_name = e.data.full_name;
+				localStorage.setItem("user", JSON.stringify(user));
+				history.go(0);
+			})
+			.catch((e) => {
+				setErrorMessage(e)
+			});
+	};
 
 	return (
 		<Container>
 			<Content>
+				{errorMessage && (
+					<ErrorAlert
+						message={errorMessage}
+						setMessage={setErrorMessage}
+					/>
+				)}
 				<FormContainer>
 					<div tw="mx-auto max-w-4xl">
 						<h2>Your Profile</h2>
@@ -80,7 +111,6 @@ export default () => {
 
 						<ButtonLeft
 							onClick={(e) => {
-								e.preventDefault();
 								history.push({
 									pathname: "/",
 								});
@@ -90,10 +120,7 @@ export default () => {
 						</ButtonLeft>
 						<ButtonRight
 							onClick={(e) => {
-								e.preventDefault();
-								history.push({
-									pathname: "/",
-								});
+								handleModifyUser();
 							}}
 						>
 							Done

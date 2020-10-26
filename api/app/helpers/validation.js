@@ -103,13 +103,14 @@ const generateUUID = (input, len = 10) => {
  * @param {string} id
  * @returns {string} token
  */
-const generateUserToken = (id, uuid, email, full_name) => {
+const generateUserToken = (id, uuid, email, full_name, password) => {
 	const token = jwt.sign(
 		{
 			user_id: id,
 			email,
 			uuid,
 			full_name,
+			password,
 		},
 		env.secret,
 		{ expiresIn: "3d" }
