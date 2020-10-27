@@ -5,6 +5,10 @@ import { useHistory } from "react-router-dom";
 import { css } from "styled-components/macro"; //eslint-disable-line
 import { ReactComponent as SvgDotPatternIcon } from "../../images/dot-pattern.svg";
 
+import ErrorAlert from "../../alerts/ErrorAlert";
+
+import { modifyUser } from "../../controllers/userController";
+
 const Container = tw.div`relative`;
 const Content = tw.div`max-w-screen-xl mx-auto py-20 lg:py-24`;
 
@@ -42,33 +46,65 @@ export default () => {
 	const history = useHistory();
 
 	const user = JSON.parse(localStorage.getItem("user"));
+	const email = user.email;
+	const full_name = user.full_name;
+
+	const [errorMessage, setErrorMessage] = useState(null);
+
+	const handleChangePassword = () => {
+		const password = document.getElementById("new-password-input").value;
+		const password_repeat = document.getElementById(
+			"new-password-repeat-input"
+		).value;
+		if (password.length < 5) {
+			setErrorMessage("Error: Password has to be at least 5 characters.");
+			return;
+		} else if (password != password_repeat) {
+			setErrorMessage("Error: The two passwords must be the same.");
+			return;
+		}
+		modifyUser({ email, full_name, password }, user.token)
+			.then((e) => {
+				console.log(e);
+				if (e.status == "error") {
+					throw new Error(e.error);
+				}
+				history.push({
+					pathname: "/profile",
+				});
+			})
+			.catch((e) => {
+				setErrorMessage(e);
+			});
+	};
 
 	return (
 		<Container>
 			<Content>
+				{errorMessage && (
+					<ErrorAlert
+						message={errorMessage}
+						setMessage={setErrorMessage}
+					/>
+				)}
 				<FormContainer>
 					<div tw="mx-auto max-w-4xl">
 						<h2>Change Password</h2>
 						<Column>
 							<InputContainer>
-								<Label htmlFor="name-input">New Password</Label>
-								<Input
-									id="new-password-input"
-									type="password"
-								/>
+								<Label htmlFor="new-password-input">New Password</Label>
+								<Input id="new-password-input" type="password" />
 							</InputContainer>
 							<InputContainer>
-								<Label htmlFor="email-input">Repeat New Password</Label>
-								<Input
-									id="new-password-rep-input"
-									type="password"
-								/>
+								<Label htmlFor="new-password-repeat-input">
+									Repeat New Password
+								</Label>
+								<Input id="new-password-repeat-input" type="password" />
 							</InputContainer>
 						</Column>
 
 						<ButtonLeft
 							onClick={(e) => {
-								e.preventDefault();
 								history.push({
 									pathname: "/profile",
 								});
@@ -78,10 +114,7 @@ export default () => {
 						</ButtonLeft>
 						<ButtonRight
 							onClick={(e) => {
-								e.preventDefault();
-								history.push({
-									pathname: "/profile",
-								});
+								handleChangePassword();
 							}}
 						>
 							Done

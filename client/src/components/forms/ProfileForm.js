@@ -57,7 +57,6 @@ export default () => {
 		const full_name = document.getElementById("name-input").value;
 		modifyUser({ email, full_name }, user.token)
 			.then((e) => {
-				console.log(e);
 				if (e.status == "error") {
 					throw new Error(e.error);
 				}

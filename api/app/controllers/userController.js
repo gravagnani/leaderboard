@@ -278,7 +278,7 @@ const modifyUser = async (req, res) => {
 		req_user_id,
 	];
 
-	// TODO: send notification mail
+	// TODO: disable user and send notification mail
 
 	try {
 		const { rows } = await dbQuery.query(updateUserQuery, values);
