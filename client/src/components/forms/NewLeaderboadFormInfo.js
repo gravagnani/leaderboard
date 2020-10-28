@@ -5,6 +5,8 @@ import { useHistory, useLocation } from "react-router-dom";
 import { css } from "styled-components/macro"; //eslint-disable-line
 import { ReactComponent as SvgDotPatternIcon } from "../../images/dot-pattern.svg";
 
+import ErrorAlert from "../../alerts/ErrorAlert";
+
 const Container = tw.div`relative`;
 const Content = tw.div`max-w-screen-xl mx-auto py-20 lg:py-24`;
 
@@ -38,23 +40,30 @@ const SvgDotPattern1 = tw(
 	SvgDotPatternIcon
 )`absolute bottom-0 right-0 transform translate-y-1/2 translate-x-1/2 -z-10 opacity-50 text-primary-500 fill-current w-24`;
 
-const setLocalStorage = () => {
-	sessionStorage.setItem(
-		"title-input",
-		document.getElementById("title-input").value
-	);
-	sessionStorage.setItem(
-		"place-input",
-		document.getElementById("place-input").value
-	);
-	sessionStorage.setItem(
-		"note-input",
-		document.getElementById("note-input").value
-	);
+const setLocalStorage = (title, place, note) => {
+	sessionStorage.setItem("title-input", title);
+	sessionStorage.setItem("place-input", place);
+	sessionStorage.setItem("note-input", note);
 };
 
 export default () => {
 	const history = useHistory();
+
+	const [errorMessage, setErrorMessage] = useState(null);
+
+	const handleNextBtnClick = () => {
+		const title = document.getElementById("title-input").value;
+		const place = document.getElementById("place-input").value;
+		const note = document.getElementById("note-input").value;
+		if (!title) {
+			setErrorMessage('Error: "Title" must have some value');
+		} else {
+			setLocalStorage(title, place, note);
+			history.push({
+				pathname: "/new/options",
+			});
+		}
+	};
 
 	const titleInputSS = sessionStorage.getItem("title-input")
 		? sessionStorage.getItem("title-input")
@@ -69,6 +78,12 @@ export default () => {
 	return (
 		<Container>
 			<Content>
+				{errorMessage && (
+					<ErrorAlert
+						message={errorMessage}
+						setMessage={setErrorMessage}
+					/>
+				)}
 				<FormContainer>
 					<div tw="mx-auto max-w-4xl">
 						<h2>What Leaderboard?</h2>
@@ -103,7 +118,6 @@ export default () => {
 
 						<ButtonLeft
 							onClick={(e) => {
-								e.preventDefault();
 								history.push({
 									pathname: "/",
 								});
@@ -114,11 +128,7 @@ export default () => {
 						</ButtonLeft>
 						<ButtonRight
 							onClick={(e) => {
-								e.preventDefault();
-								setLocalStorage();
-								history.push({
-									pathname: "/new/options",
-								});
+								handleNextBtnClick();
 							}}
 							value="Next"
 						>

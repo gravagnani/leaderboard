@@ -5,6 +5,8 @@ import { useHistory, useLocation } from "react-router-dom";
 import { css } from "styled-components/macro"; //eslint-disable-line
 import { ReactComponent as SvgDotPatternIcon } from "../../images/dot-pattern.svg";
 
+import ErrorAlert from "../../alerts/ErrorAlert";
+
 const Container = tw.div`relative`;
 const Content = tw.div`max-w-screen-xl mx-auto py-20 lg:py-24`;
 
@@ -49,22 +51,22 @@ const SvgDotPattern1 = tw(
 	SvgDotPatternIcon
 )`absolute bottom-0 right-0 transform translate-y-1/2 translate-x-1/2 -z-10 opacity-50 text-primary-500 fill-current w-24`;
 
-const setLocalStorage = () => {
+const setLocalStorage = (min_users, max_users, start_date, end_date) => {
 	sessionStorage.setItem(
 		"min-users-input",
-		document.getElementById("min-users-input").value
+		min_users
 	);
 	sessionStorage.setItem(
 		"max-users-input",
-		document.getElementById("max-users-input").value
+		max_users
 	);
 	sessionStorage.setItem(
 		"start-date-input",
-		document.getElementById("start-date-input").value
+		start_date
 	);
 	sessionStorage.setItem(
 		"end-date-input",
-		document.getElementById("end-date-input").value
+		end_date
 	);
 	//sessionStorage.setItem(
 	//	"mode",
@@ -88,12 +90,14 @@ export default ({
 }) => {
 	const history = useHistory();
 
+	const [errorMessage, setErrorMessage] = useState(null);
+
 	const minUsersInputSS = sessionStorage.getItem("min-users-input")
 		? sessionStorage.getItem("min-users-input")
-		: "";
+		: "1";
 	const maxUsersInputSS = sessionStorage.getItem("max-users-input")
 		? sessionStorage.getItem("max-users-input")
-		: "";
+		: "10";
 	const startDateInputSS = sessionStorage.getItem("start-date-input")
 		? sessionStorage.getItem("start-date-input")
 		: "";
@@ -104,15 +108,41 @@ export default ({
 		? sessionStorage.getItem("active-tab-index")
 		: "";
 
+	const handleNextBtnClick = () => {
+		const min_users = document.getElementById("min-users-input").value;
+		const max_users = document.getElementById("max-users-input").value;
+		const start_date = document.getElementById("start-date-input").value;
+		const end_date = document.getElementById("end-date-input").value;
+		
+		if(min_users > max_users) {
+			setErrorMessage('Error: min users exceeds max users');
+		} else if (end_date && start_date > end_date) {
+			setErrorMessage('Error: start date exceeds end date');
+		} else {
+			setLocalStorage(min_users, max_users, start_date, end_date);
+			history.push({
+				pathname: "/new/userinfo",
+			});
+		}
+	};
+
 	// todo: save informaton about selected tab
 	const tabsKeys = Object.keys(tabs);
 	const [activeTab, setActiveTab] = useState(
 		tabsKeys[activeTabIndexSS ? activeTabIndexSS : 0]
 	);
 
+	// todo: set min and max max values
+
 	return (
 		<Container>
 			<Content>
+				{errorMessage && (
+					<ErrorAlert
+						message={errorMessage}
+						setMessage={setErrorMessage}
+					/>
+				)}
 				<FormContainer>
 					<div tw="mx-auto max-w-4xl">
 						<h2>Leaderboard Options</h2>
@@ -124,6 +154,7 @@ export default ({
 										id="min-users-input"
 										type="number"
 										placeholder="1"
+										min="1"
 										defaultValue={minUsersInputSS}
 									/>
 								</InputContainer>
@@ -133,6 +164,7 @@ export default ({
 										id="max-users-input"
 										type="number"
 										placeholder="10"
+										min="1"
 										defaultValue={maxUsersInputSS}
 									/>
 								</InputContainer>
@@ -192,11 +224,7 @@ export default ({
 						</ButtonLeft>
 						<ButtonRight
 							onClick={(e) => {
-								e.preventDefault();
-								setLocalStorage();
-								history.push({
-									pathname: "/new/userinfo",
-								});
+								handleNextBtnClick();
 							}}
 							value="Next"
 						>
