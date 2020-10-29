@@ -5,7 +5,9 @@ import { useHistory } from "react-router-dom";
 import { css } from "styled-components/macro"; //eslint-disable-line
 import { ReactComponent as SvgDotPatternIcon } from "../../images/dot-pattern.svg";
 
-import ErrorAlert from '../../alerts/ErrorAlert';
+import ErrorAlert from "../../alerts/ErrorAlert";
+
+import { createLeaderboard } from "../../controllers/leaderboardController";
 
 const Container = tw.div`relative`;
 const Content = tw.div`max-w-screen-xl mx-auto py-20 lg:py-24`;
@@ -40,7 +42,11 @@ const setLocalStorage = (email, full_name) => {
 	sessionStorage.setItem("email-input", email);
 };
 
-const createLeaderboard = () => {
+const SvgDotPattern1 = tw(
+	SvgDotPatternIcon
+)`absolute bottom-0 right-0 transform translate-y-1/2 translate-x-1/2 -z-10 opacity-50 text-primary-500 fill-current w-24`;
+
+const doCreateLeaderboard = async () => {
 	let title = sessionStorage.getItem("title-input");
 	let place = sessionStorage.getItem("place-input");
 	let note = sessionStorage.getItem("note-input");
@@ -48,14 +54,25 @@ const createLeaderboard = () => {
 	let max_users = sessionStorage.getItem("max-users-input");
 	let start_date = sessionStorage.getItem("start-date-input");
 	let end_date = sessionStorage.getItem("end-date-input");
-	let active_tab = sessionStorage.getItem("active-tab");
-	let name = sessionStorage.getItem("name-input");
+	let mode = sessionStorage.getItem("active-tab")
+		? sessionStorage.getItem("active-tab")
+		: "classic";
+	let full_name = sessionStorage.getItem("name-input");
 	let email = sessionStorage.getItem("email-input");
-};
 
-const SvgDotPattern1 = tw(
-	SvgDotPatternIcon
-)`absolute bottom-0 right-0 transform translate-y-1/2 translate-x-1/2 -z-10 opacity-50 text-primary-500 fill-current w-24`;
+	return createLeaderboard({
+		title,
+		place,
+		note,
+		min_users,
+		max_users,
+		start_date,
+		end_date,
+		mode,
+		full_name,
+		email,
+	});
+};
 
 export default () => {
 	const history = useHistory();
@@ -68,12 +85,12 @@ export default () => {
 		? sessionStorage.getItem("name-input")
 		: user
 		? user.full_name
-		: "";
+		: null;
 	const emailInputSS = sessionStorage.getItem("email-input")
 		? sessionStorage.getItem("email-input")
 		: user
 		? user.email
-		: "";
+		: null;
 
 	const handleNextBtnClick = () => {
 		const full_name = document.getElementById("name-input").value;
@@ -85,15 +102,14 @@ export default () => {
 			setErrorMessage("Error: Email is required");
 		} else {
 			setLocalStorage(email, full_name);
-			createLeaderboard();
-			history.push({
-				pathname: "/leaderboard",
+			doCreateLeaderboard().then((e) => {
+				const leaderboard_uuid = e.data.uuid;
+				history.push({
+					pathname: "/leaderboard/" + leaderboard_uuid,
+				});
 			});
 		}
 	};
-
-	//const [nameInput, setNameInput] = useState(nameInputSS);
-	//const [emailInput, setEmailInput] = useState(emailInputSS);
 
 	return (
 		<Container>

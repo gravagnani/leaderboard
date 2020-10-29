@@ -52,22 +52,10 @@ const SvgDotPattern1 = tw(
 )`absolute bottom-0 right-0 transform translate-y-1/2 translate-x-1/2 -z-10 opacity-50 text-primary-500 fill-current w-24`;
 
 const setLocalStorage = (min_users, max_users, start_date, end_date) => {
-	sessionStorage.setItem(
-		"min-users-input",
-		min_users
-	);
-	sessionStorage.setItem(
-		"max-users-input",
-		max_users
-	);
-	sessionStorage.setItem(
-		"start-date-input",
-		start_date
-	);
-	sessionStorage.setItem(
-		"end-date-input",
-		end_date
-	);
+	sessionStorage.setItem("min-users-input", min_users);
+	sessionStorage.setItem("max-users-input", max_users);
+	sessionStorage.setItem("start-date-input", start_date);
+	sessionStorage.setItem("end-date-input", end_date);
 	//sessionStorage.setItem(
 	//	"mode",
 	//	tabs[activeTab].description.value
@@ -77,13 +65,13 @@ const setLocalStorage = (min_users, max_users, start_date, end_date) => {
 export default ({
 	tabs = {
 		classical: {
-			mode: "Classical",
-			value: "classical",
-			description: "Classical Description",
+			mode: "Classic",
+			value: "C",
+			description: "Classic Description",
 		},
 		trueskill: {
 			mode: "TrueSkill",
-			value: "trueskill",
+			value: "T",
 			description: "TrueSkill Description",
 		},
 	},
@@ -100,24 +88,24 @@ export default ({
 		: "10";
 	const startDateInputSS = sessionStorage.getItem("start-date-input")
 		? sessionStorage.getItem("start-date-input")
-		: "";
+		: null;
 	const endDateInputSS = sessionStorage.getItem("end-date-input")
 		? sessionStorage.getItem("end-date-input")
-		: "";
+		: null;
 	const activeTabIndexSS = sessionStorage.getItem("active-tab-index")
 		? sessionStorage.getItem("active-tab-index")
-		: "";
+		: null;
 
 	const handleNextBtnClick = () => {
 		const min_users = document.getElementById("min-users-input").value;
 		const max_users = document.getElementById("max-users-input").value;
 		const start_date = document.getElementById("start-date-input").value;
 		const end_date = document.getElementById("end-date-input").value;
-		
-		if(min_users > max_users) {
-			setErrorMessage('Error: min users exceeds max users');
+
+		if (min_users > max_users) {
+			setErrorMessage("Error: min users exceeds max users");
 		} else if (end_date && start_date > end_date) {
-			setErrorMessage('Error: start date exceeds end date');
+			setErrorMessage("Error: start date exceeds end date");
 		} else {
 			setLocalStorage(min_users, max_users, start_date, end_date);
 			history.push({
@@ -197,7 +185,7 @@ export default ({
 									onClick={() => {
 										setActiveTab(tab);
 										sessionStorage.setItem("active-tab-index", index);
-										sessionStorage.setItem("active-tab", tab);
+										sessionStorage.setItem("active-tab", tabs[tab].value);
 									}}
 								>
 									{tabs[tab].mode}

@@ -67,13 +67,13 @@ export default () => {
 
 	const titleInputSS = sessionStorage.getItem("title-input")
 		? sessionStorage.getItem("title-input")
-		: "";
+		: null;
 	const placeInputSS = sessionStorage.getItem("place-input")
 		? sessionStorage.getItem("place-input")
-		: "";
+		: null;
 	const noteInputSS = sessionStorage.getItem("note-input")
 		? sessionStorage.getItem("note-input")
-		: "";
+		: null;
 
 	return (
 		<Container>

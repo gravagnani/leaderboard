@@ -109,21 +109,27 @@ const createLeaderboard = async (req, res) => {
 		max_users,
 		start_date,
 		end_date,
-		flag_public,
+		mode,
+		full_name,
+		email,
 	} = req.body;
 
 	const flag_active = 1;
 	const created_at = moment(new Date());
 	const modified_at = moment(new Date());
 	// from header
-	const created_by = req.user.email;
-	const modified_by = req.user.email;
+	const created_by = req.user.uuid;
+	const modified_by = req.user.uuid;
 
 	// TODO: sistema le costanti
 	const min_users_check = min_users ? min_users : 1;
 	const max_users_check = max_users ? max_users : 99;
+	const place_check = place ? place : null;
+	const note_check = note ? note : null;
 	const start_date_check = start_date ? start_date : moment(new Date());
-	const flag_public_check = flag_public ? flag_public : 1;
+	const end_date_check = end_date ? end_date : moment(new Date("2099-12-31"));
+	const mode_check = mode ? mode : "C"; // C = Classical T = Trueskill
+	const flag_public_check = 1; // for when implementi public / private
 
 	if (isEmpty(title)) {
 		errorMessage.error = "Title must not be empty";
@@ -132,21 +138,25 @@ const createLeaderboard = async (req, res) => {
 
 	const leaderboard_uuid = generateUUID(title + created_by);
 
+	// todo: manda mail con link laderboard
+	// parametro email (eventualmente full_name)
+
 	const createLeaderboardQuery = `INSERT INTO
 		leaderboard(uuid, title, place, note, min_users, max_users
-			, start_date , end_date, flag_public, flag_active
-			, created_at , created_by, modified_at, modified_by)
-      VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14)
+			, start_date, end_date, mode, flag_public, flag_active
+			, created_at, created_by, modified_at, modified_by)
+      VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15)
       returning *`;
 	const values = [
 		leaderboard_uuid,
 		title,
-		place,
-		note,
+		place_check,
+		note_check,
 		min_users_check,
 		max_users_check,
 		start_date_check,
-		end_date,
+		end_date_check,
+		mode_check,
 		flag_public_check,
 		flag_active,
 		created_at,
@@ -162,6 +172,7 @@ const createLeaderboard = async (req, res) => {
 
 		return res.status(status.created).send(successMessage);
 	} catch (error) {
+		console.log(error);
 		if (error.routine === "_bt_check_unique") {
 			errorMessage.error = "Create Leaderboard internal error";
 			return res.status(status.conflict).send(errorMessage);
