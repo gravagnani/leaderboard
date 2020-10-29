@@ -102,12 +102,19 @@ export default () => {
 			setErrorMessage("Error: Email is required");
 		} else {
 			setLocalStorage(email, full_name);
-			doCreateLeaderboard().then((e) => {
-				const leaderboard_uuid = e.data.uuid;
-				history.push({
-					pathname: "/leaderboard/" + leaderboard_uuid,
+			doCreateLeaderboard()
+				.then((e) => {
+					if (e.status == "error") {
+						throw new Error(e.error);
+					}
+					const leaderboard_uuid = e.data.uuid;
+					history.push({
+						pathname: "/leaderboard/" + leaderboard_uuid,
+					});
+				})
+				.catch((e) => {
+					setErrorMessage(e);
 				});
-			});
 		}
 	};
 

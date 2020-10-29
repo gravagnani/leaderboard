@@ -66,7 +66,7 @@ export default ({
 						<Input
 							type="text"
 							id="link-leaderboard"
-							defaultValue="http://localhost:3001/leaderboard/sdhcbqwdhsfobq"
+							defaultValue={window.location.href}
 						/>
 						<SubmitButton
 							onClick={() => {
