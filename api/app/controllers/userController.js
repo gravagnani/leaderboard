@@ -24,8 +24,6 @@ import { errorMessage, successMessage, status } from "../helpers/status";
 const createUser = async (req, res) => {
 	const { email, full_name, password } = req.body;
 
-	console.log({ email, full_name, password });
-
 	const flag_active = 1;
 	const created_at = moment(new Date());
 	const modified_at = moment(new Date());
@@ -73,8 +71,8 @@ const createUser = async (req, res) => {
 
 		const token = generateUserToken(
 			dbResponse.id,
-			dbResponse.uuid,
 			dbResponse.email,
+			dbResponse.uuid,
 			dbResponse.full_name
 		);
 		successMessage.data = dbResponse;

@@ -19,7 +19,7 @@ const verifyAuth = async (req, res, next) => {
 	}
 
 	try {
-		const decoded = jwt.verify(token, env.secret);
+      const decoded = jwt.verify(token, env.secret);
 		// TODO: change with user information
 		req.user = {
 			id: decoded.user_id,

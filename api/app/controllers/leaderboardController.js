@@ -39,7 +39,7 @@ const getAllLeaderboards = async (req, res) => {
 const getLeaderboardByUUID = async (req, res) => {
 	const uuid = req.params.uuid;
 
-	const getAllLeaderboardsQuery = `SELECT uuid, title, place, min_users, max_users, start_date, end_date FROM leaderboard WHERE uuid = $1`;
+	const getAllLeaderboardsQuery = `SELECT uuid, title, place, min_users, max_users, start_date, end_date, created_by FROM leaderboard WHERE uuid = $1`;
 	const values = [uuid];
 
 	try {
@@ -172,7 +172,6 @@ const createLeaderboard = async (req, res) => {
 
 		return res.status(status.created).send(successMessage);
 	} catch (error) {
-		console.log(error);
 		if (error.routine === "_bt_check_unique") {
 			errorMessage.error = "Create Leaderboard internal error";
 			return res.status(status.conflict).send(errorMessage);

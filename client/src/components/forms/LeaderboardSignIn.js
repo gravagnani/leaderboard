@@ -42,7 +42,7 @@ const copyClipboard = () => {
 	document.execCommand("copy");
 };
 
-export default () => {
+export default (props) => {
 	const history = useHistory();
 	// The textOnLeft boolean prop can be used to display either the text on left or right side of the image.
 
@@ -56,6 +56,7 @@ export default () => {
 								onClick={() => {
 									history.push({
 										pathname: "/signin",
+										calling_page: "/leaderboard/" + props.leaderboardUUID
 									});
 								}}
 							>
