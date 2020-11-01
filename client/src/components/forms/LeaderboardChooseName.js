@@ -1,12 +1,16 @@
-import React from "react";
+import React, { useState } from "react";
 import tw from "twin.macro";
 import styled from "styled-components";
+import { useHistory } from "react-router-dom";
 import { css } from "styled-components/macro"; //eslint-disable-line
 import {
 	SectionHeading,
 	Subheading as SubheadingBase,
 } from "components/misc/Headings.js";
 import { PrimaryButton as PrimaryButtonBase } from "components/misc/Buttons.js";
+import userEvent from "@testing-library/user-event";
+
+import { joinLeaderboard } from "../../controllers/leaderboardController";
 
 const Container = tw.div`relative`;
 const TwoColumn = tw.div`flex flex-col md:flex-row justify-between max-w-screen-xl mx-auto pt-20 md:pt-24`;
@@ -35,20 +39,46 @@ const Input = tw.input`w-6/12 border-2 px-5 py-3 rounded focus:outline-none font
 
 const SubmitButton = tw(PrimaryButtonBase)`inline-block lg:ml-6 mt-6 sm:mt-3`;
 
-export default ({
-	heading = (
-		<>
-			Choose your <span tw="text-primary-500">name</span> and join the
-			competition
-			<wbr />.
-		</>
-	),
-	description = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
-	submitButtonText = "Join",
-	formMethod = "get",
-	textOnLeft = true,
-}) => {
+const heading = (
+	<>
+		Choose your <span tw="text-primary-500">name</span> and join the
+		competition
+		<wbr />.
+	</>
+);
+const description =
+	"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.";
+const submitButtonText = "Join";
+const textOnLeft = true;
+
+export default ({ user, participants, leaderboard, setParticipants }) => {
+	const history = useHistory;
+	const [errorMessage, setErrorMessage] = useState(null);
 	// The textOnLeft boolean prop can be used to display either the text on left or right side of the image.
+	const handleJoinBtnClick = () => {
+		var user_full_name = document.getElementById("ures-full-name-input")
+			.value;
+		joinLeaderboard(user.uuid, leaderboard.uuid, user_full_name)
+			.then((e) => {
+				if (e.status == "error") {
+					throw new Error(e.error);
+				}
+				console.log(e);
+				setParticipants([
+					...participants,
+					{
+						position: null,
+						name: e.data.user_full_name,
+						score: e.data.user_mean,
+						image:
+							"https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=256&q=80",
+					},
+				].sort((a, b) => (a.score > b.score) ? 1 : -1));
+			})
+			.catch((e) => {
+				setErrorMessage(e);
+			});
+	};
 
 	return (
 		<Container>
@@ -59,11 +89,17 @@ export default ({
 						<Description>{description}</Description>
 						<Input
 							type="text"
-							id="link-leaderboard"
-							defaultValue="User Full Name"
+							id="ures-full-name-input"
+							defaultValue={
+								user && user.full_name
+									? user.full_name
+									: "User Full Name"
+							}
 						/>
 						<SubmitButton
-							onClick={() => {}}
+							onClick={() => {
+								handleJoinBtnClick();
+							}}
 						>
 							{submitButtonText}
 						</SubmitButton>

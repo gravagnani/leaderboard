@@ -180,6 +180,7 @@ const createLeaderboard = async (req, res) => {
 		return res.status(status.error).send(errorMessage);
 	}
 };
+
 /**
  * Create A Leaderboard
  * @param {object} req
@@ -268,10 +269,117 @@ const modifyLeaderboard = async (req, res) => {
 	}
 };
 
+/**
+ * Join A Leaderboard
+ * @param {object} req
+ * @param {object} res
+ * @returns {object} reflection object
+ */
+const joinLeaderboard = async (req, res) => {
+	const { user_uuid, leaderboard_uuid, user_full_name } = req.body;
+
+	const created_at = moment(new Date());
+	const modified_at = moment(new Date());
+	// from header
+	const modified_by = req.user.uuid;
+	var user_mean = 0;
+	var user_variance = 1;
+
+	if (isEmpty(user_uuid)) {
+		errorMessage.error = "User UUID must not be empty";
+		return res.status(status.bad).send(errorMessage);
+	}
+
+	if (user_uuid != req.user.uuid) {
+		errorMessage.error = "User not allowed to join another user";
+		return res.status(status.unauthorized).send(errorMessage);
+	}
+
+	if (isEmpty(leaderboard_uuid)) {
+		errorMessage.error = "Leaderboard UUID must not be empty";
+		return res.status(status.bad).send(errorMessage);
+	}
+
+	if (isEmpty(user_full_name)) {
+		errorMessage.error = "User Full Name must not be empty";
+		return res.status(status.bad).send(errorMessage);
+	}
+
+	const checkUserQuery = `SELECT * FROM users WHERE uuid = $1`;
+	const user_values = [user_uuid];
+
+	const checkLeaderboardQuery = `SELECT uuid, title, mode, start_date, end_date, 
+		min_users, max_users FROM leaderboard WHERE uuid = $1`;
+	const leaderboard_values = [leaderboard_uuid];
+
+	try {
+		var { rows } = await dbQuery.query(checkUserQuery, user_values);
+		const user_dbResponse = rows[0];
+		if (!user_dbResponse) {
+			errorMessage.error = "User Cannot be found";
+			return res.status(status.notfound).send(errorMessage);
+		}
+		var { rows } = await dbQuery.query(
+			checkLeaderboardQuery,
+			leaderboard_values
+		);
+		const leaderboard_dbResponse = rows[0];
+		if (!leaderboard_dbResponse) {
+			errorMessage.error = "Leaderboard Cannot be found";
+			return res.status(status.notfound).send(errorMessage);
+		}
+		// check start date, end date, min users and max users
+
+		// set user mean and variance based on leaderboard scoring mode
+		switch (leaderboard_dbResponse.mode) {
+			case "C":
+				user_mean = 0;
+				user_variance = null;
+				break;
+			case "T":
+				user_mean = 0;
+				user_variance = 1;
+				break;
+		}
+
+		const joinLeaderboardQuery = `INSERT INTO
+		user_leaderboard(
+			leaderboard_uuid, user_uuid, user_full_name, user_mean, 
+			user_variance, created_at, modified_at, modified_by
+		) VALUES($1, $2, $3, $4, $5, $6, $7, $8)
+		returning leaderboard_uuid, user_uuid, user_full_name, 
+			user_mean, user_variance, modified_at`;
+		const values = [
+			leaderboard_uuid,
+			user_uuid,
+			user_full_name,
+			user_mean,
+			user_variance,
+			created_at,
+			modified_at,
+			modified_by,
+		];
+
+		var { rows } = await dbQuery.query(joinLeaderboardQuery, values);
+		const dbResponseJoin = rows[0];
+		successMessage.data = dbResponseJoin;
+
+		return res.status(status.created).send(successMessage);
+	} catch (error) {
+		if (error.routine === "_bt_check_unique") {
+			errorMessage.error = "User already participating";
+			return res.status(status.conflict).send(errorMessage);
+		}
+		errorMessage.error = "Operation was not successful";
+		return res.status(status.error).send(errorMessage);
+	}
+};
+
 export {
 	createLeaderboard,
 	getAllLeaderboards,
 	getLeaderboardByUUID,
 	getLeaderboardByTitle,
 	modifyLeaderboard,
+	joinLeaderboard,
 };

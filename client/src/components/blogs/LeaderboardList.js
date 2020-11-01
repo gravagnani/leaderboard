@@ -183,38 +183,7 @@ const recentGames = [
 	},
 ];
 
-const participants = [
-	{
-		position: 1,
-		name: "Ivo",
-		score: 123,
-		image:
-			"https://images.unsplash.com/photo-1546971587-02375cbbdade?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=641&q=80",
-	},
-	{
-		position: 2,
-		name: "Gilda",
-		score: 98,
-		image:
-			"https://images.unsplash.com/photo-1504609773096-104ff2c73ba4?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=256&q=80",
-	},
-	{
-		position: 3,
-		name: "Ciccio",
-		score: 46,
-		image:
-			"https://images.unsplash.com/photo-1503220317375-aaad61436b1b?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=256&q=80",
-	},
-	{
-		position: 4,
-		name: "Beppe",
-		score: 15,
-		image:
-			"https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=256&q=80",
-	},
-];
-
-export default () => {
+export default ({ user, leaderboard, participants, setParticipants }) => {
 	const [newGameMode, setNewGameMode] = useState(false);
 	const [winList, setWinList] = useState([]);
 	const [loseList, setLoseList] = useState([]);
@@ -260,7 +229,7 @@ export default () => {
 						<UsersContainer>
 							{participants.map((user, index) => (
 								<User key={index}>
-									<Position>{user.position}</Position>
+									<Position>{index + 1}</Position>
 									<Image imageSrc={user.image} />
 									<UserName>{user.name}</UserName>
 									<Score>
@@ -292,27 +261,6 @@ export default () => {
 									</Score>
 								</User>
 							))}
-							{/*
-							{"Qui sotto test"}
-							<User key={10}>
-								<Position>10</Position>
-								<Image imageSrc={null} />
-								<UserName>{"Test"}</UserName>
-								<Score>{false ? 37 : <Win>W</Win>}</Score>
-							</User>
-							<User key={11}>
-								<Position>10</Position>
-								<Image imageSrc={null} />
-								<UserName>{"Test"}</UserName>
-								<Score>{false ? 37 : <Lose>L</Lose>}</Score>
-							</User>
-							<User key={12}>
-								<Position>10</Position>
-								<Image imageSrc={null} />
-								<UserName>{"Test"}</UserName>
-								<Score>{false ? 37 : <NotPart />}</Score>
-							</User>
-							*/}
 						</UsersContainer>
 					</LeaderboardContainer>
 					<LastGamesContainer>

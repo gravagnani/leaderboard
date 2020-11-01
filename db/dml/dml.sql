@@ -76,9 +76,8 @@ from leaderboard_dev.leaderboard
 
 create table leaderboard_dev.user_leaderboard (
 	  id 				serial
-	, leaderboard_id 	int
-	, user_id			int
-	, flag_owner		bit
+	, leaderboard_uuid 	varchar
+	, user_uuid			varchar
 	, user_mean			real
 	, user_variance		real
 	, created_at 		timestamptz
@@ -86,14 +85,13 @@ create table leaderboard_dev.user_leaderboard (
 	, modified_by		varchar
 	
 	, primary key(id)
-	, foreign key(user_id) references leaderboard_dev.users(id)
-	, foreign key(leaderboard_id) references leaderboard_dev.leaderboard(id)
+	, foreign key(user_uuid) references leaderboard_dev.users(uuid)
+	, foreign key(leaderboard_uuid) references leaderboard_dev.leaderboard(uuid)
 );
 
 select * 
 from leaderboard_dev.user_leaderboard
 ; 
-
 
 
 ------------------------------
