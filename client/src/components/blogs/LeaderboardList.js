@@ -18,7 +18,7 @@ const Game = tw(
 const User = tw(motion.a)``;
 const Image = styled(motion.div)((props) => [
 	`background-image: url("${props.imageSrc}");`,
-	tw`h-64 bg-cover bg-center rounded`,
+	tw`h-64 bg-cover bg-center rounded bg-primary-100`,
 ]);
 const Player = tw.h5`mt-6 text-xl font-bold transition duration-300 group-hover:text-primary-500`;
 const Position = tw.h5`mt-6 flex items-center text-xl font-bold transition duration-300 group-hover:text-primary-500`;
@@ -188,15 +188,15 @@ export default ({ user, leaderboard, participants, setParticipants }) => {
 	const [winList, setWinList] = useState([]);
 	const [loseList, setLoseList] = useState([]);
 
-	const handleWinBtn = (position) => {
-		setWinList(winList.filter((e) => e != position));
-		setLoseList([...loseList, position]);
+	const handleWinBtn = (user_uuid) => {
+		setWinList(winList.filter((e) => e != user_uuid));
+		setLoseList([...loseList, user_uuid]);
 	};
-	const handleLoseBtn = (position) => {
-		setLoseList(loseList.filter((e) => e != position));
+	const handleLoseBtn = (user_uuid) => {
+		setLoseList(loseList.filter((e) => e != user_uuid));
 	};
-	const handleNoPartBtn = (position) => {
-		setWinList([...winList, position]);
+	const handleNoPartBtn = (user_uuid) => {
+		setWinList([...winList, user_uuid]);
 	};
 
 	// This setting is for animating the Game background image on hover
@@ -230,23 +230,29 @@ export default ({ user, leaderboard, participants, setParticipants }) => {
 							{participants.map((user, index) => (
 								<User key={index}>
 									<Position>{index + 1}</Position>
-									<Image imageSrc={user.image} />
-									<UserName>{user.name}</UserName>
+									<Image
+										imageSrc={
+											user.image
+												? user.image
+												: "https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=256&q=80"
+										}
+									/>
+									<UserName>{user.user_full_name}</UserName>
 									<Score>
 										{!newGameMode ? (
-											user.score
-										) : winList.includes(user.position) ? (
+											user.user_mean
+										) : winList.includes(user.user_uuid) ? (
 											<Win
 												onClick={() => {
-													handleWinBtn(user.position);
+													handleWinBtn(user.user_uuid);
 												}}
 											>
 												W
 											</Win>
-										) : loseList.includes(user.position) ? (
+										) : loseList.includes(user.user_uuid) ? (
 											<Lose
 												onClick={() => {
-													handleLoseBtn(user.position);
+													handleLoseBtn(user.user_uuid);
 												}}
 											>
 												L
@@ -254,7 +260,7 @@ export default ({ user, leaderboard, participants, setParticipants }) => {
 										) : (
 											<NotPart
 												onClick={() => {
-													handleNoPartBtn(user.position);
+													handleNoPartBtn(user.user_uuid);
 												}}
 											/>
 										)}

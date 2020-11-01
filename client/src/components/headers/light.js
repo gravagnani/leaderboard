@@ -1,5 +1,5 @@
 import React from "react";
-import { useHistory } from "react-router-dom";
+import { useHistory, useLocation } from "react-router-dom";
 import { motion } from "framer-motion";
 import tw from "twin.macro";
 import styled from "styled-components";
@@ -16,7 +16,7 @@ const Header = tw.header`
   max-w-screen-xl mx-auto
 `;
 
-export const NavLinks = tw.div`inline-block`;
+export const NavLinks = tw.div`inline-block cursor-pointer`;
 
 /* hocus: stands for "on hover or focus"
  * hocus:bg-primary-700 will apply the bg-primary-700 class on hover or focus
@@ -79,12 +79,21 @@ export default ({
 	 */
 
 	const history = useHistory();
+	const location = useLocation();
 
 	const user = JSON.parse(localStorage.getItem("user"));
 
 	const handleLogout = () => {
 		localStorage.removeItem("user");
 		history.go(0);
+	};
+
+	const handleLogin = () => {
+		history.push({
+			// if coming from new leaderboard -> history.push with parameter calling_page
+			pathname: "/signin",
+			calling_page: location.pathname,
+		});
 	};
 
 	const defaultLinks = [
@@ -95,7 +104,12 @@ export default ({
 			<NavLink href="/#">Contact Us</NavLink>
 			{!user && (
 				<>
-					<NavLink href="/signin" tw="lg:ml-12!">
+					<NavLink
+						onClick={() => {
+							handleLogin();
+						}}
+						tw="lg:ml-12!"
+					>
 						Login
 					</NavLink>
 					<PrimaryLink

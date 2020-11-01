@@ -309,27 +309,47 @@ const joinLeaderboard = async (req, res) => {
 	const user_values = [user_uuid];
 
 	const checkLeaderboardQuery = `SELECT uuid, title, mode, start_date, end_date, 
-		min_users, max_users FROM leaderboard WHERE uuid = $1`;
+		min_users, max_users, users FROM leaderboard_v WHERE uuid = $1`;
 	const leaderboard_values = [leaderboard_uuid];
 
+	const checkUserNameQuery = `SELECT * FROM user_leaderboard WHERE user_full_name = $1`;
+	const user_name_values = [user_full_name];
+
 	try {
+		// check user exixts
 		var { rows } = await dbQuery.query(checkUserQuery, user_values);
 		const user_dbResponse = rows[0];
 		if (!user_dbResponse) {
 			errorMessage.error = "User Cannot be found";
 			return res.status(status.notfound).send(errorMessage);
 		}
+		// check leaderboard exixts
 		var { rows } = await dbQuery.query(
 			checkLeaderboardQuery,
 			leaderboard_values
 		);
 		const leaderboard_dbResponse = rows[0];
-		if (!leaderboard_dbResponse) {
-			errorMessage.error = "Leaderboard Cannot be found";
-			return res.status(status.notfound).send(errorMessage);
+		// check leaderboard max users
+		if (leaderboard_dbResponse.users == leaderboard_dbResponse.max_users) {
+			errorMessage.error = "Leaderboard has not remaining free places";
+			return res.status(status.conflict).send(errorMessage);
 		}
-		// check start date, end date, min users and max users
+		// check leaderboard end_date
+		if (leaderboard_dbResponse.end_date <= moment(new Date())) {
+			errorMessage.error = "Leaderboard is already ended";
+			return res.status(status.conflict).send(errorMessage);
+		}
 
+		// check user full_name
+		var { rows } = await dbQuery.query(
+			checkUserNameQuery,
+			user_name_values
+		);
+		const user_name_dbResponse = rows[0];
+		if (user_name_dbResponse) {
+			errorMessage.error = "User Full Name already used";
+			return res.status(status.conflict).send(errorMessage);
+		}
 		// set user mean and variance based on leaderboard scoring mode
 		switch (leaderboard_dbResponse.mode) {
 			case "C":
@@ -342,13 +362,14 @@ const joinLeaderboard = async (req, res) => {
 				break;
 		}
 
-		const joinLeaderboardQuery = `INSERT INTO
-		user_leaderboard(
-			leaderboard_uuid, user_uuid, user_full_name, user_mean, 
-			user_variance, created_at, modified_at, modified_by
-		) VALUES($1, $2, $3, $4, $5, $6, $7, $8)
-		returning leaderboard_uuid, user_uuid, user_full_name, 
-			user_mean, user_variance, modified_at`;
+		const joinLeaderboardQuery = `
+			INSERT INTO user_leaderboard(
+				leaderboard_uuid, user_uuid, user_full_name, user_mean, 
+				user_variance, created_at, modified_at, modified_by
+			) VALUES(
+					$1, $2, $3, $4, $5, $6, $7, $8
+			) returning leaderboard_uuid, user_uuid, user_full_name, 
+				user_mean, user_variance, modified_at`;
 		const values = [
 			leaderboard_uuid,
 			user_uuid,
@@ -375,6 +396,47 @@ const joinLeaderboard = async (req, res) => {
 	}
 };
 
+/**
+ * Get a Leaderboard (UUID) participants
+ * @param {object} req
+ * @param {object} res
+ * @returns {object} participants of the leaderboard
+ */
+const getLeaderboardParticipants = async (req, res) => {
+	const uuid = req.params.uuid;
+
+	const getLeaderboardQuery = `SELECT * FROM leaderboard WHERE uuid = $1`;
+	const values_lb = [uuid];
+
+	const getAllLeaderboardPartQuery = `
+		SELECT leaderboard_uuid, user_uuid, user_full_name, user_mean, user_variance 
+		FROM user_leaderboard WHERE leaderboard_uuid = $1
+		ORDER BY user_mean desc, user_variance asc`;
+	const values = [uuid];
+
+	try {
+		// chack leaderbaord exists
+		var { rows } = await dbQuery.query(getLeaderboardQuery, values_lb);
+		const dbResponse = rows[0];
+		if (!dbResponse) {
+			errorMessage.error = "Leaderboard Cannot be found";
+			return res.status(status.notfound).send(errorMessage);
+		}
+		// get participants
+		var { rows } = await dbQuery.query(getAllLeaderboardPartQuery, values);
+		successMessage.data = rows;
+
+		return res.status(status.created).send(successMessage);
+	} catch (error) {
+		if (error.routine === "_bt_check_unique") {
+			errorMessage.error = "Get All Leaderboard Participants internal error";
+			return res.status(status.conflict).send(errorMessage);
+		}
+		errorMessage.error = "Operation was not successful";
+		return res.status(status.error).send(errorMessage);
+	}
+};
+
 export {
 	createLeaderboard,
 	getAllLeaderboards,
@@ -382,4 +444,5 @@ export {
 	getLeaderboardByTitle,
 	modifyLeaderboard,
 	joinLeaderboard,
+	getLeaderboardParticipants,
 };

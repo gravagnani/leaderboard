@@ -7,6 +7,7 @@ import {
 	getLeaderboardByTitle,
 	modifyLeaderboard,
 	joinLeaderboard,
+	getLeaderboardParticipants,
 } from "../controllers/leaderboardController";
 import verifyAuth from "../middlewares/verifyAuth";
 
@@ -16,6 +17,8 @@ const router = express.Router();
 router.get("/leaderboard/", getAllLeaderboards);
 router.get("/leaderboard/uuid/:uuid", getLeaderboardByUUID);
 router.get("/leaderboard/title/:title", getLeaderboardByTitle);
+
+router.get("/leaderboard/:uuid/users", getLeaderboardParticipants);
 
 router.post("/leaderboard/", verifyAuth, createLeaderboard);
 

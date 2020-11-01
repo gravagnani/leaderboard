@@ -78,6 +78,7 @@ create table leaderboard_dev.user_leaderboard (
 	  id 				serial
 	, leaderboard_uuid 	varchar
 	, user_uuid			varchar
+	, user_full_name	varchar
 	, user_mean			real
 	, user_variance		real
 	, created_at 		timestamptz
@@ -87,12 +88,12 @@ create table leaderboard_dev.user_leaderboard (
 	, primary key(id)
 	, foreign key(user_uuid) references leaderboard_dev.users(uuid)
 	, foreign key(leaderboard_uuid) references leaderboard_dev.leaderboard(uuid)
+	, unique (leaderboard_uuid, user_uuid)
 );
 
 select * 
 from leaderboard_dev.user_leaderboard
 ; 
-
 
 ------------------------------
 --------- GAME TABLE ---------
@@ -140,5 +141,53 @@ from leaderboard_dev.user_game
 ;
 
 
+------------------------------
+------ LEADERBOARD VIEW ------
+------------------------------
 
-select * from users where uuid = 'P53J99OE4H';
+-- drop view leaderboard_dev.leaderboard_v
+
+create or replace view leaderboard_dev.leaderboard_v as
+select 
+	  l.id
+	, l.uuid
+	, l.title
+	, l.place
+	, l.note
+	, l.min_users
+	, l.max_users
+	, l.start_date
+	, l.end_date
+	, l.mode
+	, l.flag_public
+	, l.flag_active
+	, l.created_at
+	, l.created_by
+	, l.modified_at
+	, l.modified_by
+	, count(distinct user_uuid) users
+from leaderboard_dev.leaderboard l left join leaderboard_dev.user_leaderboard ul 
+	on (l.uuid = ul.leaderboard_uuid)
+group by 
+	  l.id
+	, l.uuid
+	, l.title
+	, l.place
+	, l.note
+	, l.min_users
+	, l.max_users
+	, l.start_date
+	, l.end_date
+	, l.mode
+	, l.flag_public
+	, l.flag_active
+	, l.created_at
+	, l.created_by
+	, l.modified_at
+	, l.modified_by
+;
+
+select *
+from leaderboard_dev.leaderboard_v
+;
+

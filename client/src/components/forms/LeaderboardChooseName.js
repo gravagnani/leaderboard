@@ -51,7 +51,13 @@ const description =
 const submitButtonText = "Join";
 const textOnLeft = true;
 
-export default ({ user, participants, leaderboard, setParticipants }) => {
+export default ({
+	user,
+	participants,
+	leaderboard,
+	setParticipants,
+	setLoadParticipants,
+}) => {
 	const history = useHistory;
 	const [errorMessage, setErrorMessage] = useState(null);
 	// The textOnLeft boolean prop can be used to display either the text on left or right side of the image.
@@ -63,17 +69,30 @@ export default ({ user, participants, leaderboard, setParticipants }) => {
 				if (e.status == "error") {
 					throw new Error(e.error);
 				}
-				console.log(e);
-				setParticipants([
-					...participants,
-					{
-						position: null,
-						name: e.data.user_full_name,
-						score: e.data.user_mean,
-						image:
-							"https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=256&q=80",
-					},
-				].sort((a, b) => (a.score > b.score) ? 1 : -1));
+				// todo: probabilmente in questo caso basta fare setLoadParticipants(true);
+				setLoadParticipants(true);
+				/*setParticipants(
+					[
+						...participants,
+						{
+							position: null,
+							user_full_name: e.data.user_full_name,
+							user_mean: e.data.user_mean,
+							user_variance: e.data.user_variance,
+							image:
+								"https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=256&q=80",
+						},
+						// ordina per media crescente. se media uguale allora per varianza decrescente
+					].sort((a, b) =>
+						a.user_mean > b.user_mean
+							? 1
+							: a.user_mean < b.user_mean
+							? -1
+							: a.user_variance < b.user_variance
+							? 1
+							: -1
+					)
+				);*/
 			})
 			.catch((e) => {
 				setErrorMessage(e);
