@@ -7,6 +7,7 @@ import Hero from "components/hero/TwoColumnWithFeaturesAndTestimonialLeaderboard
 import LeaderboardList from "components/blogs/LeaderboardList.js";
 import Footer from "components/footers/MiniCenteredFooter.js";
 import LeaderboardShare from "components/forms/LeaderboardShare.js";
+import LeaderboardInfo from "components/forms/LeaderboardInfo.js";
 import LeaderboardSignIn from "components/forms/LeaderboardSignIn.js";
 import LeaderboardNotFound from "components/forms/LeaderboardNotFound.js";
 import LeaderboardChooseName from "components/forms/LeaderboardChooseName.js";
@@ -101,8 +102,9 @@ export default () => {
 			<Hero />
 			{leaderboard ? (
 				<>
+					<LeaderboardInfo leaderboard={leaderboard} />
 					{/** to be displayed only if the user is the creator */}
-					{userIsCreator && userIsAlreadyPlaying && <LeaderboardShare />}
+					{userIsAlreadyPlaying && <LeaderboardShare />}
 					{/** to be displayed only if the user is not signed up */}
 					{!userIsSignedIn && (
 						<LeaderboardSignIn leaderboardUUID={leaderboard_uuid} />

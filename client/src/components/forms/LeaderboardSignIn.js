@@ -9,13 +9,13 @@ import {
 import { PrimaryButton as PrimaryButtonBase } from "components/misc/Buttons.js";
 
 const Container = tw.div`relative`;
-const TwoColumn = tw.div`flex flex-col md:flex-row justify-between max-w-screen-xl mx-auto pt-20 md:pt-20`;
+const TwoColumn = tw.div`flex flex-col md:flex-row justify-between max-w-screen-xl mx-auto`;
 const Column = tw.div`w-full max-w-md mx-auto md:max-w-none md:mx-0`;
 const TextColumn = styled(Column)((props) => [
 	tw` mt-16 md:mt-0`,
 	props.textOnLeft
 		? tw`md:mr-12 lg:mr-16 md:order-first`
-		: tw`md:ml-12 lg:ml-16 md:order-last`,
+		: tw`md:order-last`,
 ]);
 
 const Image = styled.div((props) => [
