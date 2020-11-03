@@ -62,6 +62,8 @@ export default ({ leaderboard, setLeaderboard, isEditable }) => {
 	const modifyLeaderboard = (leaderboard, title_mod, note_mod) => {
 		if (leaderboard.title == title_mod && leaderboard.note == note_mod) {
 			// no edit
+			setEditTitle(false);
+			setEditNote(false);
 			return;
 		}
 		modifyLeadeboardTitleNote(leaderboard, title_mod, note_mod)
