@@ -8,6 +8,8 @@ import {
 } from "components/misc/Headings.js";
 import { PrimaryButton as PrimaryButtonBase } from "components/misc/Buttons.js";
 
+import { modifyLeadeboardTitleNote } from "../../controllers/leaderboardController";
+
 const Container = tw.div`relative`;
 const TwoColumn = tw.div`flex flex-col md:flex-row justify-between max-w-screen-xl mx-auto pt-20 md:pt-24`;
 const Column = tw.div`w-full max-w-md mx-auto md:max-w-none md:mx-0`;
@@ -23,17 +25,17 @@ const Image = styled.div((props) => [
 	`background-image: url("${props.imageSrc}");`,
 	tw`rounded bg-contain bg-no-repeat bg-center h-full`,
 ]);
-const TextContent = tw.div`lg:py-8 text-center md:text-left`;
+const TextContent = tw.div`lg:py-8 text-center md:text-center`;
 
-const Subheading = tw(SubheadingBase)`text-center md:text-left`;
+const Subheading = tw(SubheadingBase)`text-center md:text-center`;
 const Heading = tw(
 	SectionHeading
-)`mt-4 font-black text-left text-3xl sm:text-4xl lg:text-5xl text-center md:text-left leading-tight`;
+)`mt-4 font-black text-center text-3xl sm:text-4xl lg:text-5xl text-center md:text-center leading-tight`;
 
-const HeadingInput = tw.input`mt-4 font-black text-left text-3xl sm:text-4xl lg:text-5xl text-center md:text-left leading-tight`;
+const HeadingInput = tw.input`mt-4 font-black text-center text-3xl sm:text-4xl lg:text-5xl text-center md:text-center leading-tight`;
 
-const Description = tw.p`mt-4 mb-4 text-center md:text-left text-sm md:text-base lg:text-lg font-medium leading-relaxed text-secondary-100`;
-const DescriptionInput = tw.input`mt-4 mb-4 text-center md:text-left text-sm md:text-base lg:text-lg font-medium leading-relaxed text-secondary-100`;
+const Description = tw.p`mt-4 mb-4 text-center md:text-center text-sm md:text-base lg:text-lg font-medium leading-relaxed text-secondary-100`;
+const DescriptionInput = tw.input`mt-4 mb-4 text-center md:text-center text-sm md:text-base lg:text-lg font-medium leading-relaxed text-secondary-100`;
 
 const Input = tw.input`w-6/12 border-2 px-5 py-3 rounded focus:outline-none font-medium transition duration-300 hocus:border-primary-500`;
 
@@ -52,26 +54,54 @@ const formatHeading = (text) => {
 	);
 };
 
-export default ({ leaderboard }) => {
+export default ({ leaderboard, setLeaderboard, isEditable }) => {
 	// The textOnLeft boolean prop can be used to display either the text on left or right side of the image.
 	const [editTitle, setEditTitle] = useState(false);
 	const [editNote, setEditNote] = useState(false);
+
+	const modifyLeaderboard = (leaderboard, title_mod, note_mod) => {
+		if (leaderboard.title == title_mod && leaderboard.note == note_mod) {
+			// no edit
+			return;
+		}
+		modifyLeadeboardTitleNote(leaderboard, title_mod, note_mod)
+			.then((e) => {
+				if (e.status == "error") {
+					throw new Error(e.error);
+				}
+				leaderboard.title = e.data.title;
+				leaderboard.note = e.data.note;
+				setLeaderboard(leaderboard);
+				setEditTitle(false);
+				setEditNote(false);
+			})
+			.catch((e) => {
+				// todo: handle error
+				console.log(e);
+			});
+	};
 
 	const handleClickOutside = (event) => {
 		if (
 			event.target.id != "heading-input" &&
 			event.target.id != "description-input"
 		) {
-			console.log('click!');
+			var title_mod = editTitle
+				? document.getElementById("heading-input").value
+				: leaderboard.title;
+			var note_mod = editNote
+				? document.getElementById("description-input").value
+				: leaderboard.note;
+			// call api and modify
 			document.removeEventListener("click", handleClickOutside, true);
-			setEditTitle(false);
-			setEditNote(false);
-			// todo: edit leaderboard
+			modifyLeaderboard(leaderboard, title_mod, note_mod);
 		}
 	};
 
 	useEffect(() => {
-		(editTitle || editNote) && document.addEventListener("click", handleClickOutside, true);
+		isEditable &&
+			(editTitle || editNote) &&
+			document.addEventListener("click", handleClickOutside, true);
 	});
 
 	// todo: split title among black and violet color
@@ -81,7 +111,7 @@ export default ({ leaderboard }) => {
 			<TwoColumn>
 				<TextColumn textOnLeft={textOnLeft}>
 					<TextContent>
-						{editTitle ? (
+						{isEditable && editTitle ? (
 							<>
 								<HeadingInput
 									id="heading-input"
@@ -99,7 +129,7 @@ export default ({ leaderboard }) => {
 								{formatHeading(leaderboard.title)}
 							</Heading>
 						)}
-						{editNote ? (
+						{isEditable && editNote ? (
 							<DescriptionInput
 								id="description-input"
 								defaultValue={leaderboard.note}

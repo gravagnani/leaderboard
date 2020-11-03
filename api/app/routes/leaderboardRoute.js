@@ -24,6 +24,6 @@ router.post("/leaderboard/", verifyAuth, createLeaderboard);
 
 router.post("/leaderboard/join/", verifyAuth, joinLeaderboard);
 
-router.put("/leaderboard/", verifyAuth, modifyLeaderboard);
+router.put("/leaderboard/:uuid", verifyAuth, modifyLeaderboard);
 
 export default router;

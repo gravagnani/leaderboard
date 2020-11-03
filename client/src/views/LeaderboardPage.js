@@ -88,21 +88,24 @@ export default () => {
 				console.log(e);
 			});
 
-	const userIsCreator = true; // leaderboard && user && leaderboard.created_by == user.uuid;
+	const userIsCreator =
+		leaderboard && user && leaderboard.created_by == user.uuid;
 	const userIsSignedIn = !!user;
-	const userIsAlreadyPlaying = user && participants.some(
-		(e) => e.user_uuid === user.uuid
-	);
+	const userIsAlreadyPlaying =
+		user && participants.some((e) => e.user_uuid === user.uuid);
 	//const userIsCreator = leaderbaord.created_by == user.uuid;
 	//const userIsSignedIn = !!user;
 	//const userIsAlreadyPlaying = false || user;
-
 	return (
 		<AnimationRevealPage>
 			<Hero />
 			{leaderboard ? (
 				<>
-					<LeaderboardInfo leaderboard={leaderboard} />
+					<LeaderboardInfo
+						leaderboard={leaderboard}
+						setLeaderboard={setLeaderboard}
+						isEditable={userIsCreator}
+					/>
 					{/** to be displayed only if the user is the creator */}
 					{userIsAlreadyPlaying && <LeaderboardShare />}
 					{/** to be displayed only if the user is not signed up */}

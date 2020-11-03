@@ -192,10 +192,10 @@ const createLeaderboard = async (req, res) => {
  * @returns {object} reflection object
  */
 const modifyLeaderboard = async (req, res) => {
-	const user_id = req.user.id;
+	const user_uuid = req.user.uuid;
+	const leaderboard_uuid = req.params.uuid;
 
 	const {
-		uuid,
 		title,
 		place,
 		note,
@@ -207,19 +207,23 @@ const modifyLeaderboard = async (req, res) => {
 	} = req.body;
 
 	// TODO: fa le stesse cose della funzione di ricerca per uuid => aggiornare il codice
-	const getAllLeaderboardsQuery = `SELECT uuid, title, place, min_users, max_users, start_date, end_date, created_by FROM leaderboard WHERE uuid = $1`;
-	const values = [uuid];
+	const getLeaderboardUUIDQuery = `
+		SELECT uuid, title, place, note, min_users, max_users, 
+			start_date, end_date, created_by 
+		FROM leaderboard 
+		WHERE uuid = $1`;
+	var values = [leaderboard_uuid];
 
 	try {
 		// search by uuid
-		const { rows } = await dbQuery.query(getAllLeaderboardsQuery, values);
+		var { rows } = await dbQuery.query(getLeaderboardUUIDQuery, values);
 		const dbResponse = rows[0];
 		if (!dbResponse) {
 			errorMessage.error = "Leaderboard Cannot be found";
 			return res.status(status.notfound).send(errorMessage);
 		}
 
-		if (dbResponse.created_by != user_id) {
+		if (dbResponse.created_by != user_uuid) {
 			errorMessage.error = "User unauthorized to modify leaderboard";
 			return res.status(status.unauthorized).send(errorMessage);
 		}
@@ -227,38 +231,40 @@ const modifyLeaderboard = async (req, res) => {
 		// modify
 		const modified_at = moment(new Date());
 		// from header
-		const modified_by = req.user.email;
+		const modified_by = user_uuid;
 
-		// TODO: sistema le costanti
-		const min_users_check = min_users ? min_users : 1;
-		const max_users_check = max_users ? max_users : 99;
-		const start_date_check = start_date ? start_date : moment(new Date());
-		const flag_public_check = flag_public ? flag_public : 1;
+		const title_check = title || dbResponse.title;
+		const place_check = place || dbResponse.place;
+		const note_check = note || dbResponse.note;
+		const min_users_check = min_users || dbResponse.min_users;
+		const max_users_check = max_users || dbResponse.max_users;
+		const start_date_check = start_date || dbResponse.start_date;
+		const end_date_check = end_date || dbResponse.end_date;
 
-		if (isEmpty(title)) {
-			errorMessage.error = "Title must not be empty";
-			return res.status(status.bad).send(errorMessage);
-		}
+		console.log;
 
-		const modifyLeaderboardQuery = `UPDATE leaderboard set title = $1, place = $2, note = $3
-			, min_users = $4, max_users = $5, start_date = $6, end_date = $7, flag_public = $8
-			, modified_at = $9, modified_by = $10)
-      VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
-      returning *`;
-		const values = [
-			title,
-			place,
-			note,
+		const modifyLeaderboardQuery = `
+			UPDATE leaderboard 
+			SET title = $2, place = $3, note = $4, min_users = $5, 
+				max_users = $6, start_date = $7, end_date = $8, 
+				modified_at = $9, modified_by = $10
+			WHERE uuid = $1
+			RETURNING *`;
+
+		var values = [
+			leaderboard_uuid,
+			title_check,
+			place_check,
+			note_check,
 			min_users_check,
 			max_users_check,
 			start_date_check,
-			end_date,
-			flag_public_check,
+			end_date_check,
 			modified_at,
 			modified_by,
 		];
 
-		const { rowsMod } = await dbQuery.query(modifyLeaderboardQuery, values);
+		var { rows } = await dbQuery.query(modifyLeaderboardQuery, values);
 		const dbResponseMod = rows[0];
 		successMessage.data = dbResponseMod;
 
@@ -345,10 +351,7 @@ const joinLeaderboard = async (req, res) => {
 		}
 
 		// check user full_name
-		var { rows } = await dbQuery.query(
-			checkUserNameQuery,
-			user_name_values
-		);
+		var { rows } = await dbQuery.query(checkUserNameQuery, user_name_values);
 		const user_name_dbResponse = rows[0];
 		if (user_name_dbResponse) {
 			errorMessage.error = "User Full Name already used";
