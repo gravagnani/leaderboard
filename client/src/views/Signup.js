@@ -64,7 +64,7 @@ const IllustrationImage = styled.div`
 
 const Image = styled(motion.div)((props) => [
 	`background-image: url("${props.imageSrc}");`,
-	tw`h-64 bg-cover bg-center rounded bg-gray-200 hover:bg-gray-400 h-40 w-40 flex-shrink-0 mx-auto cursor-pointer`,
+	tw`h-64 bg-cover bg-center rounded bg-gray-200 hover:bg-gray-400 h-40 w-40 flex-shrink-0 mx-auto cursor-pointer rounded-full`,
 ]);
 
 export default ({

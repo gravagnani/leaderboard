@@ -10,11 +10,11 @@ export default (props) => {
 	const onChange = (imageList, addUpdateIndex) => {
 		// data for submit
 		setImages(imageList);
-   };
-   
-   /**
-    * https://www.npmjs.com/package/react-images-uploading
-    */
+	};
+
+	/**
+	 * https://www.npmjs.com/package/react-images-uploading
+	 */
 
 	return (
 		<div className="image-picker">
@@ -40,7 +40,7 @@ export default (props) => {
 								images.length > 0 ? images[0]["data_url"] : searchImage,
 							onClick:
 								images.length === 0 ? onImageUpload : onImageRemoveAll,
-							dragProps: { ...dragProps },
+							...dragProps,
 						})}
 					</>
 				)}
