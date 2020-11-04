@@ -12,6 +12,8 @@ import LeaderboardSignIn from "components/forms/LeaderboardSignIn.js";
 import LeaderboardNotFound from "components/forms/LeaderboardNotFound.js";
 import LeaderboardChooseName from "components/forms/LeaderboardChooseName.js";
 
+import ErrorAlert from "../alerts/ErrorAlert";
+
 import {
 	getLeaderboardByUUID,
 	getLeaderboardParticipants,

@@ -6,6 +6,8 @@ import { isEmpty, generateUUID } from "../helpers/validation";
 
 import { errorMessage, successMessage, status } from "../helpers/status";
 
+import { MIN_USERS_FREE, MAX_USERS_FREE } from "../constants";
+
 /**
  * Get all Leaderboards
  * @param {object} req
@@ -126,8 +128,8 @@ const createLeaderboard = async (req, res) => {
 	const modified_by = req.user.uuid;
 
 	// TODO: sistema le costanti
-	const min_users_check = min_users ? min_users : 1;
-	const max_users_check = max_users ? max_users : 99;
+	const min_users_check = min_users ? min_users : MIN_USERS_FREE;
+	const max_users_check = max_users ? max_users : MAX_USERS_FREE;
 	const place_check = place ? place : null;
 	const note_check = note ? note : null;
 	const start_date_check = start_date ? start_date : moment(new Date());
@@ -137,6 +139,16 @@ const createLeaderboard = async (req, res) => {
 
 	if (isEmpty(title)) {
 		errorMessage.error = "Title must not be empty";
+		return res.status(status.bad).send(errorMessage);
+	}
+
+	if (min_users_check > max_users_check) {
+		errorMessage.error = "Max users must be more than Min users";
+		return res.status(status.bad).send(errorMessage);
+	}
+
+	if (max_users_check > MAX_USERS_FREE) {
+		errorMessage.error = "Max must be less than " + MAX_USERS_FREE;
 		return res.status(status.bad).send(errorMessage);
 	}
 
@@ -241,7 +253,20 @@ const modifyLeaderboard = async (req, res) => {
 		const start_date_check = start_date || dbResponse.start_date;
 		const end_date_check = end_date || dbResponse.end_date;
 
-		console.log;
+		if (isEmpty(title)) {
+			errorMessage.error = "Title must not be empty";
+			return res.status(status.bad).send(errorMessage);
+		}
+
+		if (min_users_check > max_users_check) {
+			errorMessage.error = "Max users must be more than Min users";
+			return res.status(status.bad).send(errorMessage);
+		}
+	
+		if (max_users_check > MAX_USERS_FREE) {
+			errorMessage.error = "Max must be less than " + MAX_USERS_FREE;
+			return res.status(status.bad).send(errorMessage);
+		}
 
 		const modifyLeaderboardQuery = `
 			UPDATE leaderboard 

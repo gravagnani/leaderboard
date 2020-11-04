@@ -7,6 +7,8 @@ import { ReactComponent as SvgDotPatternIcon } from "../../images/dot-pattern.sv
 
 import ErrorAlert from "../../alerts/ErrorAlert";
 
+import { MIN_USERS_FREE, MAX_USERS_FREE } from "../../constants";
+
 const Container = tw.div`relative`;
 const Content = tw.div`max-w-screen-xl mx-auto py-20 lg:py-24`;
 
@@ -82,10 +84,10 @@ export default ({
 
 	const minUsersInputSS = sessionStorage.getItem("min-users-input")
 		? sessionStorage.getItem("min-users-input")
-		: "1";
+		: MIN_USERS_FREE;
 	const maxUsersInputSS = sessionStorage.getItem("max-users-input")
 		? sessionStorage.getItem("max-users-input")
-		: "10";
+		: MAX_USERS_FREE;
 	const startDateInputSS = sessionStorage.getItem("start-date-input")
 		? sessionStorage.getItem("start-date-input")
 		: null;
@@ -142,7 +144,8 @@ export default ({
 										id="min-users-input"
 										type="number"
 										placeholder="1"
-										min="1"
+										min={MIN_USERS_FREE}
+										max={MAX_USERS_FREE}
 										defaultValue={minUsersInputSS}
 									/>
 								</InputContainer>
@@ -152,7 +155,8 @@ export default ({
 										id="max-users-input"
 										type="number"
 										placeholder="10"
-										min="1"
+										min={MIN_USERS_FREE}
+										max={MAX_USERS_FREE}
 										defaultValue={maxUsersInputSS}
 									/>
 								</InputContainer>
@@ -185,7 +189,10 @@ export default ({
 									onClick={() => {
 										setActiveTab(tab);
 										sessionStorage.setItem("active-tab-index", index);
-										sessionStorage.setItem("active-tab", tabs[tab].value);
+										sessionStorage.setItem(
+											"active-tab",
+											tabs[tab].value
+										);
 									}}
 								>
 									{tabs[tab].mode}

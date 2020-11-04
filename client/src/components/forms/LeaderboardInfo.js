@@ -65,22 +65,23 @@ export default ({ leaderboard, setLeaderboard, isEditable }) => {
 			setEditTitle(false);
 			setEditNote(false);
 			return;
+		} else {
+			modifyLeadeboardTitleNote(leaderboard, title_mod, note_mod)
+				.then((e) => {
+					if (e.status == "error") {
+						throw new Error(e.error);
+					}
+					leaderboard.title = e.data.title;
+					leaderboard.note = e.data.note;
+					setLeaderboard(leaderboard);
+					setEditTitle(false);
+					setEditNote(false);
+				})
+				.catch((e) => {
+					// todo: handle error
+					console.log(e);
+				});
 		}
-		modifyLeadeboardTitleNote(leaderboard, title_mod, note_mod)
-			.then((e) => {
-				if (e.status == "error") {
-					throw new Error(e.error);
-				}
-				leaderboard.title = e.data.title;
-				leaderboard.note = e.data.note;
-				setLeaderboard(leaderboard);
-				setEditTitle(false);
-				setEditNote(false);
-			})
-			.catch((e) => {
-				// todo: handle error
-				console.log(e);
-			});
 	};
 
 	const handleClickOutside = (event) => {

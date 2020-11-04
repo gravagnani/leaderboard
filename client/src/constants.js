@@ -1,0 +1,4 @@
+const MIN_USERS_FREE = 1;
+const MAX_USERS_FREE = 15;
+
+export { MIN_USERS_FREE, MAX_USERS_FREE };

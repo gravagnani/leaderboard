@@ -4,6 +4,7 @@ import { Container as ContainerBase } from "components/misc/Layouts";
 import tw from "twin.macro";
 import { useHistory, useLocation } from "react-router-dom";
 import styled from "styled-components";
+import { motion } from "framer-motion";
 import { css } from "styled-components/macro"; //eslint-disable-line
 import illustration from "images/signup-illustration.svg";
 import logo from "images/logo.svg";
@@ -11,6 +12,8 @@ import googleIconImageSrc from "images/google-icon.png";
 import twitterIconImageSrc from "images/twitter-icon.png";
 import { ReactComponent as SignUpIcon } from "feather-icons/dist/icons/user-plus.svg";
 import ErrorAlert from "../alerts/ErrorAlert";
+
+import ImageUploader from "../helpers/ImageUploader";
 
 import { signUp } from "../controllers/userController";
 
@@ -59,6 +62,11 @@ const IllustrationImage = styled.div`
 	${tw`m-12 xl:m-16 w-full max-w-lg bg-contain bg-center bg-no-repeat`}
 `;
 
+const Image = styled(motion.div)((props) => [
+	`background-image: url("${props.imageSrc}");`,
+	tw`h-64 bg-cover bg-center rounded bg-gray-200 hover:bg-gray-400 h-40 w-40 flex-shrink-0 mx-auto cursor-pointer`,
+]);
+
 export default ({
 	logoLinkUrl = "/",
 	illustrationImageSrc = illustration,
@@ -89,6 +97,10 @@ export default ({
 		var email = document.getElementById("signup_email").value;
 		var full_name = document.getElementById("signup_name").value;
 		var password = document.getElementById("signup_password").value;
+		// todo: da migliorare upload
+		var image = window
+			.getComputedStyle(document.getElementById("image-input"))
+			.getPropertyValue("background-image");
 
 		signUp({ email, full_name, password })
 			.then((e) => {
@@ -143,6 +155,9 @@ export default ({
 									</DividerText>
 								</DividerTextContainer>
 								<Form>
+									<ImageUploader>
+										<Image id="image-input" />
+									</ImageUploader>
 									<Input
 										type="email"
 										placeholder="Email"
