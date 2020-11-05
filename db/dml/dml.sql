@@ -24,6 +24,7 @@ create table leaderboard_dev.users (
 	, email 		varchar unique
 	, full_name		varchar
 	, password 		varchar
+	, image			text
 	, flag_active	bit
 	, created_at 	timestamptz
 	, modified_at 	timestamptz

@@ -30,7 +30,7 @@ const FormContainer = tw.div`w-full flex-1 mt-8`;
 
 const SocialButtonsContainer = tw.div`flex flex-col items-center`;
 const SocialButton = styled.a`
-	${tw`w-full max-w-xs font-semibold rounded-lg py-3 border text-gray-900 bg-gray-100 hocus:bg-gray-200 hocus:border-gray-400 flex items-center justify-center transition-all duration-300 focus:outline-none focus:shadow-outline text-sm mt-5 first:mt-0`}
+	${tw`w-full max-w-xs font-semibold rounded-lg py-3 border text-gray-900 bg-gray-100 hocus:bg-gray-200 focus:border-gray-400 flex items-center justify-center transition-all duration-300 focus:outline-none focus:shadow-outline text-sm mt-5 first:mt-0`}
 	.iconContainer {
 		${tw`bg-white p-2 rounded-full`}
 	}
@@ -64,7 +64,7 @@ const IllustrationImage = styled.div`
 
 const Image = styled(motion.div)((props) => [
 	`background-image: url("${props.imageSrc}");`,
-	tw`h-64 bg-cover bg-center rounded bg-gray-200 hover:bg-gray-400 h-40 w-40 flex-shrink-0 mx-auto cursor-pointer rounded-full`,
+	tw`h-64 bg-cover bg-center rounded bg-gray-200 hover:bg-gray-400 h-40 w-40 flex-shrink-0 mx-auto cursor-pointer rounded-full border text-gray-900 bg-gray-100 hocus:opacity-75 focus:border-gray-400 flex items-center justify-center transition-all duration-300 focus:outline-none focus:shadow-outline text-sm mt-5 first:mt-0`,
 ]);
 
 export default ({
@@ -93,16 +93,14 @@ export default ({
 
 	const [errorMessage, setErrorMessage] = useState(null);
 
+	const [image, setImage] = useState(null);
+
 	const handleSignUp = () => {
 		var email = document.getElementById("signup_email").value;
 		var full_name = document.getElementById("signup_name").value;
 		var password = document.getElementById("signup_password").value;
-		// todo: da migliorare upload
-		var image = window
-			.getComputedStyle(document.getElementById("image-input"))
-			.getPropertyValue("background-image");
 
-		signUp({ email, full_name, password })
+		signUp({ email, full_name, password, image })
 			.then((e) => {
 				if (e.status == "error") {
 					throw new Error(e.error);
@@ -155,7 +153,7 @@ export default ({
 									</DividerText>
 								</DividerTextContainer>
 								<Form>
-									<ImageUploader>
+									<ImageUploader setImage={setImage}>
 										<Image id="image-input" />
 									</ImageUploader>
 									<Input

@@ -5,6 +5,9 @@ import { motion } from "framer-motion";
 import { SectionHeading } from "components/misc/Headings.js";
 import { Container, ContentWithPaddingXl } from "components/misc/Layouts.js";
 
+//import searchImage from "../../images/search-image.svg";
+import searchImage from "../../images/logo.svg";
+
 const Row = tw.div`flex flex-col lg:flex-row -mb-10`;
 const HeadingRow = tw.div`flex flex-col lg:flex-row items-center`;
 const Heading = tw(SectionHeading)`text-left lg:text-4xl xl:text-5xl`;
@@ -18,7 +21,7 @@ const Game = tw(
 const User = tw(motion.a)``;
 const Image = styled(motion.div)((props) => [
 	`background-image: url("${props.imageSrc}");`,
-	tw`h-64 bg-cover bg-center rounded bg-primary-100`,
+	tw`h-64 bg-cover bg-center rounded`,
 ]);
 const Player = tw.h5`mt-6 text-xl font-bold transition duration-300 group-hover:text-primary-500`;
 const Position = tw.h5`mt-6 flex items-center text-xl font-bold transition duration-300 group-hover:text-primary-500`;
@@ -234,7 +237,7 @@ export default ({ user, leaderboard, participants, setParticipants }) => {
 										imageSrc={
 											user.image
 												? user.image
-												: "https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=256&q=80"
+												: searchImage //"https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=256&q=80"
 										}
 									/>
 									<UserName>{user.user_full_name}</UserName>

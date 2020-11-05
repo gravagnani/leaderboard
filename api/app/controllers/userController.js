@@ -22,7 +22,7 @@ import { errorMessage, successMessage, status } from "../helpers/status";
  * @returns {object} reflection object
  */
 const createUser = async (req, res) => {
-	const { email, full_name, password } = req.body;
+	const { email, full_name, password, image } = req.body;
 
 	const flag_active = 1;
 	const created_at = moment(new Date());
@@ -51,13 +51,15 @@ const createUser = async (req, res) => {
 	const user_uuid = generateUUID(email + full_name);
 
 	const createUserQuery = `INSERT INTO users 
-		(uuid, email, full_name, password, flag_active, created_at, modified_at, modified_by) 
-		VALUES($1, $2, $3, $4, $5, $6, $7, $8) returning *`;
+		(uuid, email, full_name, password, image, flag_active, created_at, modified_at, modified_by) 
+		VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9) 
+		returning uuid, email, full_name, image, flag_active, created_at`;
 	const values = [
 		user_uuid,
 		email,
 		full_name,
 		hashed_password,
+		image,
 		flag_active,
 		created_at,
 		modified_at,
@@ -108,7 +110,7 @@ const siginUser = async (req, res) => {
 		return res.status(status.bad).send(errorMessage);
 	}
 
-	const signinUserQuery = `SELECT id, uuid, email, password, full_name FROM users WHERE email = $1`;
+	const signinUserQuery = `SELECT id, uuid, email, password, full_name, image FROM users WHERE email = $1`;
 
 	try {
 		const { rows } = await dbQuery.query(signinUserQuery, [email]);

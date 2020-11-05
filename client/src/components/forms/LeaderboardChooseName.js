@@ -27,13 +27,13 @@ const Image = styled.div((props) => [
 	`background-image: url("${props.imageSrc}");`,
 	tw`rounded bg-contain bg-no-repeat bg-center h-full`,
 ]);
-const TextContent = tw.div`lg:py-8 text-center md:text-left`;
+const TextContent = tw.div`lg:py-8 text-center md:text-center`;
 
-const Subheading = tw(SubheadingBase)`text-center md:text-left`;
+const Subheading = tw(SubheadingBase)`text-center md:text-center`;
 const Heading = tw(
 	SectionHeading
-)`mt-4 font-black text-left text-3xl sm:text-4xl lg:text-5xl text-center md:text-left leading-tight`;
-const Description = tw.p`mt-4 mb-4 text-center md:text-left text-sm md:text-base lg:text-lg font-medium leading-relaxed text-secondary-100`;
+)`mt-4 font-black text-center text-3xl sm:text-4xl lg:text-5xl text-center md:text-center leading-tight`;
+const Description = tw.p`mt-4 mb-4 text-center md:text-center text-sm md:text-base lg:text-lg font-medium leading-relaxed text-secondary-100`;
 
 const Input = tw.input`w-6/12 border-2 px-5 py-3 rounded focus:outline-none font-medium transition duration-300 hocus:border-primary-500`;
 
@@ -53,19 +53,18 @@ const textOnLeft = true;
 
 export default ({
 	user,
-	participants,
 	leaderboard,
-	setParticipants,
 	setLoadParticipants,
 }) => {
 	const history = useHistory;
 	const [errorMessage, setErrorMessage] = useState(null);
 	// The textOnLeft boolean prop can be used to display either the text on left or right side of the image.
 	const handleJoinBtnClick = () => {
-		var user_full_name = document.getElementById("ures-full-name-input")
+		var user_full_name = document.getElementById("user-full-name-input")
 			.value;
 		joinLeaderboard(user.uuid, leaderboard.uuid, user_full_name)
 			.then((e) => {
+				console.log(user_full_name);
 				if (e.status == "error") {
 					throw new Error(e.error);
 				}
@@ -108,7 +107,7 @@ export default ({
 						<Description>{description}</Description>
 						<Input
 							type="text"
-							id="ures-full-name-input"
+							id="user-full-name-input"
 							defaultValue={
 								user && user.full_name
 									? user.full_name

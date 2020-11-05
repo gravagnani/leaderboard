@@ -262,7 +262,7 @@ const modifyLeaderboard = async (req, res) => {
 			errorMessage.error = "Max users must be more than Min users";
 			return res.status(status.bad).send(errorMessage);
 		}
-	
+
 		if (max_users_check > MAX_USERS_FREE) {
 			errorMessage.error = "Max must be less than " + MAX_USERS_FREE;
 			return res.status(status.bad).send(errorMessage);
@@ -311,6 +311,8 @@ const modifyLeaderboard = async (req, res) => {
  * @returns {object} reflection object
  */
 const joinLeaderboard = async (req, res) => {
+
+	console.log(req.body);
 	const { user_uuid, leaderboard_uuid, user_full_name } = req.body;
 
 	const created_at = moment(new Date());
@@ -441,9 +443,12 @@ const getLeaderboardParticipants = async (req, res) => {
 	const values_lb = [uuid];
 
 	const getAllLeaderboardPartQuery = `
-		SELECT leaderboard_uuid, user_uuid, user_full_name, user_mean, user_variance 
-		FROM user_leaderboard WHERE leaderboard_uuid = $1
-		ORDER BY user_mean desc, user_variance asc`;
+	SELECT ul.leaderboard_uuid, ul.user_uuid, ul.user_full_name, ul.user_mean, ul.user_variance, u.image
+	FROM user_leaderboard ul 
+		LEFT JOIN users u ON (ul.user_uuid = u.uuid)
+	WHERE leaderboard_uuid = $1
+	ORDER BY user_mean desc, user_variance asc
+	;`;
 	const values = [uuid];
 
 	try {

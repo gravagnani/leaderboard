@@ -1,8 +1,7 @@
 import { BASE_URL } from "../config";
 
-const user = JSON.parse(localStorage.getItem("user"));
-
 const createLeaderboard = async (body) => {
+	const user = JSON.parse(localStorage.getItem("user"));
 	const response = await fetch(BASE_URL + "/api/v1/leaderboard", {
 		method: "POST", // *GET, POST, PUT, DELETE, etc.
 		mode: "cors", // no-cors, *cors, same-origin
@@ -36,6 +35,7 @@ const getLeaderboardByUUID = async (uuid) => {
 };
 
 const joinLeaderboard = async (user_uuid, leaderboard_uuid, user_full_name) => {
+	const user = JSON.parse(localStorage.getItem("user"));
 	const response = await fetch(BASE_URL + "/api/v1/leaderboard/join/", {
 		method: "POST", // *GET, POST, PUT, DELETE, etc.
 		mode: "cors", // no-cors, *cors, same-origin
@@ -71,6 +71,7 @@ const getLeaderboardParticipants = async (leaderboard_uuid) => {
 };
 
 const modifyLeadeboardTitleNote = async (leaderboard, title, note) => {
+	const user = JSON.parse(localStorage.getItem("user"));
 	const response = await fetch(
 		BASE_URL + "/api/v1/leaderboard/" + leaderboard.uuid,
 		{
