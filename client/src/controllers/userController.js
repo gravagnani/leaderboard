@@ -1,7 +1,5 @@
 import { BASE_URL } from "../config";
 
-const user = JSON.parse(localStorage.getItem("user"));
-
 const doLogin = async (body) => {
 	const response = await fetch(BASE_URL + "/api/v1/auth/signin", {
 		method: "POST", // *GET, POST, PUT, DELETE, etc.
@@ -37,6 +35,7 @@ const signUp = async (body) => {
 };
 
 const modifyUser = async (body) => {
+	const user = JSON.parse(localStorage.getItem("user"));
 	const response = await fetch(BASE_URL + "/api/v1/user", {
 		method: "PUT", // *GET, POST, PUT, DELETE, etc.
 		mode: "cors", // no-cors, *cors, same-origin

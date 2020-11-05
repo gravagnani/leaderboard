@@ -221,7 +221,9 @@ const getUsersOfLeaderboardUUID = async (req, res) => {
  * @returns {object} reflection object
  */
 const modifyUser = async (req, res) => {
-	const { email, full_name, password } = req.body;
+	const { email, full_name, password, image, user } = req.body;
+
+	console.log(image);
 
 	const req_user_id = req.user.id;
 
@@ -267,12 +269,13 @@ const modifyUser = async (req, res) => {
 	}
 
 	const updateUserQuery = `UPDATE users 
-		SET email = $1, full_name = $2, password = $3, modified_at = $4, modified_by = $5 
-		WHERE id = $6 returning uuid, email, full_name, modified_at`;
+		SET email = $1, full_name = $2, password = $3, image = $4, modified_at = $5, modified_by = $6 
+		WHERE id = $7 returning uuid, email, full_name, image, modified_at`;
 	const values = [
 		email_check,
 		full_name_check,
 		password_check,
+		image,
 		modified_at,
 		modified_by,
 		req_user_id,

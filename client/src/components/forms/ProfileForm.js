@@ -1,11 +1,14 @@
 import React, { useState } from "react";
 import styled from "styled-components";
 import tw from "twin.macro";
+import { motion } from "framer-motion";
 import { useHistory } from "react-router-dom";
 import { css } from "styled-components/macro"; //eslint-disable-line
 import { ReactComponent as SvgDotPatternIcon } from "../../images/dot-pattern.svg";
 
 import ErrorAlert from "../../alerts/ErrorAlert";
+
+import ImageUploader from "../../helpers/ImageUploader";
 
 import { modifyUser } from "../../controllers/userController";
 
@@ -42,6 +45,11 @@ const SvgDotPattern1 = tw(
 	SvgDotPatternIcon
 )`absolute bottom-0 right-0 transform translate-y-1/2 translate-x-1/2 -z-10 opacity-50 text-primary-500 fill-current w-24`;
 
+const Image = styled(motion.div)((props) => [
+	`background-image: url("${props.imageSrc}");`,
+	tw`h-64 bg-cover bg-center rounded bg-gray-200 hover:bg-gray-400 h-40 w-40 flex-shrink-0 mx-auto cursor-pointer rounded-full border text-gray-900 bg-gray-100 hocus:opacity-75 focus:border-gray-400 flex items-center justify-center transition-all duration-300 focus:outline-none focus:shadow-outline text-sm mt-5 first:mt-0`,
+]);
+
 export default () => {
 	const history = useHistory();
 
@@ -49,24 +57,27 @@ export default () => {
 
 	const [errorMessage, setErrorMessage] = useState(null);
 
+	const [image, setImage] = useState(user.image);
+
 	const nameInputSS = user ? user.full_name : "";
 	const emailInputSS = user ? user.email : "";
 
 	const handleModifyUser = () => {
 		const email = document.getElementById("email-input").value;
 		const full_name = document.getElementById("name-input").value;
-		modifyUser({ email, full_name }, user.token)
+		modifyUser({ email, full_name, image }, user.token)
 			.then((e) => {
 				if (e.status == "error") {
 					throw new Error(e.error);
 				}
 				user.email = e.data.email;
 				user.full_name = e.data.full_name;
+				user.image = e.data.image;
 				localStorage.setItem("user", JSON.stringify(user));
 				history.go(0);
 			})
 			.catch((e) => {
-				setErrorMessage(e)
+				setErrorMessage(e);
 			});
 	};
 
@@ -83,6 +94,11 @@ export default () => {
 					<div tw="mx-auto max-w-4xl">
 						<h2>Your Profile</h2>
 						<Column>
+							<InputContainer>
+								<ImageUploader image={image} setImage={setImage}>
+									<Image id="image-input" />
+								</ImageUploader>
+							</InputContainer>
 							<InputContainer>
 								<Label htmlFor="name-input">Your Name</Label>
 								<Input
