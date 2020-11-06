@@ -157,12 +157,19 @@ const createLeaderboard = async (req, res) => {
 	// todo: manda mail con link laderboard
 	// parametro email (eventualmente full_name)
 
-	const createLeaderboardQuery = `INSERT INTO
-		leaderboard(uuid, title, place, note, min_users, max_users
-			, start_date, end_date, mode, flag_public, flag_active
-			, created_at, created_by, modified_at, modified_by)
-      VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15)
-      returning *`;
+	const createLeaderboardQuery = `
+		INSERT INTO leaderboard(
+			uuid, title, place, note, min_users, max_users, 
+			start_date, end_date, mode, flag_public, flag_active, 
+			created_at, created_by, modified_at, modified_by
+		) VALUES(
+			$1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15
+		) RETURNING 
+			uuid, title, place, note, min_users, max_users, 
+			start_date, end_date, flag_public, flag_active, 
+			created_at, created_by, modified_at, modified_by, mode
+	`;
+
 	const values = [
 		leaderboard_uuid,
 		title,
@@ -311,7 +318,6 @@ const modifyLeaderboard = async (req, res) => {
  * @returns {object} reflection object
  */
 const joinLeaderboard = async (req, res) => {
-
 	console.log(req.body);
 	const { user_uuid, leaderboard_uuid, user_full_name } = req.body;
 

@@ -3,6 +3,7 @@ import ImageUploading from "react-images-uploading";
 
 import searchImage from "../images/search-image.svg";
 
+
 /**
  * props:
  * children -> the child
@@ -10,6 +11,7 @@ import searchImage from "../images/search-image.svg";
  * setImage -> function to set image in the father's state
  */
 export default (props) => {
+	// if default from props set it, otherwise empty list
 	const [images, setImages] = React.useState(props.image ? [{ data_url: props.image }] : []);
 	const maxNumber = 1;
 
@@ -32,6 +34,7 @@ export default (props) => {
 				onChange={onChange}
 				maxNumber={maxNumber}
 				dataURLKey="data_url"
+				acceptType={['jpg', 'jpeg', 'png']}
 			>
 				{({
 					imageList,

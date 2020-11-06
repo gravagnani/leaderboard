@@ -1,5 +1,10 @@
 import { BASE_URL } from "../config";
 
+/**
+ * Create a leaderboard
+ * @param {object} body -> {title, place, note, min_users, max_users, start_date, end_date, mode, full_name, email}
+ * @returns {object} -> {}
+ */
 const createLeaderboard = async (body) => {
 	const user = JSON.parse(localStorage.getItem("user"));
 	const response = await fetch(BASE_URL + "/api/v1/leaderboard", {
@@ -19,6 +24,11 @@ const createLeaderboard = async (body) => {
 	return response.json();
 };
 
+/**
+ * 
+ * @param {*} uuid 
+ * @returns
+ */
 const getLeaderboardByUUID = async (uuid) => {
 	const response = await fetch(BASE_URL + "/api/v1/leaderboard/uuid/" + uuid, {
 		method: "GET", // *GET, POST, PUT, DELETE, etc.
@@ -34,6 +44,13 @@ const getLeaderboardByUUID = async (uuid) => {
 	return response.json();
 };
 
+/**
+ * 
+ * @param {*} user_uuid 
+ * @param {*} leaderboard_uuid 
+ * @param {*} user_full_name 
+ * @returns
+ */
 const joinLeaderboard = async (user_uuid, leaderboard_uuid, user_full_name) => {
 	const user = JSON.parse(localStorage.getItem("user"));
 	const response = await fetch(BASE_URL + "/api/v1/leaderboard/join/", {
@@ -52,6 +69,11 @@ const joinLeaderboard = async (user_uuid, leaderboard_uuid, user_full_name) => {
 	return response.json();
 };
 
+/**
+ * 
+ * @param {*} leaderboard_uuid 
+ * @returns
+ */
 const getLeaderboardParticipants = async (leaderboard_uuid) => {
 	const response = await fetch(
 		BASE_URL + "/api/v1/leaderboard/" + leaderboard_uuid + "/users/",
@@ -70,6 +92,13 @@ const getLeaderboardParticipants = async (leaderboard_uuid) => {
 	return response.json();
 };
 
+/**
+ * 
+ * @param {*} leaderboard 
+ * @param {*} title 
+ * @param {*} note 
+ * @returns
+ */
 const modifyLeadeboardTitleNote = async (leaderboard, title, note) => {
 	const user = JSON.parse(localStorage.getItem("user"));
 	const response = await fetch(
@@ -90,6 +119,7 @@ const modifyLeadeboardTitleNote = async (leaderboard, title, note) => {
 	);
 	return response.json();
 };
+
 
 export {
 	createLeaderboard,

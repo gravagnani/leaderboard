@@ -223,8 +223,6 @@ const getUsersOfLeaderboardUUID = async (req, res) => {
 const modifyUser = async (req, res) => {
 	const { email, full_name, password, image, user } = req.body;
 
-	console.log(image);
-
 	const req_user_id = req.user.id;
 
 	const email_check = email ? email : req.user.email;

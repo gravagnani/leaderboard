@@ -18,7 +18,11 @@ const UsersContainer = tw.div`mt-12 flex flex-col sm:flex-row sm:justify-between
 const Game = tw(
 	motion.a
 )`block sm:max-w-sm mb-16 last:mb-0 sm:mb-0 lg:mr-8 xl:mr-16`;
-const User = tw(motion.a)``;
+const User = styled(motion.a)((props) => [
+	props.isLoggedUser
+		? tw`bg-gray-500 bg-gray-400`
+		: tw`bg-gray-300 bg-gray-200`,
+]);
 const Image = styled(motion.div)((props) => [
 	`background-image: url("${props.imageSrc}");`,
 	tw`h-64 bg-cover bg-center rounded`,
@@ -44,7 +48,7 @@ const TableRowItem = tw.td`px-6 py-4 whitespace-no-wrap`;
 
 const Win = tw.div`bg-green-400 hover:bg-green-500 hover:cursor-pointer text-white w-12 h-12 text-center font-bold rounded-full flex items-center justify-center`;
 const Lose = tw.div`bg-red-400 hover:bg-red-500 hover:cursor-pointer text-white w-12 h-12 text-center font-bold rounded-full flex items-center justify-center`;
-const NotPart = tw.div`bg-gray-400 hover:bg-gray-500 hover:cursor-pointer text-white w-12 h-12 text-center font-bold rounded-full flex items-center justify-center`;
+const NotPart = tw.div`bg-primary-100 hover:bg-primary-200 hover:cursor-pointer text-white w-12 h-12 text-center font-bold rounded-full flex items-center justify-center`;
 
 const LeaderboardContainer = styled.div`
 	${tw`lg:w-2/3 md:pr-20`}
@@ -55,7 +59,7 @@ const LeaderboardContainer = styled.div`
 		${tw`h-20 w-20 flex-shrink-0 mx-10`}
 	}
 	${User} {
-		${tw`hover:bg-gray-300 bg-gray-200 px-10 py-2 flex justify-start mb-4 shadow-md max-w-none w-full sm:w-1/2 lg:w-auto`}
+		${tw`px-10 py-2 flex justify-start mb-4 shadow-md max-w-none w-full sm:w-1/2 lg:w-auto`}
 	}
 	${Position} {
 		${tw`mt-3 text-base xl:text-lg mt-0 mr-4 lg:max-w-xs`}
@@ -193,13 +197,30 @@ export default ({ user, leaderboard, participants, setParticipants }) => {
 
 	const handleWinBtn = (user_uuid) => {
 		setWinList(winList.filter((e) => e != user_uuid));
-		setLoseList([...loseList, user_uuid]);
+		setLoseList([user_uuid]);
+		// decommentare per le squadre
+		//setLoseList([...loseList, user_uuid]);
 	};
 	const handleLoseBtn = (user_uuid) => {
 		setLoseList(loseList.filter((e) => e != user_uuid));
 	};
 	const handleNoPartBtn = (user_uuid) => {
-		setWinList([...winList, user_uuid]);
+		winList.length == 0 ? setWinList([user_uuid]) : setLoseList([user_uuid]);
+		// decommentare per le squadre
+		//setWinList([...winList, user_uuid]);
+	};
+
+	const handleNewGameBtnClick = () => {
+		setWinList([]);
+		setLoseList([]);
+		setNewGameMode(!newGameMode);
+	};
+
+	const handleSaveBtnClick = () => {
+		console.log("save!");
+		console.log(winList);
+		console.log(loseList);
+		setNewGameMode(!newGameMode);
 	};
 
 	// This setting is for animating the Game background image on hover
@@ -219,43 +240,52 @@ export default ({ user, leaderboard, participants, setParticipants }) => {
 					<LeaderboardContainer>
 						<HeadingRow>
 							<Heading>Leaderboard</Heading>
-							<HeadingButton
-								onClick={() => {
-									setWinList([]);
-									setLoseList([]);
-									setNewGameMode(!newGameMode);
-								}}
-							>
-								{!newGameMode ? "New Game" : "Save"}
-							</HeadingButton>
+							{!newGameMode ? (
+								<HeadingButton
+									onClick={() => {
+										handleNewGameBtnClick();
+									}}
+								>
+									New Game
+								</HeadingButton>
+							) : (
+								<HeadingButton
+									onClick={() => {
+										handleSaveBtnClick();
+									}}
+								>
+									Save
+								</HeadingButton>
+							)}
 						</HeadingRow>
 						<UsersContainer>
-							{participants.map((user, index) => (
-								<User key={index}>
+							{participants.map((part, index) => (
+								<User
+									key={index}
+									isLoggedUser={part.user_uuid == user.uuid}
+								>
 									<Position>{index + 1}</Position>
 									<Image
 										imageSrc={
-											user.image
-												? user.image
-												: searchImage //"https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=256&q=80"
+											part.image ? part.image : searchImage //"https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=256&q=80"
 										}
 									/>
-									<UserName>{user.user_full_name}</UserName>
+									<UserName>{part.user_full_name}</UserName>
 									<Score>
 										{!newGameMode ? (
-											user.user_mean
-										) : winList.includes(user.user_uuid) ? (
+											part.user_mean
+										) : winList.includes(part.user_uuid) ? (
 											<Win
 												onClick={() => {
-													handleWinBtn(user.user_uuid);
+													handleWinBtn(part.user_uuid);
 												}}
 											>
 												W
 											</Win>
-										) : loseList.includes(user.user_uuid) ? (
+										) : loseList.includes(part.user_uuid) ? (
 											<Lose
 												onClick={() => {
-													handleLoseBtn(user.user_uuid);
+													handleLoseBtn(part.user_uuid);
 												}}
 											>
 												L
@@ -263,7 +293,7 @@ export default ({ user, leaderboard, participants, setParticipants }) => {
 										) : (
 											<NotPart
 												onClick={() => {
-													handleNoPartBtn(user.user_uuid);
+													handleNoPartBtn(part.user_uuid);
 												}}
 											/>
 										)}

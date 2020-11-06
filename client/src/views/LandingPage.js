@@ -3,7 +3,6 @@ import tw from "twin.macro";
 import { css } from "styled-components/macro"; //eslint-disable-line
 import AnimationRevealPage from "helpers/AnimationRevealPage.js";
 
-
 import Hero from "components/hero/TwoColumnWithFeaturesAndTestimonial.js";
 import Features from "components/features/ThreeColWithSideImage.js";
 import MainFeature from "components/features/TwoColWithTwoHorizontalFeaturesAndButton.js";
@@ -15,37 +14,67 @@ import FAQ from "components/faqs/SingleCol.js";
 import GetStarted from "components/cta/GetStartedLight.js";
 import Footer from "components/footers/MiniCenteredFooter.js";
 
-const HighlightedText = tw.span`text-primary-500`
+const HighlightedText = tw.span`text-primary-500`;
 
 export default () => {
+	sessionStorage.clear();
 
-  sessionStorage.clear();
-  
-  return (
-    <AnimationRevealPage>
-      <Hero />
-      <FeatureStats/>
-      <Features 
-        heading={<>Amazing <HighlightedText>Features</HighlightedText></>}
-      />
-      <MainFeature
-        heading={<>Cloud built by and for <HighlightedText>Professionals</HighlightedText></>}
-      />
-      <Testimonial 
-        heading={<>Our Clients <HighlightedText>Love Us</HighlightedText></>}
-      />
-      <Pricing 
-        heading={<>Flexible <HighlightedText>Plans</HighlightedText></>}
-      />
-      <FAQ
-        heading={<>Any <HighlightedText>Questions ?</HighlightedText></>}
-      />
-      <Blog
-        subheading="Blog"
-        heading={<>We love <HighlightedText>Writing</HighlightedText></>}
-      />
-      <GetStarted/>
-      <Footer />
-    </AnimationRevealPage>
-  );
-}
+	return (
+		<AnimationRevealPage>
+			<Hero />
+			<FeatureStats />
+			<Features
+				heading={
+					<>
+						Amazing <HighlightedText>Features</HighlightedText>
+					</>
+				}
+			/>
+			<MainFeature
+				heading={
+					<>
+						Cloud built by and for{" "}
+						<HighlightedText>Professionals</HighlightedText>
+					</>
+				}
+			/>
+			{false && (
+				<Testimonial
+					heading={
+						<>
+							Our Clients <HighlightedText>Love Us</HighlightedText>
+						</>
+					}
+				/>
+			)}
+			<Pricing
+				heading={
+					<>
+						Flexible <HighlightedText>Plans</HighlightedText>
+					</>
+				}
+			/>
+			{false && (
+				<FAQ
+					heading={
+						<>
+							Any <HighlightedText>Questions ?</HighlightedText>
+						</>
+					}
+				/>
+			)}
+			{false && (
+				<Blog
+					subheading="Blog"
+					heading={
+						<>
+							We love <HighlightedText>Writing</HighlightedText>
+						</>
+					}
+				/>
+			)}
+			{false && <GetStarted />}
+			<Footer />
+		</AnimationRevealPage>
+	);
+};
