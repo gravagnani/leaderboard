@@ -129,6 +129,7 @@ export default () => {
 						leaderboard={leaderboard}
 						participants={participants}
 						setParticipants={setParticipants}
+						setLoadParticipants={setLoadParticipants}
 					/>
 				</>
 			) : (

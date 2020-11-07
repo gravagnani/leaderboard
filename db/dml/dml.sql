@@ -27,6 +27,7 @@ create table leaderboard_dev.users (
 	, image			text
 	, flag_active	bit
 	, created_at 	timestamptz
+	, created_by	varchar
 	, modified_at 	timestamptz
 	, modified_by	varchar
 	
@@ -82,9 +83,10 @@ create table leaderboard_dev.user_leaderboard (
 	, user_full_name	varchar
 	, user_mean			real
 	, user_variance		real
-	, created_at 		timestamptz
-	, modified_at 		timestamptz
-	, modified_by		varchar
+	, created_at 	timestamptz
+	, created_by	varchar
+	, modified_at 	timestamptz
+	, modified_by	varchar
 	
 	, primary key(id)
 	, foreign key(user_uuid) references leaderboard_dev.users(uuid)
@@ -104,12 +106,15 @@ from leaderboard_dev.user_leaderboard
 
 create table leaderboard_dev.game (
 	  id 				serial
-	, leaderboard_id	int
-	, modified_at 		timestamptz
-	, modified_by		varchar
+	, uuid				varchar unique
+	, leaderboard_uuid	varchar
+	, created_at 	timestamptz
+	, created_by	varchar
+	, modified_at 	timestamptz
+	, modified_by	varchar
 	
 	, primary key (id)
-	, foreign key (leaderboard_id) references leaderboard_dev.leaderboard(id)
+	, foreign key (leaderboard_uuid) references leaderboard_dev.leaderboard(uuid)
 );
 
 select *
@@ -126,15 +131,17 @@ from leaderboard_dev.game
 
 create table leaderboard_dev.user_game (
 	  id 				serial
-	, game_id			int
-	, user_id			int
+	, game_uuid			varchar
+	, user_uuid			varchar
 	, team				int
-	, modified_at 		timestamptz
-	, modified_by		varchar
+	, created_at 	timestamptz
+	, created_by	varchar
+	, modified_at 	timestamptz
+	, modified_by	varchar
 	
 	, primary key (id)
-	, foreign key (user_id) references leaderboard_dev.users(id)
-	, foreign key (game_id) references leaderboard_dev.game(id)
+	, foreign key (user_uuid) references leaderboard_dev.users(uuid)
+	, foreign key (game_uuid) references leaderboard_dev.game(uuid)
 );
 
 select *

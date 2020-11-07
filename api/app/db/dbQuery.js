@@ -20,4 +20,40 @@ export default {
 				});
 		});
 	},
+	beginTransaction() {
+		return new Promise((resolve, reject) => {
+			pool
+				.query('BEGIN')
+				.then((res) => {
+					resolve(res);
+				})
+				.catch((err) => {
+					reject(err);
+				});
+		});
+	},
+	commitTransaction() {
+		return new Promise((resolve, reject) => {
+			pool
+				.query('COMMIT')
+				.then((res) => {
+					resolve(res);
+				})
+				.catch((err) => {
+					reject(err);
+				});
+		});
+	},
+	rollbackTransaction() {
+		return new Promise((resolve, reject) => {
+			pool
+				.query('ROLLBACK')
+				.then((res) => {
+					resolve(res);
+				})
+				.catch((err) => {
+					reject(err);
+				});
+		});
+	},
 };

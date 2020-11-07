@@ -6,7 +6,14 @@ import { isEmpty, generateUUID } from "../helpers/validation";
 
 import { errorMessage, successMessage, status } from "../helpers/status";
 
-import { MIN_USERS_FREE, MAX_USERS_FREE } from "../constants";
+import {
+	MIN_USERS_FREE,
+	MAX_USERS_FREE,
+	DEFAULT_CLASSIC_MEAN,
+	DEFAULT_CLASSIC_VARIANCE,
+	DEFAULT_TRUESKILL_MEAN,
+	DEFAULT_TRUESKILL_VARIANCE,
+} from "../constants";
 
 /**
  * Get all Leaderboards
@@ -158,7 +165,7 @@ const createLeaderboard = async (req, res) => {
 	// parametro email (eventualmente full_name)
 
 	const createLeaderboardQuery = `
-		INSERT INTO leaderboard(
+		INSERT INTO leaderboard (
 			uuid, title, place, note, min_users, max_users, 
 			start_date, end_date, mode, flag_public, flag_active, 
 			created_at, created_by, modified_at, modified_by
@@ -325,8 +332,8 @@ const joinLeaderboard = async (req, res) => {
 	const modified_at = moment(new Date());
 	// from header
 	const modified_by = req.user.uuid;
-	var user_mean = 0;
-	var user_variance = 1;
+	var user_mean = null;
+	var user_variance = null;
 
 	if (isEmpty(user_uuid)) {
 		errorMessage.error = "User UUID must not be empty";
@@ -393,12 +400,12 @@ const joinLeaderboard = async (req, res) => {
 		// set user mean and variance based on leaderboard scoring mode
 		switch (leaderboard_dbResponse.mode) {
 			case "C":
-				user_mean = 0;
-				user_variance = null;
+				user_mean = DEFAULT_CLASSIC_MEAN;
+				user_variance = DEFAULT_CLASSIC_VARIANCE;
 				break;
 			case "T":
-				user_mean = 0;
-				user_variance = 1;
+				user_mean = DEFAULT_TRUESKILL_MEAN;
+				user_variance = DEFAULT_TRUESKILL_VARIANCE;
 				break;
 		}
 
@@ -449,11 +456,12 @@ const getLeaderboardParticipants = async (req, res) => {
 	const values_lb = [uuid];
 
 	const getAllLeaderboardPartQuery = `
-	SELECT ul.leaderboard_uuid, ul.user_uuid, ul.user_full_name, ul.user_mean, ul.user_variance, u.image
-	FROM user_leaderboard ul 
-		LEFT JOIN users u ON (ul.user_uuid = u.uuid)
-	WHERE leaderboard_uuid = $1
-	ORDER BY user_mean desc, user_variance asc
+		SELECT ul.leaderboard_uuid, ul.user_uuid, 
+			ul.user_full_name, ul.user_mean, ul.user_variance, u.image
+		FROM user_leaderboard ul 
+			LEFT JOIN users u ON (ul.user_uuid = u.uuid)
+		WHERE leaderboard_uuid = $1
+		ORDER BY user_mean desc, user_variance asc
 	;`;
 	const values = [uuid];
 
