@@ -21,9 +21,14 @@ const Game = tw(
 	motion.a
 )`block sm:max-w-sm mb-16 last:mb-0 sm:mb-0 lg:mr-8 xl:mr-16`;
 const User = styled(motion.a)((props) => [
-	props.isLoggedUser
-		? tw`bg-gray-500 bg-gray-400`
-		: tw`bg-gray-300 bg-gray-200`,
+	tw`hover:bg-gray-300 bg-gray-200`,
+	props.isLoggedUser ? tw`text-primary-500` : tw``,
+	props.newGameMode ? tw`cursor-pointer` : tw``,
+	props.gameState == "W"
+		? tw`bg-green-200 hover:bg-green-300`
+		: props.gameState == "L"
+		? tw`bg-red-200 hover:bg-red-300`
+		: tw``,
 ]);
 const Image = styled(motion.div)((props) => [
 	`background-image: url("${props.imageSrc}");`,
@@ -51,6 +56,7 @@ const TableRowItem = tw.td`px-6 py-4 whitespace-no-wrap`;
 const Win = tw.div`bg-green-400 hover:bg-green-500 hover:cursor-pointer text-white w-12 h-12 text-center font-bold rounded-full flex items-center justify-center`;
 const Lose = tw.div`bg-red-400 hover:bg-red-500 hover:cursor-pointer text-white w-12 h-12 text-center font-bold rounded-full flex items-center justify-center`;
 const NotPart = tw.div`bg-primary-100 hover:bg-primary-200 hover:cursor-pointer text-white w-12 h-12 text-center font-bold rounded-full flex items-center justify-center`;
+const GameState = tw.div`text-white w-12 h-12 text-center font-bold flex items-center justify-center`;
 
 const LeaderboardContainer = styled.div`
 	${tw`lg:w-2/3 md:pr-20`}
@@ -152,7 +158,21 @@ export default ({
 		//setWinList([...winList, user_uuid]);
 	};
 
+	const handleUserClick = (user_uuid) => {
+		winList.includes(user_uuid)
+			? handleWinBtn(user_uuid)
+			: loseList.includes(user_uuid)
+			? handleLoseBtn(user_uuid)
+			: handleNoPartBtn(user_uuid);
+	};
+
 	const handleNewGameBtnClick = () => {
+		setWinList([]);
+		setLoseList([]);
+		setNewGameMode(!newGameMode);
+	};
+
+	const handleCancelBtnClick = () => {
 		setWinList([]);
 		setLoseList([]);
 		setNewGameMode(!newGameMode);
@@ -169,7 +189,11 @@ export default ({
 			.catch((e) => {
 				console.log(e);
 			});
-		setNewGameMode(!newGameMode);
+		setNewGameMode();
+		setTimeout(() => {
+			setWinList([]);
+			setLoseList([]);
+		}, 2000);
 	};
 
 	// This setting is for animating the Game background image on hover
@@ -197,14 +221,19 @@ export default ({
 								>
 									New Game
 								</HeadingButton>
+							) : winList.length == 0 || loseList.length == 0 ? (
+								<HeadingButton
+									onClick={() => {
+										handleCancelBtnClick();
+									}}
+								>
+									Cancel
+								</HeadingButton>
 							) : (
 								<HeadingButton
 									onClick={() => {
 										handleSaveBtnClick();
 									}}
-									disabled={
-										winList.length == 0 || loseList.length == 0
-									}
 								>
 									Save
 								</HeadingButton>
@@ -215,6 +244,17 @@ export default ({
 								<User
 									key={index}
 									isLoggedUser={part.user_uuid == user.uuid}
+									newGameMode={newGameMode}
+									gameState={
+										winList.includes(part.user_uuid)
+											? "W"
+											: loseList.includes(part.user_uuid)
+											? "L"
+											: null
+									}
+									onClick={() =>
+										newGameMode && handleUserClick(part.user_uuid)
+									}
 								>
 									<Position>{index + 1}</Position>
 									<Image
@@ -227,23 +267,23 @@ export default ({
 										{!newGameMode ? (
 											part.user_mean
 										) : winList.includes(part.user_uuid) ? (
-											<Win
+											<GameState
 												onClick={() => {
 													handleWinBtn(part.user_uuid);
 												}}
 											>
 												W
-											</Win>
+											</GameState>
 										) : loseList.includes(part.user_uuid) ? (
-											<Lose
+											<GameState
 												onClick={() => {
 													handleLoseBtn(part.user_uuid);
 												}}
 											>
 												L
-											</Lose>
+											</GameState>
 										) : (
-											<NotPart
+											<GameState
 												onClick={() => {
 													handleNoPartBtn(part.user_uuid);
 												}}
