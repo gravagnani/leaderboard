@@ -22,7 +22,6 @@ import {
  * @returns {object} reflection object
  */
 const createGame = async (req, res) => {
-	console.log(req);
 	const user = req.user;
 	const leaderboard_uuid = req.params.uuid;
 	const { team_win, team_lose } = req.body;
@@ -263,7 +262,6 @@ const createGame = async (req, res) => {
 		successMessage.data = team_all_upd_db;
 		return res.status(status.created).send(successMessage);
 	} catch (error) {
-		console.log(error);
 		dbQuery.rollbackTransaction();
 		if (error.routine === "_bt_check_unique") {
 			errorMessage.error = "Create Game internal error";
@@ -272,7 +270,49 @@ const createGame = async (req, res) => {
 		errorMessage.error = "Operation was not successful";
 		return res.status(status.error).send(errorMessage);
 	}
-
 };
 
-export { createGame };
+/**
+ * Create A Game
+ * @param {object} req
+ * @param {object} res
+ * @returns {object} reflection object
+ */
+const getLeaderboardGames = async (req, res) => {
+	const leaderboard_uuid = req.params.uuid;
+	// if not specified than zero
+	const N = req.params.N || 0;
+
+	if (!leaderboard_uuid) {
+		errorMessage.error = "Specify the leaderboard UUID";
+		return res.status(status.bad).send(errorMessage);
+	}
+
+	const getLeaderboardGamesQuery = `
+		SELECT 
+			game_uuid, leaderboard_uuid, team_win, team_win_names, team_lose, 
+			team_lose_names, team_draw, team_draw_names, to_char(modified_at, 'Dy DD Mon') as date
+		FROM game_v
+		WHERE 1=1
+			AND leaderboard_uuid = $1
+		ORDER BY modified_at DESC
+		LIMIT ($2)
+	`;
+	const get_leaderboard_games_values = [leaderboard_uuid, N];
+
+	try {
+		var { rows } = await dbQuery.query(
+			getLeaderboardGamesQuery,
+			get_leaderboard_games_values
+		);
+		console.log(rows);
+		successMessage.data = rows;
+		return res.status(status.created).send(successMessage);
+	} catch (error) {
+		console.log(error);
+		errorMessage.error = "Operation was not successful";
+		return res.status(status.error).send(errorMessage);
+	}
+};
+
+export { createGame, getLeaderboardGames };

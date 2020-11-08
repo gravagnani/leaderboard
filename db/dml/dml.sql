@@ -199,3 +199,39 @@ select *
 from leaderboard_dev.leaderboard_v
 ;
 
+
+------------------------------
+---------- GAME VIEW ---------
+------------------------------
+
+-- drop view leaderboard_dev.game_v
+
+create or replace view leaderboard_dev.game_v as
+	with 
+		win as (select 1 win_code),
+		lose as (select 2 lose_code),
+		draw as (select 3 draw_code)
+	select
+		  g.id
+		, g.uuid as game_uuid
+		, g.leaderboard_uuid
+		, string_agg(case when team=(select win_code from win) then user_uuid end, ',') as team_win
+		, string_agg(case when team=(select lose_code from lose) then user_uuid end, ',') as team_lose
+		, string_agg(case when team=(select draw_code from draw) then user_uuid end, ',') as team_draw
+		, g.modified_at
+		, g.modified_by
+	from leaderboard_dev.game g inner join leaderboard_dev.user_game ug 
+		on (g.uuid = ug.game_uuid)
+	group by 
+	  	  g.id
+		, g.uuid
+		, g.leaderboard_uuid
+		, g.modified_at
+		, g.modified_by
+;
+
+
+select *
+from leaderboard_dev.game_v
+;
+

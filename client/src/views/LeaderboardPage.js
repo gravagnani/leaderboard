@@ -19,8 +19,11 @@ import {
 	getLeaderboardParticipants,
 } from "../controllers/leaderboardController";
 
+import { getLeaderboardGames } from "../controllers/gameController";
+
 const HighlightedText = tw.span`text-primary-500`;
 
+/*
 const participants_def = [
 	{
 		//position: 1,
@@ -54,7 +57,39 @@ const participants_def = [
 		image:
 			"https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=256&q=80",
 	},
-];
+];*/
+
+/*
+const games = [
+	{
+		date: "Sat Oct 24 2020",
+		player1: "Gilda",
+		score1: "+10",
+		player2: "Beppe",
+		score2: "-5",
+	},
+	{
+		date: "Sat Oct 24 2020",
+		player1: "Gilda",
+		score1: "+10",
+		player2: "Beppe",
+		score2: "-5",
+	},
+	{
+		date: "Sat Oct 24 2020",
+		player1: "Gilda",
+		score1: "+10",
+		player2: "Beppe",
+		score2: "-5",
+	},
+	{
+		date: "Sat Oct 24 2020",
+		player1: "Gilda",
+		score1: "+10",
+		player2: "Beppe",
+		score2: "-5",
+	},
+];*/
 
 export default () => {
 	const user = JSON.parse(localStorage.getItem("user"));
@@ -63,7 +98,8 @@ export default () => {
 	// devono arrivare gia ordinati dal db!
 	const [participants, setParticipants] = useState([]);
 	const [loadParticipants, setLoadParticipants] = useState(true);
-	//const [participants, setParticipants] = useState(participants_def);
+	const [games, setGames] = useState([]);
+	const [loadGames, setLoadGames] = useState(true);
 
 	!leaderboard &&
 		getLeaderboardByUUID(leaderboard_uuid)
@@ -85,6 +121,19 @@ export default () => {
 				}
 				setParticipants(e.data);
 				setLoadParticipants(false);
+			})
+			.catch((e) => {
+				console.log(e);
+			});
+
+	loadGames &&
+		getLeaderboardGames(leaderboard_uuid, 8)
+			.then((e) => {
+				if (e.status == "error") {
+					throw new Error(e.error);
+				}
+				setGames(e.data);
+				setLoadGames(false);
 			})
 			.catch((e) => {
 				console.log(e);
@@ -130,6 +179,9 @@ export default () => {
 						participants={participants}
 						setParticipants={setParticipants}
 						setLoadParticipants={setLoadParticipants}
+						games={games}
+						setGames={setGames}
+						setLoadGames={setLoadGames}
 					/>
 				</>
 			) : (

@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import tw from "twin.macro";
+import moment from "moment";
 import styled from "styled-components";
 import { motion } from "framer-motion";
 import { SectionHeading } from "components/misc/Headings.js";
@@ -92,45 +93,21 @@ const LastGamesContainer = styled.div`
 		${tw`text-base xl:text-lg mt-0 lg:max-w-xs`}
 	}
 	${GameScore} {
-		${tw`mt-3 text-sm text-secondary-100 font-normal leading-none`}
+		${tw`text-sm text-secondary-100 font-normal leading-none`}
 	}
 	${GameDate} {
-		${tw`mt-5 text-sm text-secondary-100 font-normal leading-none`}
+		${tw`text-sm text-secondary-100 font-normal leading-none`}
 	}
 `;
 
-const GameTextContainer = tw.div``;
-
-const recentGames = [
-	{
-		date: "Sat Oct 24 2020",
-		player1: "Gilda",
-		score1: "+10",
-		player2: "Beppe",
-		score2: "-5",
-	},
-	{
-		date: "Sat Oct 24 2020",
-		player1: "Gilda",
-		score1: "+10",
-		player2: "Beppe",
-		score2: "-5",
-	},
-	{
-		date: "Sat Oct 24 2020",
-		player1: "Gilda",
-		score1: "+10",
-		player2: "Beppe",
-		score2: "-5",
-	},
-	{
-		date: "Sat Oct 24 2020",
-		player1: "Gilda",
-		score1: "+10",
-		player2: "Beppe",
-		score2: "-5",
-	},
-];
+const GameTextContainer = styled(motion.div)((props) => [
+	props.gameState == "W"
+		? tw`text-green-500`
+		: props.gameState == "L"
+		? tw`text-red-500`
+		: tw``,
+	tw`my-auto text-left`,
+]);
 
 export default ({
 	user,
@@ -138,6 +115,9 @@ export default ({
 	participants,
 	setParticipants,
 	setLoadParticipants,
+	games,
+	setGames,
+	setLoadGames,
 }) => {
 	const [newGameMode, setNewGameMode] = useState(false);
 	const [winList, setWinList] = useState([]);
@@ -185,6 +165,7 @@ export default ({
 					throw new Error(e.error);
 				}
 				setLoadParticipants(true);
+				setLoadGames(true);
 			})
 			.catch((e) => {
 				console.log(e);
@@ -297,18 +278,18 @@ export default ({
 					<LastGamesContainer>
 						<Heading>Last Games</Heading>
 						<GamesContainer>
-							{recentGames.map((game, index) => (
+							{games.map((game, index) => (
 								<Game key={index} className="group">
 									<GameTextContainer>
 										<GameDate>{game.date}</GameDate>
 									</GameTextContainer>
-									<GameTextContainer>
-										<Player>{game.player1}</Player>
-										<GameScore>{game.score1}</GameScore>
+									<GameTextContainer gameState={"W"}>
+										<Player>{game.team_win_names}</Player>
+										<GameScore>{game.team_scores}</GameScore>
 									</GameTextContainer>
-									<GameTextContainer>
-										<Player>{game.player1}</Player>
-										<GameScore>{game.score2}</GameScore>
+									<GameTextContainer gameState={"L"}>
+										<Player>{game.team_lose_names}</Player>
+										<GameScore>{game.team_scores}</GameScore>
 									</GameTextContainer>
 								</Game>
 							))}
