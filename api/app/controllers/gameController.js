@@ -82,11 +82,11 @@ const createGame = async (req, res) => {
 
 	const createGameQuery = `
 		INSERT INTO game (
-			uuid, leaderboard_uuid, modified_at, modified_by
+			uuid, leaderboard_uuid, modified_at, modified_by, created_at, created_by
 		) VALUES (
-			$1, $2, $3, $4
+			$1, $2, $3, $4, $5, $6
 		) RETURNING 
-			uuid, leaderboard_uuid, modified_at, modified_by
+			uuid, leaderboard_uuid, created_at, created_by
 	`;
 	const new_game_uuid = generateUUID(user.uuid + new Date());
 	const create_game_values = [
@@ -94,15 +94,18 @@ const createGame = async (req, res) => {
 		leaderboard_uuid,
 		modified_at,
 		modified_by,
+		created_at,
+		created_by,
 	];
 
 	const insertUserGameQuery = `
 		INSERT INTO user_game (
-			game_uuid, user_uuid, team, modified_at, modified_by
+			game_uuid, user_uuid, team, mean_old, variance_old, mean_new, variance_new, 
+			modified_at, modified_by, created_at, created_by
 		) VALUES (
-			$1, $2, $3, $4, $5
+			$1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11
 		) RETURNING 
-			game_uuid, user_uuid, team, modified_at, modified_by
+			game_uuid, user_uuid, team, created_at, created_by
 	`;
 	var insert_user_game_values = [];
 
@@ -166,41 +169,6 @@ const createGame = async (req, res) => {
 
 		// OK -> insert into db
 
-		// create game -> all transactional
-		await dbQuery.beginTransaction();
-
-		var { rows } = await dbQuery.query(createGameQuery, create_game_values);
-		var new_game = rows[0];
-
-		// associate teams with game -> insert in user_game table
-		for (const u_uuid of team_win) {
-			insert_user_game_values = [
-				new_game.uuid,
-				u_uuid,
-				WIN_TEAM,
-				modified_at,
-				modified_by,
-			];
-			var { rows } = await dbQuery.query(
-				insertUserGameQuery,
-				insert_user_game_values
-			);
-		}
-
-		for (const u_uuid of team_lose) {
-			insert_user_game_values = [
-				new_game.uuid,
-				u_uuid,
-				LOSE_TEAM,
-				modified_at,
-				modified_by,
-			];
-			var { rows } = await dbQuery.query(
-				insertUserGameQuery,
-				insert_user_game_values
-			);
-		}
-
 		// update users with new mean and variance
 		// create only one array (join team_win_db and team_lose_db) with both winners and losers
 
@@ -210,41 +178,92 @@ const createGame = async (req, res) => {
 
 		switch (leaderboard_db.mode) {
 			case "C":
-				team_win_db.forEach(
-					(p) => (p.user_mean = p.user_mean + CLASSIC_WIN_POINTS)
-				);
-				team_lose_db.forEach(
-					(p) => (p.user_mean = p.user_mean + CLASSIC_LOSE_POINTS)
-				);
+				team_win_db.forEach((p) => {
+					p.user_mean_new = p.user_mean + CLASSIC_WIN_POINTS;
+					p.team = WIN_TEAM;
+				});
+				team_lose_db.forEach((p) => {
+					p.user_mean_new = p.user_mean + CLASSIC_LOSE_POINTS;
+					p.team = LOSE_TEAM;
+				});
 				team_all = team_win_db.concat(team_lose_db);
 				break;
 			case "T":
 				team_win_db.forEach((p) => {
 					p.skill = [p.user_mean, p.user_variance];
 					p.rank = WIN_TEAM;
+					p.team = WIN_TEAM;
 				});
 				team_lose_db.forEach((p) => {
 					p.skill = [p.user_mean, p.user_variance];
 					p.rank = LOSE_TEAM;
+					p.team = LOSE_TEAM;
 				});
 				team_all = team_win_db.concat(team_lose_db);
 				// calculate new scores
 				trueskill.AdjustPlayers(team_all);
 				team_all.forEach((p) => {
-					p.user_mean = p.skill[0];
-					p.user_variance = p.skill[1];
+					p.user_mean_new = p.skill[0];
+					p.user_variance_new = p.skill[1];
 					delete p.skill;
 					delete p.rank;
 				});
 				break;
 		}
 
+		// create game -> all transactional
+		await dbQuery.beginTransaction();
+
+		var { rows } = await dbQuery.query(createGameQuery, create_game_values);
+		var new_game = rows[0];
+
+		// associate teams with game -> insert in user_game table
+		for (const p of team_all) {
+			insert_user_game_values = [
+				new_game.uuid,
+				p.user_uuid,
+				p.team,
+				p.user_mean, // mean_old
+				p.user_variance, //cvariance_old
+				p.user_mean_new,
+				p.user_variance_new,
+				modified_at,
+				modified_by,
+				created_at,
+				created_by,
+			];
+			var { rows } = await dbQuery.query(
+				insertUserGameQuery,
+				insert_user_game_values
+			);
+		}
+
+		/*for (const u_uuid of team_lose) {
+			insert_user_game_values = [
+				new_game.uuid,
+				u_uuid,
+				LOSE_TEAM,
+				// mean_old
+				// variance_old
+				// mean_new
+				// variance_new
+				modified_at,
+				modified_by,
+				created_at,
+				created_by,
+			];
+			var { rows } = await dbQuery.query(
+				insertUserGameQuery,
+				insert_user_game_values
+			);
+		}*/
+
 		// update the db
 		var team_all_upd_db = [];
 		for (const p of team_all) {
 			update_update_user_leaderbaord_values = [
-				p.user_mean,
-				p.user_variance,
+				p.user_mean_new,
+				p.user_variance_new,
 				modified_at,
 				modified_by,
 				p.user_uuid,
@@ -262,6 +281,7 @@ const createGame = async (req, res) => {
 		successMessage.data = team_all_upd_db;
 		return res.status(status.created).send(successMessage);
 	} catch (error) {
+		console.log(error);
 		dbQuery.rollbackTransaction();
 		if (error.routine === "_bt_check_unique") {
 			errorMessage.error = "Create Game internal error";
@@ -290,8 +310,8 @@ const getLeaderboardGames = async (req, res) => {
 
 	const getLeaderboardGamesQuery = `
 		SELECT 
-			game_uuid, leaderboard_uuid, team_win, team_win_names, team_lose, 
-			team_lose_names, team_draw, team_draw_names, to_char(modified_at, 'Dy DD Mon') as date
+			game_uuid, leaderboard_uuid, users_uuid, users_name, users_team,
+			users_delta, to_char(created_at, 'Dy DD Mon') as date
 		FROM game_v
 		WHERE 1=1
 			AND leaderboard_uuid = $1
@@ -306,6 +326,22 @@ const getLeaderboardGames = async (req, res) => {
 			get_leaderboard_games_values
 		);
 		console.log(rows);
+		rows.forEach((game) => {
+			const uuids = game.users_uuid.split(",");
+			const names = game.users_name.split(",");
+			const teams = game.users_team.split(",");
+			const deltas = game.users_delta.split(",");
+			game.users = [];
+			for (var i = 0; i < uuids.length; i++) {
+				game.users.push({
+					user_uuid: uuids[i],
+					user_full_name: names[i],
+					user_team: teams[i],
+					user_delta: deltas[i],
+				});
+			}
+		});
+
 		successMessage.data = rows;
 		return res.status(status.created).send(successMessage);
 	} catch (error) {

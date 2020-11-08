@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import tw from "twin.macro";
-import moment from "moment";
 import styled from "styled-components";
 import { motion } from "framer-motion";
 import { SectionHeading } from "components/misc/Headings.js";
@@ -44,7 +43,6 @@ const Score = tw.div`mt-6 font-medium flex items-center`;
 const InputName = tw.input` appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-purple-500`;
 const AuthorImage = tw.img`w-12 h-12 rounded-full`;
 const AuthorNameAndProfession = tw.div`ml-4`;
-const GameScore = tw.h6`font-semibold text-lg`;
 const GameDate = tw.h6`font-semibold text-lg`;
 const AuthorProfile = tw.p`text-secondary-100 text-sm`;
 const Table = tw.table`min-w-full divide-y divide-gray-200 mt-16 mr-20`;
@@ -58,6 +56,15 @@ const Win = tw.div`bg-green-400 hover:bg-green-500 hover:cursor-pointer text-whi
 const Lose = tw.div`bg-red-400 hover:bg-red-500 hover:cursor-pointer text-white w-12 h-12 text-center font-bold rounded-full flex items-center justify-center`;
 const NotPart = tw.div`bg-primary-100 hover:bg-primary-200 hover:cursor-pointer text-white w-12 h-12 text-center font-bold rounded-full flex items-center justify-center`;
 const GameState = tw.div`text-white w-12 h-12 text-center font-bold flex items-center justify-center`;
+
+const GameScore = styled(motion.h6)((props) => [
+	props.gameResult == "W"
+		? tw`text-green-500`
+		: props.gameResult == "L"
+		? tw`text-red-500`
+		: tw``,
+	tw`font-semibold text-lg my-1`,
+]);
 
 const LeaderboardContainer = styled.div`
 	${tw`lg:w-2/3 md:pr-20`}
@@ -90,10 +97,10 @@ const LastGamesContainer = styled.div`
 		${tw`flex justify-between hover:bg-gray-300 bg-gray-200 px-10 py-2 mb-4 shadow-md max-w-none w-full sm:w-1/2 lg:w-auto mr-0`}
 	}
 	${Player} {
-		${tw`text-base xl:text-lg mt-0 lg:max-w-xs`}
+		${tw`text-base xl:text-lg mt-0 lg:max-w-xs my-1`}
 	}
 	${GameScore} {
-		${tw`text-sm text-secondary-100 font-normal leading-none`}
+		${tw`text-sm font-normal leading-none`}
 	}
 	${GameDate} {
 		${tw`text-sm text-secondary-100 font-normal leading-none`}
@@ -101,11 +108,6 @@ const LastGamesContainer = styled.div`
 `;
 
 const GameTextContainer = styled(motion.div)((props) => [
-	props.gameState == "W"
-		? tw`text-green-500`
-		: props.gameState == "L"
-		? tw`text-red-500`
-		: tw``,
 	tw`my-auto text-left`,
 ]);
 
@@ -283,14 +285,22 @@ export default ({
 									<GameTextContainer>
 										<GameDate>{game.date}</GameDate>
 									</GameTextContainer>
-									<GameTextContainer gameState={"W"}>
-										<Player>{game.team_win_names}</Player>
-										<GameScore>{game.team_scores}</GameScore>
-									</GameTextContainer>
-									<GameTextContainer gameState={"L"}>
-										<Player>{game.team_lose_names}</Player>
-										<GameScore>{game.team_scores}</GameScore>
-									</GameTextContainer>
+									{game.users.map((user, index2) => (
+										<GameTextContainer key={index2}>
+											<Player>{user.user_full_name}</Player>
+											<GameScore
+												gameResult={
+													user.user_team == 1
+														? "W"
+														: user.user_team == 2
+														? "L"
+														: "D"
+												}
+											>
+												{user.user_delta}
+											</GameScore>
+										</GameTextContainer>
+									))}
 								</Game>
 							))}
 						</GamesContainer>

@@ -83,10 +83,10 @@ create table leaderboard_dev.user_leaderboard (
 	, user_full_name	varchar
 	, user_mean			real
 	, user_variance		real
-	, created_at 	timestamptz
-	, created_by	varchar
-	, modified_at 	timestamptz
-	, modified_by	varchar
+	, created_at 		timestamptz
+	, created_by		varchar
+	, modified_at 		timestamptz
+	, modified_by		varchar
 	
 	, primary key(id)
 	, foreign key(user_uuid) references leaderboard_dev.users(uuid)
@@ -108,10 +108,10 @@ create table leaderboard_dev.game (
 	  id 				serial
 	, uuid				varchar unique
 	, leaderboard_uuid	varchar
-	, created_at 	timestamptz
-	, created_by	varchar
-	, modified_at 	timestamptz
-	, modified_by	varchar
+	, created_at 		timestamptz
+	, created_by		varchar
+	, modified_at 		timestamptz
+	, modified_by		varchar
 	
 	, primary key (id)
 	, foreign key (leaderboard_uuid) references leaderboard_dev.leaderboard(uuid)
@@ -134,10 +134,14 @@ create table leaderboard_dev.user_game (
 	, game_uuid			varchar
 	, user_uuid			varchar
 	, team				int
-	, created_at 	timestamptz
-	, created_by	varchar
-	, modified_at 	timestamptz
-	, modified_by	varchar
+	, mean_old			real
+	, variance_old		real
+	, mean_new			real
+	, variance_new		real
+	, created_at 		timestamptz
+	, created_by		varchar
+	, modified_at 		timestamptz
+	, modified_by		varchar
 	
 	, primary key (id)
 	, foreign key (user_uuid) references leaderboard_dev.users(uuid)
@@ -207,21 +211,22 @@ from leaderboard_dev.leaderboard_v
 -- drop view leaderboard_dev.game_v
 
 create or replace view leaderboard_dev.game_v as
-	with 
-		win as (select 1 win_code),
-		lose as (select 2 lose_code),
-		draw as (select 3 draw_code)
 	select
 		  g.id
 		, g.uuid as game_uuid
 		, g.leaderboard_uuid
-		, string_agg(case when team=(select win_code from win) then user_uuid end, ',') as team_win
-		, string_agg(case when team=(select lose_code from lose) then user_uuid end, ',') as team_lose
-		, string_agg(case when team=(select draw_code from draw) then user_uuid end, ',') as team_draw
+		, string_agg(ug.user_uuid, ',') as users_uuid
+		, string_agg(u.full_name, ',') as users_name
+		, string_agg(cast(mean_new - mean_old as varchar), ',') as users_delta
+		, g.created_at
+		, g.created_by
 		, g.modified_at
 		, g.modified_by
-	from leaderboard_dev.game g inner join leaderboard_dev.user_game ug 
-		on (g.uuid = ug.game_uuid)
+	from leaderboard_dev.game g 
+		inner join leaderboard_dev.user_game ug 
+			on (g.uuid = ug.game_uuid)
+		inner join leaderboard_dev.users u 
+			on (ug.user_uuid = u.uuid)
 	group by 
 	  	  g.id
 		, g.uuid
@@ -231,7 +236,7 @@ create or replace view leaderboard_dev.game_v as
 ;
 
 
-select *
+select to_char(modified_at, 'Dy DD Mon')
 from leaderboard_dev.game_v
 ;
 
