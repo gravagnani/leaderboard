@@ -8,8 +8,10 @@ import { errorMessage, successMessage, status } from "../helpers/status";
 
 import {
 	MAX_USERS_PER_TEAM,
+	MAX_USERS_PER_GAME,
 	WIN_TEAM,
 	LOSE_TEAM,
+	DRAW_TEAM,
 	CLASSIC_WIN_POINTS,
 	CLASSIC_LOSE_POINTS,
 	CLASSIC_DRAW_POINTS,
@@ -24,7 +26,7 @@ import {
 const createGame = async (req, res) => {
 	const user = req.user;
 	const leaderboard_uuid = req.params.uuid;
-	const { team_win, team_lose } = req.body;
+	const { team_win, team_lose, team_draw } = req.body;
 	const all_part_uuid = team_win.concat(team_lose); // forse togliere il map
 
 	const created_at = moment(new Date());
@@ -37,10 +39,17 @@ const createGame = async (req, res) => {
 
 	// one and only one participant per team
 	if (
-		team_win.length != MAX_USERS_PER_TEAM ||
-		team_lose.length != MAX_USERS_PER_TEAM
+		team_win.length + team_lose.length + team_draw.length !=
+		MAX_USERS_PER_GAME
 	) {
-		errorMessage.error = "There must be one participant per team";
+		errorMessage.error =
+			"There must be " + MAX_USERS_PER_GAME + " participants per game";
+		return res.status(status.bad).send(errorMessage);
+	}
+
+	if (team_draw.length > 0 && (team_win.length > 0 || team_lose.length > 0)) {
+		errorMessage.error =
+			"If the game was finished in draw, winners and losers should not be present";
 		return res.status(status.bad).send(errorMessage);
 	}
 
@@ -54,30 +63,49 @@ const createGame = async (req, res) => {
 	`;
 	const search_leaderboard_values = [leaderboard_uuid];
 
-	// = sql listagg users from both lists
-	var win_part_string = "";
-	var lose_part_string = "";
-	team_win.forEach((u) => (win_part_string += u + ", "));
-	team_lose.forEach((u) => (lose_part_string += u + ", "));
-	win_part_string = win_part_string.substring(0, win_part_string.length - 2);
-	lose_part_string = lose_part_string.substring(
-		0,
-		lose_part_string.length - 2
-	);
-	const searchUsersLeaderboardQuery = `
-		SELECT user_uuid, user_mean, user_variance
-		FROM user_leaderboard
-		WHERE 1=1
-			AND leaderboard_uuid = $1
-			AND user_uuid IN ($2)
-	`;
+	// create dinamically
+	const searchUsersPreparedStatementFnc = (params_list) => {
+		// first param is leaderboard_uuid, so start from 2
+		var params = [];
+		for (var i = 1; i < params_list.length; i++) {
+			params.push("$" + Number(i + 1));
+		}
+		if (params_list.length == 1) {
+			// se ho solo un parametro (non ho utenti) -> non trovare niente (id=-1)
+			return (
+				`
+				SELECT user_uuid, user_mean, user_variance
+				FROM user_leaderboard
+				WHERE 1=1
+					AND leaderboard_uuid = $1
+					AND id = -1`
+			);
+		}
+		return (
+			`
+			SELECT user_uuid, user_mean, user_variance
+			FROM user_leaderboard
+			WHERE 1=1
+				AND leaderboard_uuid = $1
+				AND user_uuid IN (` +
+			params.join(",") +
+			`)`
+		);
+	};
 	const search_win_users_leaderboard_values = [
 		leaderboard_uuid,
-		win_part_string,
+		//win_part_string,
+		...team_win,
 	];
 	const search_lose_users_leaderboard_values = [
 		leaderboard_uuid,
-		lose_part_string,
+		//lose_part_string,
+		...team_lose,
+	];
+	const search_draw_users_leaderboard_values = [
+		leaderboard_uuid,
+		//draw_part_string,
+		...team_draw,
 	];
 
 	const createGameQuery = `
@@ -137,17 +165,24 @@ const createGame = async (req, res) => {
 		// participants exist and participate in the leaderboard
 		// search winners and loser separately
 		var { rows } = await dbQuery.query(
-			searchUsersLeaderboardQuery,
+			searchUsersPreparedStatementFnc(search_win_users_leaderboard_values),
 			search_win_users_leaderboard_values
 		);
 		var team_win_db = rows;
 		var { rows } = await dbQuery.query(
-			searchUsersLeaderboardQuery,
+			searchUsersPreparedStatementFnc(search_lose_users_leaderboard_values),
 			search_lose_users_leaderboard_values
 		);
 		var team_lose_db = rows;
+		var { rows } = await dbQuery.query(
+			searchUsersPreparedStatementFnc(search_draw_users_leaderboard_values),
+			search_draw_users_leaderboard_values
+		);
+		var team_draw_db = rows;
+		
 		var all_part_uuid_db = team_win_db
 			.concat(team_lose_db)
+			.concat(team_draw_db)
 			.map((p) => p.user_uuid);
 
 		var participants_exist = true;
@@ -186,6 +221,10 @@ const createGame = async (req, res) => {
 					p.user_mean_new = p.user_mean + CLASSIC_LOSE_POINTS;
 					p.team = LOSE_TEAM;
 				});
+				team_draw_db.forEach((p) => {
+					p.user_mean_new = p.user_mean + CLASSIC_DRAW_POINTS;
+					p.team = DRAW_TEAM;
+				});
 				team_all = team_win_db.concat(team_lose_db);
 				break;
 			case "T":
@@ -199,7 +238,13 @@ const createGame = async (req, res) => {
 					p.rank = LOSE_TEAM;
 					p.team = LOSE_TEAM;
 				});
-				team_all = team_win_db.concat(team_lose_db);
+				team_draw_db.forEach((p) => {
+					p.skill = [p.user_mean, p.user_variance];
+					p.rank = DRAW_TEAM;
+					p.team = DRAW_TEAM;
+				});
+				team_all = team_win_db.concat(team_lose_db).concat(team_draw_db);
+				console.log(team_all);
 				// calculate new scores
 				trueskill.AdjustPlayers(team_all);
 				team_all.forEach((p) => {

@@ -113,27 +113,27 @@ export default () => {
 				console.log(e);
 			});
 
-	loadParticipants &&
+	leaderboard && loadParticipants &&
 		getLeaderboardParticipants(leaderboard_uuid)
 			.then((e) => {
 				if (e.status == "error") {
 					throw new Error(e.error);
 				}
-				setParticipants(e.data);
 				setLoadParticipants(false);
+				setParticipants(e.data);
 			})
 			.catch((e) => {
 				console.log(e);
 			});
 
-	loadGames &&
+	leaderboard && loadGames && loadParticipants &&
 		getLeaderboardGames(leaderboard_uuid, 8)
 			.then((e) => {
 				if (e.status == "error") {
 					throw new Error(e.error);
 				}
-				setGames(e.data);
 				setLoadGames(false);
+				setGames(e.data);
 			})
 			.catch((e) => {
 				console.log(e);
@@ -182,6 +182,7 @@ export default () => {
 						games={games}
 						setGames={setGames}
 						setLoadGames={setLoadGames}
+						userIsCreator={userIsCreator}
 					/>
 				</>
 			) : (

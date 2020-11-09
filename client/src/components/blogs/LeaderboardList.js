@@ -7,6 +7,8 @@ import { Container, ContentWithPaddingXl } from "components/misc/Layouts.js";
 
 import { createGame } from "../../controllers/gameController";
 
+import { WIN_TEAM, LOSE_TEAM, DRAW_TEAM } from "../../constants";
+
 //import searchImage from "../../images/search-image.svg";
 import searchImage from "../../images/logo.svg";
 
@@ -24,10 +26,12 @@ const User = styled(motion.a)((props) => [
 	tw`hover:bg-gray-300 bg-gray-200`,
 	props.isLoggedUser ? tw`text-primary-500` : tw``,
 	props.newGameMode ? tw`cursor-pointer` : tw``,
-	props.gameState == "W"
+	props.gameState == WIN_TEAM
 		? tw`bg-green-200 hover:bg-green-300`
-		: props.gameState == "L"
+		: props.gameState == LOSE_TEAM
 		? tw`bg-red-200 hover:bg-red-300`
+		: props.gameState == DRAW_TEAM
+		? tw`bg-blue-200 hover:bg-blue-300`
 		: tw``,
 ]);
 const Image = styled(motion.div)((props) => [
@@ -35,7 +39,7 @@ const Image = styled(motion.div)((props) => [
 	tw`h-64 bg-cover bg-center rounded`,
 ]);
 const Player = tw.h5`mt-6 text-xl font-bold transition duration-300 group-hover:text-primary-500`;
-const Position = tw.h5`mt-6 flex items-center text-xl font-bold transition duration-300 group-hover:text-primary-500`;
+const Position = tw.h5`mt-6 w-1 flex items-center text-xl font-bold transition duration-300 group-hover:text-primary-500`;
 const Description = tw.p`mt-2 font-medium text-secondary-100 leading-loose text-sm`;
 const AuthorInfo = tw.div`mt-6 flex items-center`;
 const UserName = tw.div`mt-6 flex items-center`;
@@ -58,10 +62,12 @@ const NotPart = tw.div`bg-primary-100 hover:bg-primary-200 hover:cursor-pointer 
 const GameState = tw.div`text-white w-12 h-12 text-center font-bold flex items-center justify-center`;
 
 const GameScore = styled(motion.h6)((props) => [
-	props.gameResult == "W"
+	props.gameResult == WIN_TEAM
 		? tw`text-green-500`
-		: props.gameResult == "L"
+		: props.gameResult == LOSE_TEAM
 		? tw`text-red-500`
+		: props.gameResult == DRAW_TEAM
+		? tw`text-blue-500`
 		: tw``,
 	tw`font-semibold text-lg my-1`,
 ]);
@@ -108,7 +114,7 @@ const LastGamesContainer = styled.div`
 `;
 
 const GameTextContainer = styled(motion.div)((props) => [
-	tw`my-auto text-left`,
+	tw`my-auto text-center`,
 ]);
 
 export default ({
@@ -120,11 +126,14 @@ export default ({
 	games,
 	setGames,
 	setLoadGames,
+	userIsCreator,
 }) => {
 	const [newGameMode, setNewGameMode] = useState(false);
 	const [winList, setWinList] = useState([]);
 	const [loseList, setLoseList] = useState([]);
+	const [drawList, setDrawList] = useState([]);
 
+	// none -> win -> lose -> draw -> none
 	const handleWinBtn = (user_uuid) => {
 		setWinList(winList.filter((e) => e != user_uuid));
 		setLoseList([user_uuid]);
@@ -132,10 +141,24 @@ export default ({
 		//setLoseList([...loseList, user_uuid]);
 	};
 	const handleLoseBtn = (user_uuid) => {
-		setLoseList(loseList.filter((e) => e != user_uuid));
+		setDrawList([...winList, ...loseList, user_uuid]);
+		setWinList([]);
+		setLoseList([]);
+		//setDrawList([user_uuid]);
+	};
+	const handleDrawBtn = (user_uuid) => {
+		setDrawList(drawList.filter((e) => e != user_uuid));
 	};
 	const handleNoPartBtn = (user_uuid) => {
-		winList.length == 0 ? setWinList([user_uuid]) : setLoseList([user_uuid]);
+		//winList.length == 0 ? setWinList([user_uuid]) : setLoseList([user_uuid]);
+		// MOLTO CONTORTO!!!! (MA IN QUALCHE MODO FUNZIONA)
+		winList.length == 0 && drawList.length == 0
+			? setWinList([user_uuid])
+			: loseList == 0 && drawList.length == 0
+			? setLoseList([user_uuid])
+			: winList.length > 0 && loseList.length > 0
+			? setLoseList([user_uuid])
+			: setDrawList([user_uuid, drawList[0]]);
 		// decommentare per le squadre
 		//setWinList([...winList, user_uuid]);
 	};
@@ -145,23 +168,27 @@ export default ({
 			? handleWinBtn(user_uuid)
 			: loseList.includes(user_uuid)
 			? handleLoseBtn(user_uuid)
+			: drawList.includes(user_uuid)
+			? handleDrawBtn(user_uuid)
 			: handleNoPartBtn(user_uuid);
 	};
 
 	const handleNewGameBtnClick = () => {
 		setWinList([]);
 		setLoseList([]);
+		setDrawList([]);
 		setNewGameMode(!newGameMode);
 	};
 
 	const handleCancelBtnClick = () => {
 		setWinList([]);
 		setLoseList([]);
+		setDrawList([]);
 		setNewGameMode(!newGameMode);
 	};
 
 	const handleSaveBtnClick = () => {
-		createGame(leaderboard.uuid, winList, loseList)
+		createGame(leaderboard.uuid, winList, loseList, drawList)
 			.then((e) => {
 				if (e.status == "error") {
 					throw new Error(e.error);
@@ -176,6 +203,7 @@ export default ({
 		setTimeout(() => {
 			setWinList([]);
 			setLoseList([]);
+			setDrawList([]);
 		}, 2000);
 	};
 
@@ -196,43 +224,47 @@ export default ({
 					<LeaderboardContainer>
 						<HeadingRow>
 							<Heading>Leaderboard</Heading>
-							{!newGameMode ? (
-								<HeadingButton
-									onClick={() => {
-										handleNewGameBtnClick();
-									}}
-								>
-									New Game
-								</HeadingButton>
-							) : winList.length == 0 || loseList.length == 0 ? (
-								<HeadingButton
-									onClick={() => {
-										handleCancelBtnClick();
-									}}
-								>
-									Cancel
-								</HeadingButton>
-							) : (
-								<HeadingButton
-									onClick={() => {
-										handleSaveBtnClick();
-									}}
-								>
-									Save
-								</HeadingButton>
-							)}
+							{userIsCreator &&
+								(!newGameMode ? (
+									<HeadingButton
+										onClick={() => {
+											handleNewGameBtnClick();
+										}}
+									>
+										New Game
+									</HeadingButton>
+								) : winList.length + loseList.length + drawList.length <
+								  2 ? (
+									<HeadingButton
+										onClick={() => {
+											handleCancelBtnClick();
+										}}
+									>
+										Cancel
+									</HeadingButton>
+								) : (
+									<HeadingButton
+										onClick={() => {
+											handleSaveBtnClick();
+										}}
+									>
+										Save
+									</HeadingButton>
+								))}
 						</HeadingRow>
 						<UsersContainer>
 							{participants.map((part, index) => (
 								<User
 									key={index}
-									isLoggedUser={part.user_uuid == user.uuid}
+									isLoggedUser={user && part.user_uuid == user.uuid}
 									newGameMode={newGameMode}
 									gameState={
 										winList.includes(part.user_uuid)
-											? "W"
+											? WIN_TEAM
 											: loseList.includes(part.user_uuid)
-											? "L"
+											? LOSE_TEAM
+											: drawList.includes(part.user_uuid)
+											? DRAW_TEAM
 											: null
 									}
 									onClick={() =>
@@ -250,27 +282,13 @@ export default ({
 										{!newGameMode ? (
 											part.user_mean
 										) : winList.includes(part.user_uuid) ? (
-											<GameState
-												onClick={() => {
-													handleWinBtn(part.user_uuid);
-												}}
-											>
-												W
-											</GameState>
+											<GameState>W</GameState>
 										) : loseList.includes(part.user_uuid) ? (
-											<GameState
-												onClick={() => {
-													handleLoseBtn(part.user_uuid);
-												}}
-											>
-												L
-											</GameState>
+											<GameState>L</GameState>
+										) : drawList.includes(part.user_uuid) ? (
+											<GameState>D</GameState>
 										) : (
-											<GameState
-												onClick={() => {
-													handleNoPartBtn(part.user_uuid);
-												}}
-											/>
+											<GameState />
 										)}
 									</Score>
 								</User>
@@ -288,15 +306,7 @@ export default ({
 									{game.users.map((user, index2) => (
 										<GameTextContainer key={index2}>
 											<Player>{user.user_full_name}</Player>
-											<GameScore
-												gameResult={
-													user.user_team == 1
-														? "W"
-														: user.user_team == 2
-														? "L"
-														: "D"
-												}
-											>
+											<GameScore gameResult={user.user_team}>
 												{user.user_delta}
 											</GameScore>
 										</GameTextContainer>

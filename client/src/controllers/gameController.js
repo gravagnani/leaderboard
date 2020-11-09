@@ -7,7 +7,7 @@ import { BASE_URL } from "../config";
  * @param {*} team_lose the array of losers' uuids
  * @returns the array of affected users with updated scores
  */
-const createGame = async (leaderboard_uuid, team_win, team_lose) => {
+const createGame = async (leaderboard_uuid, team_win, team_lose, team_draw) => {
 	const user = JSON.parse(localStorage.getItem("user"));
 	const response = await fetch(
 		BASE_URL + "/api/v1/leaderboard/" + leaderboard_uuid + "/game",
@@ -23,7 +23,7 @@ const createGame = async (leaderboard_uuid, team_win, team_lose) => {
 			},
 			redirect: "follow", // manual, *follow, error
 			referrerPolicy: "no-referrer", // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url
-			body: JSON.stringify({ team_win, team_lose }), // body data type must match "Content-Type" header
+			body: JSON.stringify({ team_win, team_lose, team_draw }), // body data type must match "Content-Type" header
 		}
 	);
 	return response.json();
