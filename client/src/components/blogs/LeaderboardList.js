@@ -59,7 +59,7 @@ const TableRowItem = tw.td`px-6 py-4 whitespace-no-wrap`;
 const Win = tw.div`bg-green-400 hover:bg-green-500 hover:cursor-pointer text-white w-12 h-12 text-center font-bold rounded-full flex items-center justify-center`;
 const Lose = tw.div`bg-red-400 hover:bg-red-500 hover:cursor-pointer text-white w-12 h-12 text-center font-bold rounded-full flex items-center justify-center`;
 const NotPart = tw.div`bg-primary-100 hover:bg-primary-200 hover:cursor-pointer text-white w-12 h-12 text-center font-bold rounded-full flex items-center justify-center`;
-const GameState = tw.div`text-white w-12 h-12 text-center font-bold flex items-center justify-center`;
+const GameState = tw.div`text-white w-12 h-12 text-center font-bold flex items-center justify-center select-none`;
 
 const GameScore = styled(motion.h6)((props) => [
 	props.gameResult == WIN_TEAM
@@ -281,14 +281,16 @@ export default ({
 									<Score>
 										{!newGameMode ? (
 											part.user_mean
-										) : winList.includes(part.user_uuid) ? (
-											<GameState>W</GameState>
-										) : loseList.includes(part.user_uuid) ? (
-											<GameState>L</GameState>
-										) : drawList.includes(part.user_uuid) ? (
-											<GameState>D</GameState>
 										) : (
-											<GameState />
+											<GameState>
+												{winList.includes(part.user_uuid)
+													? "W"
+													: loseList.includes(part.user_uuid)
+													? "L"
+													: drawList.includes(part.user_uuid)
+													? "L"
+													: null}
+											</GameState>
 										)}
 									</Score>
 								</User>

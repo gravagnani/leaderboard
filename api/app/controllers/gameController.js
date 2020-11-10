@@ -244,7 +244,6 @@ const createGame = async (req, res) => {
 					p.team = DRAW_TEAM;
 				});
 				team_all = team_win_db.concat(team_lose_db).concat(team_draw_db);
-				console.log(team_all);
 				// calculate new scores
 				trueskill.AdjustPlayers(team_all);
 				team_all.forEach((p) => {
@@ -326,7 +325,6 @@ const createGame = async (req, res) => {
 		successMessage.data = team_all_upd_db;
 		return res.status(status.created).send(successMessage);
 	} catch (error) {
-		console.log(error);
 		dbQuery.rollbackTransaction();
 		if (error.routine === "_bt_check_unique") {
 			errorMessage.error = "Create Game internal error";
@@ -370,7 +368,6 @@ const getLeaderboardGames = async (req, res) => {
 			getLeaderboardGamesQuery,
 			get_leaderboard_games_values
 		);
-		console.log(rows);
 		rows.forEach((game) => {
 			const uuids = game.users_uuid.split(",");
 			const names = game.users_name.split(",");
@@ -390,7 +387,6 @@ const getLeaderboardGames = async (req, res) => {
 		successMessage.data = rows;
 		return res.status(status.created).send(successMessage);
 	} catch (error) {
-		console.log(error);
 		errorMessage.error = "Operation was not successful";
 		return res.status(status.error).send(errorMessage);
 	}

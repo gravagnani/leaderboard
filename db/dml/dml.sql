@@ -83,6 +83,7 @@ create table leaderboard_dev.user_leaderboard (
 	, user_full_name	varchar
 	, user_mean			real
 	, user_variance		real
+	, flag_active		bit
 	, created_at 		timestamptz
 	, created_by		varchar
 	, modified_at 		timestamptz
@@ -215,9 +216,10 @@ create or replace view leaderboard_dev.game_v as
 		  g.id
 		, g.uuid as game_uuid
 		, g.leaderboard_uuid
-		, string_agg(ug.user_uuid, ',') as users_uuid
-		, string_agg(u.full_name, ',') as users_name
-		, string_agg(cast(mean_new - mean_old as varchar), ',') as users_delta
+		, string_agg(ug.user_uuid, ',' order by u.full_name) as users_uuid
+		, string_agg(u.full_name, ',' order by u.full_name) as users_name
+		, string_agg(cast(ug.team as varchar), ',' order by u.full_name) as users_team
+		, string_agg(cast(mean_new - mean_old as varchar), ',' order by u.full_name) as users_delta
 		, g.created_at
 		, g.created_by
 		, g.modified_at

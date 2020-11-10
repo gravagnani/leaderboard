@@ -461,6 +461,8 @@ const getLeaderboardParticipants = async (req, res) => {
 		FROM user_leaderboard ul 
 			LEFT JOIN users u ON (ul.user_uuid = u.uuid)
 		WHERE leaderboard_uuid = $1
+			AND ul.flag_active = B'1'
+			AND u.flag_active = B'1'
 		ORDER BY user_mean desc, user_variance asc
 	;`;
 	const values = [uuid];

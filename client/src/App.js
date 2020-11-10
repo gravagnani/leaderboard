@@ -97,6 +97,7 @@ import LoginPage from "views/Login.js";
 import SignupPage from "views/Signup.js";
 import NewLeaderboardInfo from "views/NewLeaderboardInfo.js";
 import NewLeaderboardOptions from "views/NewLeaderboardOptions.js";
+import NewLeaderboardPricing from "views/NewLeaderboardPricing.js";
 import NewLeaderboardUserInfo from "views/NewLeaderboardUserInfo.js";
 import TermsOfServicePage from "views/TermsOfService.js";
 import PrivacyPolicyPage from "views/PrivacyPolicy.js";
@@ -129,6 +130,9 @@ export default function App() {
         </Route>
         <Route path="/new/info">
           <NewLeaderboardInfo />
+        </Route>
+        <Route path="/new/pricing">
+          <NewLeaderboardPricing />
         </Route>
         <Route path="/new/options">
           <NewLeaderboardOptions />

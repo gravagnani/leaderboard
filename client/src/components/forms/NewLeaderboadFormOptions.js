@@ -210,7 +210,8 @@ export default ({
 								e.preventDefault();
 								setLocalStorage();
 								history.push({
-									pathname: "/new/info",
+									//pathname: "/new/info",
+									pathname: "/new/pricing",
 								});
 							}}
 							value="Back"

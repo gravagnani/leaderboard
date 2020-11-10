@@ -60,7 +60,8 @@ export default () => {
 		} else {
 			setLocalStorage(title, place, note);
 			history.push({
-				pathname: "/new/options",
+				//pathname: "/new/options",
+				pathname: "/new/pricing",
 			});
 		}
 	};
