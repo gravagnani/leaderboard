@@ -39,7 +39,7 @@ const Image = styled(motion.div)((props) => [
 	tw`h-64 bg-cover bg-center rounded`,
 ]);
 const Player = tw.h5`mt-6 text-xl font-bold transition duration-300 group-hover:text-primary-500`;
-const Position = tw.h5`mt-6 w-1 flex items-center text-xl font-bold transition duration-300 group-hover:text-primary-500`;
+const Position = tw.h5`mt-6 w-1 flex items-center text-xl font-bold transition duration-300 group-hover:text-primary-500 select-none`;
 const Description = tw.p`mt-2 font-medium text-secondary-100 leading-loose text-sm`;
 const AuthorInfo = tw.div`mt-6 flex items-center`;
 const UserName = tw.div`mt-6 flex items-center`;

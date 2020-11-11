@@ -59,6 +59,7 @@ const doCreateLeaderboard = async () => {
 		: "classic";
 	let full_name = sessionStorage.getItem("name-input");
 	let email = sessionStorage.getItem("email-input");
+	let pricing = sessionStorage.getItem("pricing-input"); // basic - medium - large
 
 	return createLeaderboard({
 		title,
@@ -91,6 +92,16 @@ export default () => {
 		: user
 		? user.email
 		: null;
+
+	const handleBackBtnClick = () => {
+		const full_name = document.getElementById("name-input").value;
+		const email = document.getElementById("email-input").value;
+		setLocalStorage(email, full_name);
+
+		history.push({
+			pathname: "/new/options",
+		});
+	};
 
 	const handleNextBtnClick = () => {
 		const full_name = document.getElementById("name-input").value;
@@ -153,11 +164,7 @@ export default () => {
 
 						<ButtonLeft
 							onClick={(e) => {
-								e.preventDefault();
-								setLocalStorage();
-								history.push({
-									pathname: "/new/options",
-								});
+								handleBackBtnClick();
 							}}
 						>
 							Back

@@ -31,14 +31,16 @@ export default () => {
 					</>
 				}
 			/>
-			<MainFeature
-				heading={
-					<>
-						Cloud built by and for{" "}
-						<HighlightedText>Professionals</HighlightedText>
-					</>
-				}
-			/>
+			{false && (
+				<MainFeature
+					heading={
+						<>
+							Cloud built by and for{" "}
+							<HighlightedText>Professionals</HighlightedText>
+						</>
+					}
+				/>
+			)}
 			{false && (
 				<Testimonial
 					heading={

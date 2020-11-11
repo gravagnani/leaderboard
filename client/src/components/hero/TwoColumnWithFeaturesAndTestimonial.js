@@ -55,10 +55,10 @@ export default ({
   const navLinks = [
     <NavLinks key={1}>
       {/*<NavLink href="/#">About</NavLink>
-      <NavLink href="/#">Blog</NavLink>
-      <NavLink href="/#">Pricing</NavLink>
-      <NavLink href="/#">Contact Us</NavLink>
-  <NavLink href="/#">Testimonials</NavLink>*/}
+          <NavLink href="/#">Blog</NavLink>
+          <NavLink href="/#">Pricing</NavLink>
+          <NavLink href="/#">Contact Us</NavLink>
+      <NavLink href="/#">Testimonials</NavLink>*/}
     </NavLinks>,
     <NavLinks key={2}>
       <NavLink href="/signin" tw="lg:ml-12!">

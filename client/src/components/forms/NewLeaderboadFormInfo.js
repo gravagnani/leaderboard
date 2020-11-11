@@ -60,8 +60,8 @@ export default () => {
 		} else {
 			setLocalStorage(title, place, note);
 			history.push({
-				//pathname: "/new/options",
-				pathname: "/new/pricing",
+				pathname: "/new/options",
+				//pathname: "/new/pricing",
 			});
 		}
 	};
@@ -120,7 +120,8 @@ export default () => {
 						<ButtonLeft
 							onClick={(e) => {
 								history.push({
-									pathname: "/",
+									//pathname: "/",
+									pathname: "/new/pricing",
 								});
 							}}
 							value="Back"

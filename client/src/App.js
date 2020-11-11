@@ -141,7 +141,8 @@ export default function App() {
           <NewLeaderboardUserInfo />
         </Route>
         <Route path="/new">
-          <Redirect to="/new/info" />
+          {/*<Redirect to="/new/info" />*/}
+          <Redirect to="/new/pricing" />
         </Route>
         <Route path="/leaderboard">
           <LeaderboardPage />

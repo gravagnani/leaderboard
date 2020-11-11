@@ -15,7 +15,21 @@ import {
 } from "components/misc/Layouts.js";
 import { ReactComponent as CheckboxIcon } from "images/checkbox-circle.svg";
 
-const Container = tw(ContainerBase)`bg-primary-900 text-gray-100 -mx-8 px-8`;
+import logo from "../../images/logo.svg";
+
+import {
+	PRICING_BASIC,
+	PRICING_MEDIUM,
+	PRICING_LARGE,
+	MIN_USERS_BASIC,
+	MAX_USERS_BASIC,
+	MIN_USERS_MEDIUM,
+	MAX_USERS_MEDIUM,
+	MIN_USERS_LARGE,
+	MAX_USERS_LARGE,
+} from "../../constants";
+
+const Container = tw(ContainerBase)`bg-primary-500 text-gray-100 -mx-8 px-8`;
 const ContentWithPaddingXl = tw(
 	ContentBase
 )`relative z-10 mx-auto px-0 py-10 sm:px-6 md:px-8 lg:px-12 xl:px-24 sm:py-20 flex flex-col max-w-screen-xl`;
@@ -63,7 +77,7 @@ const PlanFeatures = styled.ul`
 			${tw`w-6 h-6 text-primary-500 flex-shrink-0`}
 		}
 		.text {
-			${tw`font-semibold text-primary-900 tracking-wide ml-3`}
+			${tw`font-semibold text-primary-500 tracking-wide ml-3`}
 		}
 	}
 `;
@@ -74,6 +88,33 @@ const ActionButton = styled(PrimaryButtonBase)`
 `;
 
 const WhiteBackgroundOverlay = tw.div`absolute inset-x-0 bottom-0 h-1/6 lg:h-1/3 bg-white z-0`;
+
+// todo: spostare in una libreria di helper -> usato anche in leaderboard options
+const getMinUsers = (pricing) => {
+	switch (pricing) {
+		case PRICING_BASIC:
+			return MIN_USERS_BASIC;
+
+		case PRICING_MEDIUM:
+			return MIN_USERS_MEDIUM;
+
+		case PRICING_LARGE:
+			return MIN_USERS_LARGE;
+	}
+};
+
+const getMaxUsers = (pricing) => {
+	switch (pricing) {
+		case PRICING_BASIC:
+			return MAX_USERS_BASIC;
+
+		case PRICING_MEDIUM:
+			return MAX_USERS_MEDIUM;
+
+		case PRICING_LARGE:
+			return MAX_USERS_LARGE;
+	}
+};
 
 export default ({
 	subheading = "",
@@ -86,7 +127,7 @@ export default ({
 
 	const defaultPlans = [
 		{
-			value: "basic",
+			value: PRICING_BASIC,
 			name: "Basic",
 			price: ["$0", ".00"],
 			//oldPrice: "$11.99",
@@ -95,14 +136,14 @@ export default ({
 			features: [
 				"All Scoring Systems",
 				"Unlimited Games",
-				"Unlimited time",
-				//"Up to 15 players",
+				"Unlimited Time",
+				"Up to 15 players",
 			],
 		},
 		{
-			value: "medium",
+			value: PRICING_MEDIUM,
 			name: "Medium",
-			price: ["$4", ".99/month"],
+			price: ["$9", ".99"],
 			//oldPrice: "$19.99",
 			description:
 				"Perfect for hosting blogs with lots of traffic or heavy development projects. In addition to Basic plan",
@@ -110,9 +151,9 @@ export default ({
 			//featured: "Most Popular"
 		},
 		{
-			value: "large",
+			value: PRICING_LARGE,
 			name: "Large",
-			price: ["$9", ".99/month"],
+			price: ["$19", ".99"],
 			//oldPrice: "$29.99",
 			description:
 				"Perfect for hosting production websites & API services with high traffic load. In addition to Medium plan",
@@ -123,13 +164,15 @@ export default ({
 	if (!plans) plans = defaultPlans;
 
 	const setLocalStorage = (pricing) => {
-		sessionStorage.setItem("pricing-input", pricing);
+    sessionStorage.setItem("pricing-input", pricing);
+    sessionStorage.setItem("min-users-input", getMinUsers(pricing));
+    sessionStorage.setItem("max-users-input", getMaxUsers(pricing));
 	};
 
 	const handleNextBtnClick = (pricing) => {
 		setLocalStorage(pricing);
 		history.push({
-			pathname: "/new/options",
+			pathname: "/new/info",
 		});
 	};
 
@@ -173,7 +216,9 @@ export default ({
 								))}
 							</PlanFeatures>
 							<PlanAction>
-								<ActionButton onClick={() => handleNextBtnClick(plan.value)}>
+								<ActionButton
+									onClick={() => handleNextBtnClick(plan.value)}
+								>
 									{primaryButtonText}
 								</ActionButton>
 							</PlanAction>

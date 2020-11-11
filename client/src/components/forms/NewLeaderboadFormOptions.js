@@ -7,7 +7,17 @@ import { ReactComponent as SvgDotPatternIcon } from "../../images/dot-pattern.sv
 
 import ErrorAlert from "../../alerts/ErrorAlert";
 
-import { MIN_USERS_FREE, MAX_USERS_FREE } from "../../constants";
+import {
+	PRICING_BASIC,
+	PRICING_MEDIUM,
+	PRICING_LARGE,
+	MIN_USERS_BASIC,
+	MAX_USERS_BASIC,
+	MIN_USERS_MEDIUM,
+	MAX_USERS_MEDIUM,
+	MIN_USERS_LARGE,
+	MAX_USERS_LARGE,
+} from "../../constants";
 
 const Container = tw.div`relative`;
 const Content = tw.div`max-w-screen-xl mx-auto py-20 lg:py-24`;
@@ -64,6 +74,32 @@ const setLocalStorage = (min_users, max_users, start_date, end_date) => {
 	//);
 };
 
+const getMinUsers = (pricing) => {
+	switch (pricing) {
+		case PRICING_BASIC:
+			return MIN_USERS_BASIC;
+
+		case PRICING_MEDIUM:
+			return MIN_USERS_MEDIUM;
+
+		case PRICING_LARGE:
+			return MIN_USERS_LARGE;
+	}
+};
+
+const getMaxUsers = (pricing) => {
+	switch (pricing) {
+		case PRICING_BASIC:
+			return MAX_USERS_BASIC;
+
+		case PRICING_MEDIUM:
+			return MAX_USERS_MEDIUM;
+
+		case PRICING_LARGE:
+			return MAX_USERS_LARGE;
+	}
+};
+
 export default ({
 	tabs = {
 		classical: {
@@ -82,12 +118,15 @@ export default ({
 
 	const [errorMessage, setErrorMessage] = useState(null);
 
+	const pricingInputSS = sessionStorage.getItem("pricing-input")
+		? sessionStorage.getItem("pricing-input")
+		: null;
 	const minUsersInputSS = sessionStorage.getItem("min-users-input")
 		? sessionStorage.getItem("min-users-input")
-		: MIN_USERS_FREE;
+		: getMinUsers(pricingInputSS);
 	const maxUsersInputSS = sessionStorage.getItem("max-users-input")
 		? sessionStorage.getItem("max-users-input")
-		: MAX_USERS_FREE;
+		: getMaxUsers(pricingInputSS);
 	const startDateInputSS = sessionStorage.getItem("start-date-input")
 		? sessionStorage.getItem("start-date-input")
 		: null;
@@ -97,6 +136,18 @@ export default ({
 	const activeTabIndexSS = sessionStorage.getItem("active-tab-index")
 		? sessionStorage.getItem("active-tab-index")
 		: null;
+
+	const handleBackBtnClick = () => {
+		const min_users = document.getElementById("min-users-input").value;
+		const max_users = document.getElementById("max-users-input").value;
+		const start_date = document.getElementById("start-date-input").value;
+		const end_date = document.getElementById("end-date-input").value;
+		setLocalStorage(min_users, max_users, start_date, end_date);
+		history.push({
+			pathname: "/new/info",
+			//pathname: "/new/pricing",
+		});
+	};
 
 	const handleNextBtnClick = () => {
 		const min_users = document.getElementById("min-users-input").value;
@@ -144,8 +195,8 @@ export default ({
 										id="min-users-input"
 										type="number"
 										placeholder="1"
-										min={MIN_USERS_FREE}
-										max={MAX_USERS_FREE}
+										min={getMinUsers(pricingInputSS)}
+										max={getMaxUsers(pricingInputSS)}
 										defaultValue={minUsersInputSS}
 									/>
 								</InputContainer>
@@ -155,8 +206,8 @@ export default ({
 										id="max-users-input"
 										type="number"
 										placeholder="10"
-										min={MIN_USERS_FREE}
-										max={MAX_USERS_FREE}
+										min={getMinUsers(pricingInputSS)}
+										max={getMaxUsers(pricingInputSS)}
 										defaultValue={maxUsersInputSS}
 									/>
 								</InputContainer>
@@ -207,12 +258,7 @@ export default ({
 
 						<ButtonLeft
 							onClick={(e) => {
-								e.preventDefault();
-								setLocalStorage();
-								history.push({
-									//pathname: "/new/info",
-									pathname: "/new/pricing",
-								});
+								handleBackBtnClick();
 							}}
 							value="Back"
 						>

@@ -412,9 +412,9 @@ const joinLeaderboard = async (req, res) => {
 		const joinLeaderboardQuery = `
 			INSERT INTO user_leaderboard(
 				leaderboard_uuid, user_uuid, user_full_name, user_mean, 
-				user_variance, created_at, modified_at, modified_by
+				user_variance, flag_active, created_at, modified_at, modified_by
 			) VALUES(
-					$1, $2, $3, $4, $5, $6, $7, $8
+					$1, $2, $3, $4, $5, B'1', $6, $7, $8
 			) returning leaderboard_uuid, user_uuid, user_full_name, 
 				user_mean, user_variance, modified_at`;
 		const values = [
