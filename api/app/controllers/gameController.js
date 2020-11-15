@@ -72,14 +72,12 @@ const createGame = async (req, res) => {
 		}
 		if (params_list.length == 1) {
 			// se ho solo un parametro (non ho utenti) -> non trovare niente (id=-1)
-			return (
-				`
+			return `
 				SELECT user_uuid, user_mean, user_variance
 				FROM user_leaderboard
 				WHERE 1=1
 					AND leaderboard_uuid = $1
-					AND id = -1`
-			);
+					AND id = -1`;
 		}
 		return (
 			`
@@ -161,6 +159,16 @@ const createGame = async (req, res) => {
 			errorMessage.error = "Leaderboard not found";
 			return res.status(status.notfound).send(errorMessage);
 		}
+		// start date and end date
+		if (leaderboard_db.start_date > created_at) {
+			errorMessage.error = "Leaderboard not started yet";
+			return res.status(status.conflict).send(errorMessage);
+		}
+
+		if (leaderboard_db.end_date < created_at) {
+			errorMessage.error = "Leaderboard already ended";
+			return res.status(status.conflict).send(errorMessage);
+		}
 
 		// participants exist and participate in the leaderboard
 		// search winners and loser separately
@@ -179,7 +187,7 @@ const createGame = async (req, res) => {
 			search_draw_users_leaderboard_values
 		);
 		var team_draw_db = rows;
-		
+
 		var all_part_uuid_db = team_win_db
 			.concat(team_lose_db)
 			.concat(team_draw_db)

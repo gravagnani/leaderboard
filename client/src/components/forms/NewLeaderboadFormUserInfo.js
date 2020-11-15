@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import styled from "styled-components";
 import tw from "twin.macro";
 import { useHistory } from "react-router-dom";
@@ -6,6 +6,8 @@ import { css } from "styled-components/macro"; //eslint-disable-line
 import { ReactComponent as SvgDotPatternIcon } from "../../images/dot-pattern.svg";
 
 import ErrorAlert from "../../alerts/ErrorAlert";
+
+import PaypalButton from "../payment/PaypalButton";
 
 import { createLeaderboard } from "../../controllers/leaderboardController";
 
@@ -36,6 +38,7 @@ const Label = tw.label`absolute top-0 left-0 tracking-wide font-semibold text-sm
 const Input = tw.input``;
 const ButtonLeft = tw.button`w-full sm:w-32 mt-6 py-3 bg-gray-100 text-primary-500 rounded-full font-bold tracking-wide shadow-lg uppercase text-sm transition duration-300 transform focus:outline-none focus:shadow-outline hover:bg-gray-300 hover:text-primary-700 hocus:-translate-y-px hocus:shadow-xl`;
 const ButtonRight = tw.button`w-full float-right sm:w-32 mt-6 py-3 bg-gray-100 text-primary-500 rounded-full font-bold tracking-wide shadow-lg uppercase text-sm transition duration-300 transform focus:outline-none focus:shadow-outline hover:bg-gray-300 hover:text-primary-700 hocus:-translate-y-px hocus:shadow-xl`;
+const ButtonRightPP = tw.button`float-right mt-6 `;
 
 const setLocalStorage = (email, full_name) => {
 	sessionStorage.setItem("name-input", full_name);
@@ -56,7 +59,7 @@ const doCreateLeaderboard = async () => {
 	let end_date = sessionStorage.getItem("end-date-input");
 	let mode = sessionStorage.getItem("active-tab")
 		? sessionStorage.getItem("active-tab")
-		: "classic";
+		: "C";
 	let full_name = sessionStorage.getItem("name-input");
 	let email = sessionStorage.getItem("email-input");
 	let pricing = sessionStorage.getItem("pricing-input"); // basic - medium - large
@@ -72,6 +75,7 @@ const doCreateLeaderboard = async () => {
 		mode,
 		full_name,
 		email,
+		pricing,
 	});
 };
 
@@ -81,6 +85,7 @@ export default () => {
 	const [errorMessage, setErrorMessage] = useState(null);
 
 	const user = JSON.parse(localStorage.getItem("user"));
+	const pricing = sessionStorage.getItem("pricing-input");
 
 	const nameInputSS = sessionStorage.getItem("name-input")
 		? sessionStorage.getItem("name-input")
@@ -115,13 +120,14 @@ export default () => {
 			setLocalStorage(email, full_name);
 			doCreateLeaderboard()
 				.then((e) => {
+					console.log(e);
 					if (e.status == "error") {
 						throw new Error(e.error);
 					}
-					const leaderboard_uuid = e.data.uuid;
+					/*const leaderboard_uuid = e.data.uuid;
 					history.push({
 						pathname: "/leaderboard/" + leaderboard_uuid,
-					});
+					});*/
 				})
 				.catch((e) => {
 					setErrorMessage(e);
@@ -170,13 +176,24 @@ export default () => {
 							Back
 						</ButtonLeft>
 						{user ? (
-							<ButtonRight
-								onClick={(e) => {
-									handleNextBtnClick();
-								}}
-							>
-								Done
-							</ButtonRight>
+							pricing == "basic" ? (
+								<ButtonRight
+									onClick={(e) => {
+										handleNextBtnClick();
+									}}
+								>
+									Done
+								</ButtonRight>
+							) : (
+								<ButtonRightPP>
+									<PaypalButton
+										pricing={pricing}
+										history={history}
+										doCreateLeaderboard={doCreateLeaderboard}
+										setErrorMessage={setErrorMessage}
+									/>
+								</ButtonRightPP>
+							)
 						) : (
 							<ButtonRight
 								onClick={(e) => {

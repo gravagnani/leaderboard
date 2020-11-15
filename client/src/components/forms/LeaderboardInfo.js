@@ -108,7 +108,6 @@ export default ({ leaderboard, setLeaderboard, isEditable }) => {
 	});
 
 	// todo: split title among black and violet color
-	// todo: handle click outside (and save edits)
 	return (
 		<Container>
 			<TwoColumn>

@@ -12,6 +12,8 @@ import { WIN_TEAM, LOSE_TEAM, DRAW_TEAM } from "../../constants";
 //import searchImage from "../../images/search-image.svg";
 import searchImage from "../../images/logo.svg";
 
+import ErrorAlert from "../../alerts/ErrorAlert";
+
 const Row = tw.div`flex flex-col lg:flex-row -mb-10`;
 const HeadingRow = tw.div`flex flex-col lg:flex-row items-center`;
 const Heading = tw(SectionHeading)`text-left lg:text-4xl xl:text-5xl`;
@@ -133,6 +135,8 @@ export default ({
 	const [loseList, setLoseList] = useState([]);
 	const [drawList, setDrawList] = useState([]);
 
+	const [errorMessage, setErrorMessage] = useState(null);
+
 	// none -> win -> lose -> draw -> none
 	const handleWinBtn = (user_uuid) => {
 		setWinList(winList.filter((e) => e != user_uuid));
@@ -197,7 +201,7 @@ export default ({
 				setLoadGames(true);
 			})
 			.catch((e) => {
-				console.log(e);
+				setErrorMessage(e);
 			});
 		setNewGameMode();
 		setTimeout(() => {
@@ -217,6 +221,14 @@ export default ({
 		},
 	};
 
+	var leaderboard_start_date = new Date(leaderboard.start_date);
+	var leaderboard_end_date = new Date(leaderboard.end_date);
+	var current_date = new Date();
+
+	const isStarted =
+		current_date.getTime() - leaderboard_start_date.getTime() >= 0;
+	const isEnded = current_date.getTime() - leaderboard_end_date.getTime() >= 0;
+
 	return (
 		<Container>
 			<ContentWithPaddingXl>
@@ -224,8 +236,8 @@ export default ({
 					<LeaderboardContainer>
 						<HeadingRow>
 							<Heading>Leaderboard</Heading>
-							{userIsCreator &&
-								(!newGameMode ? (
+							{isStarted && !isEnded && userIsCreator ? (
+								!newGameMode ? (
 									<HeadingButton
 										onClick={() => {
 											handleNewGameBtnClick();
@@ -233,26 +245,39 @@ export default ({
 									>
 										New Game
 									</HeadingButton>
-								) : winList.length + loseList.length + drawList.length <
-								  2 ? (
-									<HeadingButton
-										onClick={() => {
-											handleCancelBtnClick();
-										}}
-									>
-										Cancel
-									</HeadingButton>
 								) : (
-									<HeadingButton
-										onClick={() => {
-											handleSaveBtnClick();
-										}}
-									>
-										Save
-									</HeadingButton>
-								))}
+									<>
+										<HeadingButton
+											onClick={() => {
+												handleCancelBtnClick();
+											}}
+										>
+											Cancel
+										</HeadingButton>
+										<HeadingButton
+											onClick={() => {
+												handleSaveBtnClick();
+											}}
+										>
+											Save
+										</HeadingButton>
+									</>
+								)
+							) : (
+								<HeadingButton>
+									{isEnded
+										? leaderboard_start_date.toLocaleString()
+										: leaderboard_end_date.toLocaleString()}
+								</HeadingButton>
+							)}
 						</HeadingRow>
 						<UsersContainer>
+							{errorMessage && (
+								<ErrorAlert
+									message={errorMessage}
+									setMessage={setErrorMessage}
+								/>
+							)}
 							{participants.map((part, index) => (
 								<User
 									key={index}

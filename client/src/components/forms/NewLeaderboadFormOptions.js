@@ -8,16 +8,9 @@ import { ReactComponent as SvgDotPatternIcon } from "../../images/dot-pattern.sv
 import ErrorAlert from "../../alerts/ErrorAlert";
 
 import {
-	PRICING_BASIC,
-	PRICING_MEDIUM,
-	PRICING_LARGE,
-	MIN_USERS_BASIC,
-	MAX_USERS_BASIC,
-	MIN_USERS_MEDIUM,
-	MAX_USERS_MEDIUM,
-	MIN_USERS_LARGE,
-	MAX_USERS_LARGE,
-} from "../../constants";
+	getMinUsers,
+	getMaxUsers,
+} from "../../controllers/leaderboardController";
 
 const Container = tw.div`relative`;
 const Content = tw.div`max-w-screen-xl mx-auto py-20 lg:py-24`;
@@ -72,32 +65,6 @@ const setLocalStorage = (min_users, max_users, start_date, end_date) => {
 	//	"mode",
 	//	tabs[activeTab].description.value
 	//);
-};
-
-const getMinUsers = (pricing) => {
-	switch (pricing) {
-		case PRICING_BASIC:
-			return MIN_USERS_BASIC;
-
-		case PRICING_MEDIUM:
-			return MIN_USERS_MEDIUM;
-
-		case PRICING_LARGE:
-			return MIN_USERS_LARGE;
-	}
-};
-
-const getMaxUsers = (pricing) => {
-	switch (pricing) {
-		case PRICING_BASIC:
-			return MAX_USERS_BASIC;
-
-		case PRICING_MEDIUM:
-			return MAX_USERS_MEDIUM;
-
-		case PRICING_LARGE:
-			return MAX_USERS_LARGE;
-	}
 };
 
 export default ({

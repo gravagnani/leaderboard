@@ -1,5 +1,51 @@
 import { BASE_URL } from "../config";
 
+import {
+	PRICING_BASIC,
+	PRICING_MEDIUM,
+	PRICING_LARGE,
+	MIN_USERS_BASIC,
+	MAX_USERS_BASIC,
+	MIN_USERS_MEDIUM,
+	MAX_USERS_MEDIUM,
+	MIN_USERS_LARGE,
+	MAX_USERS_LARGE,
+} from "../constants";
+
+/**
+ *
+ * @param {string} pricing
+ */
+const getMinUsers = (pricing) => {
+	switch (pricing) {
+		case PRICING_BASIC:
+			return MIN_USERS_BASIC;
+
+		case PRICING_MEDIUM:
+			return MIN_USERS_MEDIUM;
+
+		case PRICING_LARGE:
+			return MIN_USERS_LARGE;
+	}
+};
+
+/**
+ *
+ * @param {string} pricing
+ */
+const getMaxUsers = (pricing) => {
+	switch (pricing) {
+		case PRICING_BASIC:
+			return MAX_USERS_BASIC;
+
+		case PRICING_MEDIUM:
+			return MAX_USERS_MEDIUM;
+
+		case PRICING_LARGE:
+			return MAX_USERS_LARGE;
+	}
+};
+
 /**
  * Create a leaderboard
  * @param {object} body -> {title, place, note, min_users, max_users, start_date, end_date, mode, full_name, email}
@@ -8,7 +54,9 @@ import { BASE_URL } from "../config";
 const createLeaderboard = async (body) => {
 	const user = JSON.parse(localStorage.getItem("user"));
 	const response = await fetch(BASE_URL + "/api/v1/leaderboard", {
+		//const response = await fetch(BASE_URL + "/api/v1/pay", {
 		method: "POST", // *GET, POST, PUT, DELETE, etc.
+		crossDomain: true,
 		mode: "cors", // no-cors, *cors, same-origin
 		cache: "no-cache", // *default, no-cache, reload, force-cache, only-if-cached
 		credentials: "same-origin", // include, *same-origin, omit
@@ -25,8 +73,8 @@ const createLeaderboard = async (body) => {
 };
 
 /**
- * 
- * @param {*} uuid 
+ *
+ * @param {*} uuid
  * @returns
  */
 const getLeaderboardByUUID = async (uuid) => {
@@ -45,10 +93,10 @@ const getLeaderboardByUUID = async (uuid) => {
 };
 
 /**
- * 
- * @param {*} user_uuid 
- * @param {*} leaderboard_uuid 
- * @param {*} user_full_name 
+ *
+ * @param {*} user_uuid
+ * @param {*} leaderboard_uuid
+ * @param {*} user_full_name
  * @returns
  */
 const joinLeaderboard = async (user_uuid, leaderboard_uuid, user_full_name) => {
@@ -70,8 +118,8 @@ const joinLeaderboard = async (user_uuid, leaderboard_uuid, user_full_name) => {
 };
 
 /**
- * 
- * @param {*} leaderboard_uuid 
+ *
+ * @param {*} leaderboard_uuid
  * @returns
  */
 const getLeaderboardParticipants = async (leaderboard_uuid) => {
@@ -93,10 +141,10 @@ const getLeaderboardParticipants = async (leaderboard_uuid) => {
 };
 
 /**
- * 
- * @param {*} leaderboard 
- * @param {*} title 
- * @param {*} note 
+ *
+ * @param {*} leaderboard
+ * @param {*} title
+ * @param {*} note
  * @returns
  */
 const modifyLeadeboardTitleNote = async (leaderboard, title, note) => {
@@ -120,8 +168,9 @@ const modifyLeadeboardTitleNote = async (leaderboard, title, note) => {
 	return response.json();
 };
 
-
 export {
+	getMinUsers,
+	getMaxUsers,
 	createLeaderboard,
 	getLeaderboardByUUID,
 	joinLeaderboard,

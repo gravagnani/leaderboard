@@ -17,17 +17,11 @@ import { ReactComponent as CheckboxIcon } from "images/checkbox-circle.svg";
 
 import logo from "../../images/logo.svg";
 
+import { PRICING_BASIC, PRICING_MEDIUM, PRICING_LARGE } from "../../constants";
 import {
-	PRICING_BASIC,
-	PRICING_MEDIUM,
-	PRICING_LARGE,
-	MIN_USERS_BASIC,
-	MAX_USERS_BASIC,
-	MIN_USERS_MEDIUM,
-	MAX_USERS_MEDIUM,
-	MIN_USERS_LARGE,
-	MAX_USERS_LARGE,
-} from "../../constants";
+	getMinUsers,
+	getMaxUsers,
+} from "../../controllers/leaderboardController";
 
 const Container = tw(ContainerBase)`bg-primary-500 text-gray-100 -mx-8 px-8`;
 const ContentWithPaddingXl = tw(
@@ -89,33 +83,6 @@ const ActionButton = styled(PrimaryButtonBase)`
 
 const WhiteBackgroundOverlay = tw.div`absolute inset-x-0 bottom-0 h-1/6 lg:h-1/3 bg-white z-0`;
 
-// todo: spostare in una libreria di helper -> usato anche in leaderboard options
-const getMinUsers = (pricing) => {
-	switch (pricing) {
-		case PRICING_BASIC:
-			return MIN_USERS_BASIC;
-
-		case PRICING_MEDIUM:
-			return MIN_USERS_MEDIUM;
-
-		case PRICING_LARGE:
-			return MIN_USERS_LARGE;
-	}
-};
-
-const getMaxUsers = (pricing) => {
-	switch (pricing) {
-		case PRICING_BASIC:
-			return MAX_USERS_BASIC;
-
-		case PRICING_MEDIUM:
-			return MAX_USERS_MEDIUM;
-
-		case PRICING_LARGE:
-			return MAX_USERS_LARGE;
-	}
-};
-
 export default ({
 	subheading = "",
 	heading = "Affordable Pricing",
@@ -164,9 +131,9 @@ export default ({
 	if (!plans) plans = defaultPlans;
 
 	const setLocalStorage = (pricing) => {
-    sessionStorage.setItem("pricing-input", pricing);
-    sessionStorage.setItem("min-users-input", getMinUsers(pricing));
-    sessionStorage.setItem("max-users-input", getMaxUsers(pricing));
+		sessionStorage.setItem("pricing-input", pricing);
+		sessionStorage.setItem("min-users-input", getMinUsers(pricing));
+		sessionStorage.setItem("max-users-input", getMaxUsers(pricing));
 	};
 
 	const handleNextBtnClick = (pricing) => {

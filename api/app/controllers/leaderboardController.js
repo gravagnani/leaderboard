@@ -6,9 +6,18 @@ import { isEmpty, generateUUID } from "../helpers/validation";
 
 import { errorMessage, successMessage, status } from "../helpers/status";
 
+import { createPayment, doPayment } from "./paymentController";
+
 import {
-	MIN_USERS_FREE,
-	MAX_USERS_FREE,
+	PRICING_BASIC,
+	PRICING_MEDIUM,
+	PRICING_LARGE,
+	MIN_USERS_BASIC,
+	MIN_USERS_MEDIUM,
+	MIN_USERS_LARGE,
+	MAX_USERS_BASIC,
+	MAX_USERS_MEDIUM,
+	MAX_USERS_LARGE,
 	DEFAULT_CLASSIC_MEAN,
 	DEFAULT_CLASSIC_VARIANCE,
 	DEFAULT_TRUESKILL_MEAN,
@@ -50,7 +59,7 @@ const getLeaderboardByUUID = async (req, res) => {
 
 	const getAllLeaderboardsQuery = `
 		SELECT uuid, title, place, note, min_users, 
-			max_users, start_date, end_date, created_by 
+			max_users, start_date, end_date, pricing, created_by 
 		FROM leaderboard 
 		WHERE uuid = $1`;
 	const values = [uuid];
@@ -114,6 +123,7 @@ const getLeaderboardByTitle = async (req, res) => {
  * @returns {object} reflection object
  */
 const createLeaderboard = async (req, res) => {
+	console.log(req);
 	const {
 		title,
 		place,
@@ -125,9 +135,9 @@ const createLeaderboard = async (req, res) => {
 		mode,
 		full_name,
 		email,
+		pricing,
 	} = req.body;
 
-	const flag_active = 1;
 	const created_at = moment(new Date());
 	const modified_at = moment(new Date());
 	// from header
@@ -143,19 +153,79 @@ const createLeaderboard = async (req, res) => {
 	const end_date_check = end_date ? end_date : moment(new Date("2099-12-31"));
 	const mode_check = mode ? mode : "C"; // C = Classical T = Trueskill
 	const flag_public_check = 1; // for when implementi public / private
+	const flag_active = 1;
 
 	if (isEmpty(title)) {
 		errorMessage.error = "Title must not be empty";
 		return res.status(status.bad).send(errorMessage);
 	}
 
-	if (min_users_check > max_users_check) {
-		errorMessage.error = "Max users must be more than Min users";
-		return res.status(status.bad).send(errorMessage);
+	// CHECK PRICING -> consistents min and max_users (for now)
+	switch (pricing) {
+		case PRICING_BASIC:
+			if (
+				!(
+					min_users_check >= MIN_USERS_BASIC &&
+					min_users_check <= MAX_USERS_BASIC &&
+					max_users_check >= MIN_USERS_BASIC &&
+					max_users_check <= MAX_USERS_BASIC
+				)
+			) {
+				errorMessage.error =
+					"In " +
+					pricing +
+					" pricing, users must be between " +
+					MIN_USERS_BASIC +
+					" and " +
+					MAX_USERS_BASIC;
+				return res.status(status.bad).send(errorMessage);
+			}
+			break;
+		case PRICING_MEDIUM:
+			if (
+				!(
+					min_users_check >= MIN_USERS_MEDIUM &&
+					min_users_check <= MAX_USERS_MEDIUM &&
+					max_users_check >= MIN_USERS_MEDIUM &&
+					max_users_check <= MAX_USERS_MEDIUM
+				)
+			) {
+				errorMessage.error =
+					"In " +
+					pricing +
+					" pricing, users must be between " +
+					MIN_USERS_MEDIUM +
+					" and " +
+					MAX_USERS_MEDIUM;
+				return res.status(status.bad).send(errorMessage);
+			}
+			break;
+		case PRICING_LARGE:
+			if (
+				!(
+					min_users_check >= MIN_USERS_LARGE &&
+					min_users_check <= MAX_USERS_LARGE &&
+					max_users_check >= MIN_USERS_LARGE &&
+					max_users_check <= MAX_USERS_LARGE
+				)
+			) {
+				errorMessage.error =
+					"In " +
+					pricing +
+					" pricing, users must be between " +
+					MIN_USERS_LARGE +
+					" and " +
+					MAX_USERS_LARGE;
+				return res.status(status.bad).send(errorMessage);
+			}
+			break;
+		default:
+			errorMessage.error = "Pricing plan does not exists";
+			return res.status(status.bad).send(errorMessage);
 	}
 
-	if (max_users_check > MAX_USERS_FREE) {
-		errorMessage.error = "Max must be less than " + MAX_USERS_FREE;
+	if (min_users_check > max_users_check) {
+		errorMessage.error = "Max users must be more than Min users";
 		return res.status(status.bad).send(errorMessage);
 	}
 
@@ -167,14 +237,14 @@ const createLeaderboard = async (req, res) => {
 	const createLeaderboardQuery = `
 		INSERT INTO leaderboard (
 			uuid, title, place, note, min_users, max_users, 
-			start_date, end_date, mode, flag_public, flag_active, 
+			start_date, end_date, mode, pricing, flag_public, flag_active, 
 			created_at, created_by, modified_at, modified_by
 		) VALUES(
-			$1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15
+			$1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16
 		) RETURNING 
 			uuid, title, place, note, min_users, max_users, 
-			start_date, end_date, flag_public, flag_active, 
-			created_at, created_by, modified_at, modified_by, mode
+			start_date, end_date, mode, pricing, flag_public, flag_active, 
+			created_at, created_by, modified_at, modified_by
 	`;
 
 	const values = [
@@ -187,6 +257,7 @@ const createLeaderboard = async (req, res) => {
 		start_date_check,
 		end_date_check,
 		mode_check,
+		pricing,
 		flag_public_check,
 		flag_active,
 		created_at,
@@ -202,6 +273,7 @@ const createLeaderboard = async (req, res) => {
 
 		return res.status(status.created).send(successMessage);
 	} catch (error) {
+		console.log(error);
 		if (error.routine === "_bt_check_unique") {
 			errorMessage.error = "Create Leaderboard internal error";
 			return res.status(status.conflict).send(errorMessage);
@@ -225,8 +297,6 @@ const modifyLeaderboard = async (req, res) => {
 		title,
 		place,
 		note,
-		min_users,
-		max_users,
 		start_date,
 		end_date,
 		flag_public,
@@ -235,7 +305,7 @@ const modifyLeaderboard = async (req, res) => {
 	// TODO: fa le stesse cose della funzione di ricerca per uuid => aggiornare il codice
 	const getLeaderboardUUIDQuery = `
 		SELECT uuid, title, place, note, min_users, max_users, 
-			start_date, end_date, created_by 
+			pricing, start_date, end_date, created_by 
 		FROM leaderboard 
 		WHERE uuid = $1`;
 	var values = [leaderboard_uuid];
@@ -262,8 +332,6 @@ const modifyLeaderboard = async (req, res) => {
 		const title_check = title || dbResponse.title;
 		const place_check = place || dbResponse.place;
 		const note_check = note || dbResponse.note;
-		const min_users_check = min_users || dbResponse.min_users;
-		const max_users_check = max_users || dbResponse.max_users;
 		const start_date_check = start_date || dbResponse.start_date;
 		const end_date_check = end_date || dbResponse.end_date;
 
@@ -272,21 +340,10 @@ const modifyLeaderboard = async (req, res) => {
 			return res.status(status.bad).send(errorMessage);
 		}
 
-		if (min_users_check > max_users_check) {
-			errorMessage.error = "Max users must be more than Min users";
-			return res.status(status.bad).send(errorMessage);
-		}
-
-		if (max_users_check > MAX_USERS_FREE) {
-			errorMessage.error = "Max must be less than " + MAX_USERS_FREE;
-			return res.status(status.bad).send(errorMessage);
-		}
-
 		const modifyLeaderboardQuery = `
 			UPDATE leaderboard 
-			SET title = $2, place = $3, note = $4, min_users = $5, 
-				max_users = $6, start_date = $7, end_date = $8, 
-				modified_at = $9, modified_by = $10
+			SET title = $2, place = $3, note = $4, start_date = $5, 
+				end_date = $6, modified_at = $7, modified_by = $8
 			WHERE uuid = $1
 			RETURNING *`;
 
@@ -295,8 +352,6 @@ const modifyLeaderboard = async (req, res) => {
 			title_check,
 			place_check,
 			note_check,
-			min_users_check,
-			max_users_check,
 			start_date_check,
 			end_date_check,
 			modified_at,

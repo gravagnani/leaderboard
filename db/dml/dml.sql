@@ -55,6 +55,7 @@ create table leaderboard_dev.leaderboard (
 	, start_date	timestamptz
 	, end_date		timestamptz
 	, mode 			varchar
+	, pricing		varchar
 	, flag_public	bit
 	, flag_active 	bit
 	, created_at 	timestamptz
