@@ -7,8 +7,8 @@ import Hero from "components/hero/TwoColumnWithFeaturesAndTestimonial.js";
 import Features from "components/features/ThreeColWithSideImage.js";
 import MainFeature from "components/features/TwoColWithTwoHorizontalFeaturesAndButton.js";
 import FeatureStats from "components/features/ThreeColCenteredStatsPrimaryBackground.js";
-import Pricing from "components/pricing/ThreePlansWithHalfPrimaryBackground.js";
-//import Pricing from "components/pricing/TwoPlansWithDurationSwitcher.js";
+//import Pricing from "components/pricing/ThreePlansWithHalfPrimaryBackground.js";
+import Pricing from "components/pricing/NewLeaderboardPricing.js";
 import Blog from "components/blogs/GridWithFeaturedPost.js";
 import Testimonial from "components/testimonials/TwoColumnWithImageAndRating.js";
 import FAQ from "components/faqs/SingleCol.js";
@@ -23,7 +23,7 @@ export default () => {
 	return (
 		<AnimationRevealPage>
 			<Hero />
-			<FeatureStats />
+			{false && <FeatureStats />}
 			<Features
 				heading={
 					<>

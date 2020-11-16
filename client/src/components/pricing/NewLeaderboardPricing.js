@@ -23,7 +23,7 @@ import {
 	getMaxUsers,
 } from "../../controllers/leaderboardController";
 
-const Container = tw(ContainerBase)`bg-primary-500 text-gray-100 -mx-8 px-8`;
+const Container = tw(ContainerBase)`bg-primary-900 text-gray-100 -mx-8 px-8`;
 const ContentWithPaddingXl = tw(
 	ContentBase
 )`relative z-10 mx-auto px-0 py-10 sm:px-6 md:px-8 lg:px-12 xl:px-24 sm:py-20 flex flex-col max-w-screen-xl`;
@@ -56,7 +56,7 @@ const PlanHeader = styled.div`
 			}
 		}
 		.oldPrice {
-			${tw`text-gray-500 text-lg line-through hidden sm:block`}
+			${tw`text-gray-900 text-lg line-through hidden sm:block`}
 		}
 	}
 	.description {
@@ -68,10 +68,10 @@ const PlanFeatures = styled.ul`
 	.feature {
 		${tw`flex items-start mt-6 first:mt-0`}
 		.icon {
-			${tw`w-6 h-6 text-primary-500 flex-shrink-0`}
+			${tw`w-6 h-6 text-primary-900 flex-shrink-0`}
 		}
 		.text {
-			${tw`font-semibold text-primary-500 tracking-wide ml-3`}
+			${tw`font-semibold text-primary-900 tracking-wide ml-3`}
 		}
 	}
 `;
@@ -114,7 +114,7 @@ export default ({
 			//oldPrice: "$19.99",
 			description:
 				"Perfect for hosting blogs with lots of traffic or heavy development projects. In addition to Basic plan",
-			features: ["Up to 30 players"],
+			features: ["Up to 30 players", "No Ads"],
 			//featured: "Most Popular"
 		},
 		{
@@ -144,7 +144,7 @@ export default ({
 	};
 
 	return (
-		<Container>
+		<Container id="pricing">
 			<ContentWithPaddingXl>
 				<HeaderContainer>
 					{subheading && <Subheading>{subheading}</Subheading>}

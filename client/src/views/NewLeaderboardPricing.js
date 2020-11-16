@@ -4,7 +4,7 @@ import AnimationRevealPage from "helpers/AnimationRevealPage.js";
 import Pricing from "components/pricing/NewLeaderboardPricing.js";
 import { useHistory } from "react-router-dom";
 
-const HighlightedText = tw.span`text-primary-900`;
+const HighlightedText = tw.span`text-primary-500`;
 const HomeLink = tw.span`cursor-pointer hover:underline`;
 
 export default () => {
