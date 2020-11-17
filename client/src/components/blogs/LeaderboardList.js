@@ -18,6 +18,7 @@ const Row = tw.div`flex flex-col lg:flex-row -mb-10`;
 const HeadingRow = tw.div`flex flex-col lg:flex-row items-center`;
 const Heading = tw(SectionHeading)`text-left lg:text-4xl xl:text-5xl`;
 const HeadingButton = tw.button`text-left hover:underline cursor-pointer ml-auto lg:text-2xl xl:text-3xl`;
+const HeadingButtonNoML = styled(HeadingButton)(() => [tw`ml-8`]);
 
 const GamesContainer = tw.div`mt-12 flex flex-col sm:flex-row sm:justify-between lg:justify-start`;
 const UsersContainer = tw.div`mt-12 flex flex-col sm:flex-row sm:justify-between lg:justify-start`;
@@ -75,7 +76,7 @@ const GameScore = styled(motion.h6)((props) => [
 ]);
 
 const LeaderboardContainer = styled.div`
-	${tw`lg:w-2/3 md:pr-20`}
+	${tw`lg:w-2/3 lg:pr-8`}
 	${UsersContainer} {
 		${tw`flex flex-wrap lg:flex-col`}
 	}
@@ -83,7 +84,7 @@ const LeaderboardContainer = styled.div`
 		${tw`h-20 w-20 flex-shrink-0 mx-10`}
 	}
 	${User} {
-		${tw`px-10 py-2 flex justify-start mb-4 shadow-md max-w-none w-full sm:w-1/2 lg:w-auto`}
+		${tw`px-10 py-2 flex justify-start mb-4 shadow-md max-w-none w-full sm:w-1/2 md:w-full lg:w-auto`}
 	}
 	${Position} {
 		${tw`mt-3 text-base xl:text-lg mt-0 mr-4 lg:max-w-xs`}
@@ -102,7 +103,7 @@ const LastGamesContainer = styled.div`
 		${tw`flex flex-wrap lg:flex-col`}
 	}
 	${Game} {
-		${tw`flex justify-between hover:bg-gray-300 bg-gray-200 px-10 py-2 mb-4 shadow-md max-w-none w-full sm:w-1/2 lg:w-auto mr-0`}
+		${tw`flex justify-between hover:bg-gray-300 bg-gray-200 px-10 py-2 mb-4 shadow-md max-w-none w-full lg:w-1/2 md:w-full lg:w-auto mr-0`}
 	}
 	${Player} {
 		${tw`text-base xl:text-lg mt-0 lg:max-w-xs my-1`}
@@ -145,10 +146,9 @@ export default ({
 		//setLoseList([...loseList, user_uuid]);
 	};
 	const handleLoseBtn = (user_uuid) => {
-		setDrawList([...winList, ...loseList, user_uuid]);
+		setDrawList([...new Set([...winList, ...loseList, user_uuid])]);
 		setWinList([]);
 		setLoseList([]);
-		//setDrawList([user_uuid]);
 	};
 	const handleDrawBtn = (user_uuid) => {
 		setDrawList(drawList.filter((e) => e != user_uuid));
@@ -236,8 +236,9 @@ export default ({
 					<LeaderboardContainer>
 						<HeadingRow>
 							<Heading>Leaderboard</Heading>
-							{isStarted && !isEnded && userIsCreator ? (
-								!newGameMode ? (
+							{isStarted && !isEnded ? (
+								userIsCreator &&
+								(!newGameMode ? (
 									<HeadingButton
 										onClick={() => {
 											handleNewGameBtnClick();
@@ -254,20 +255,20 @@ export default ({
 										>
 											Cancel
 										</HeadingButton>
-										<HeadingButton
+										<HeadingButtonNoML
 											onClick={() => {
 												handleSaveBtnClick();
 											}}
 										>
 											Save
-										</HeadingButton>
+										</HeadingButtonNoML>
 									</>
-								)
+								))
 							) : (
 								<HeadingButton>
 									{isEnded
-										? leaderboard_start_date.toLocaleString()
-										: leaderboard_end_date.toLocaleString()}
+										? leaderboard_end_date.toLocaleString()
+										: leaderboard_start_date.toLocaleString()}
 								</HeadingButton>
 							)}
 						</HeadingRow>
@@ -313,7 +314,7 @@ export default ({
 													: loseList.includes(part.user_uuid)
 													? "L"
 													: drawList.includes(part.user_uuid)
-													? "L"
+													? "D"
 													: null}
 											</GameState>
 										)}

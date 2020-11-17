@@ -293,14 +293,7 @@ const modifyLeaderboard = async (req, res) => {
 	const user_uuid = req.user.uuid;
 	const leaderboard_uuid = req.params.uuid;
 
-	const {
-		title,
-		place,
-		note,
-		start_date,
-		end_date,
-		flag_public,
-	} = req.body;
+	const { title, place, note, start_date, end_date, flag_public } = req.body;
 
 	// TODO: fa le stesse cose della funzione di ricerca per uuid => aggiornare il codice
 	const getLeaderboardUUIDQuery = `
@@ -380,7 +373,6 @@ const modifyLeaderboard = async (req, res) => {
  * @returns {object} reflection object
  */
 const joinLeaderboard = async (req, res) => {
-	console.log(req.body);
 	const { user_uuid, leaderboard_uuid, user_full_name } = req.body;
 
 	const created_at = moment(new Date());
@@ -417,8 +409,8 @@ const joinLeaderboard = async (req, res) => {
 		min_users, max_users, users FROM leaderboard_v WHERE uuid = $1`;
 	const leaderboard_values = [leaderboard_uuid];
 
-	const checkUserNameQuery = `SELECT * FROM user_leaderboard WHERE user_full_name = $1`;
-	const user_name_values = [user_full_name];
+	const checkUserNameQuery = `SELECT * FROM user_leaderboard WHERE leaderboard_uuid=$1 AND user_full_name = $2`;
+	const user_name_values = [leaderboard_uuid, user_full_name];
 
 	try {
 		// check user exixts

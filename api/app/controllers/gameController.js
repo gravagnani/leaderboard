@@ -145,7 +145,7 @@ const createGame = async (req, res) => {
 			leaderboard_uuid, user_uuid, user_full_name, 
 			user_mean, user_variance, created_at, modified_at, modified_by
 	`;
-	var update_update_user_leaderbaord_values = [];
+	var update_update_user_leaderboard_values = [];
 
 	try {
 		// search leaderboard
@@ -290,30 +290,10 @@ const createGame = async (req, res) => {
 			);
 		}
 
-		/*for (const u_uuid of team_lose) {
-			insert_user_game_values = [
-				new_game.uuid,
-				u_uuid,
-				LOSE_TEAM,
-				// mean_old
-				// variance_old
-				// mean_new
-				// variance_new
-				modified_at,
-				modified_by,
-				created_at,
-				created_by,
-			];
-			var { rows } = await dbQuery.query(
-				insertUserGameQuery,
-				insert_user_game_values
-			);
-		}*/
-
 		// update the db
 		var team_all_upd_db = [];
 		for (const p of team_all) {
-			update_update_user_leaderbaord_values = [
+			update_update_user_leaderboard_values = [
 				p.user_mean_new,
 				p.user_variance_new,
 				modified_at,
@@ -323,7 +303,7 @@ const createGame = async (req, res) => {
 			];
 			var { rows } = await dbQuery.query(
 				updateUserLeaderboardQuery,
-				update_update_user_leaderbaord_values
+				update_update_user_leaderboard_values
 			);
 			team_all_upd_db = team_all_upd_db.concat(rows[0]);
 		}
@@ -400,4 +380,160 @@ const getLeaderboardGames = async (req, res) => {
 	}
 };
 
-export { createGame, getLeaderboardGames };
+/**
+ * Create A Game
+ * @param {object} req
+ * @param {object} res
+ * @returns {object} reflection object
+ */
+const deleteLastGame = async (req, res) => {
+	const user = req.user;
+	const leaderboard_uuid = req.params.uuid;
+
+	// from header
+	const modified_at = moment(new Date());
+	const modified_by = user.uuid;
+
+	const searchLeaderboardQuery = `
+		SELECT uuid, title, place, note, min_users, max_users, start_date, 
+			end_date, mode, flag_public, flag_active, created_by
+		FROM leaderboard
+		WHERE 1=1
+			AND flag_active = B'1'
+			AND uuid = $1
+	`;
+	const search_leaderboard_values = [leaderboard_uuid];
+
+	const getLastGameQuery = `
+		SELECT uuid, leaderboard_uuid
+		FROM game
+		WHERE leaderboard_uuid = $1
+		ORDER BY created_at DESC
+		LIMIT 1`;
+	const get_last_game_query = [leaderboard_uuid];
+
+	const getUsersLastGameQuery = `
+		SELECT game_uuid, user_uuid, team, mean_old, variance_old
+		FROM user_game
+		WHERE game_uuid = $1`;
+	var get_users_last_game_query = []; // game_uuid
+
+	const updateUsersLastGameQuery = `
+		UPDATE user_leaderboard
+		SET user_mean = $1, user_variance = $2, 
+			modified_at = $3, modified_by = $4
+		WHERE user_uuid = $5
+			AND leaderboard_uuid = $6
+	`;
+	var update_users_last_game_valued = []; // user_mean, user_variance, modified_at, modified_by, uuid
+
+	const deleteUserGameQuery = `
+		DELETE FROM user_game
+		WHERE game_uuid = $1
+	`;
+	var delete_user_game_values = []; // game_uuid
+
+	const deleteLastGameQuery = `
+		DELETE FROM game
+		WHERE uuid = $1
+		RETURNING uuid, leaderboard_uuid
+	`;
+	var delete_last_game_values = []; // game_uuid
+
+	try {
+		// search last game
+		var { rows } = await dbQuery.query(
+			searchLeaderboardQuery,
+			search_leaderboard_values
+		);
+		var leaderboard_db = rows[0];
+
+		if (!leaderboard_db) {
+			errorMessage.error = "Leaderboard not found";
+			return res.status(status.notfound).send(errorMessage);
+		}
+		// start date and end date
+		if (leaderboard_db.start_date > modified_at) {
+			errorMessage.error = "Leaderboard not started yet";
+			return res.status(status.conflict).send(errorMessage);
+		}
+
+		if (leaderboard_db.end_date < modified_at) {
+			errorMessage.error = "Leaderboard already ended";
+			return res.status(status.conflict).send(errorMessage);
+		}
+
+		// check on created by user -> only leaderboard creator can delete a game
+		if (user.uuid != leaderboard_db.created_by) {
+			errorMessage.error = "Only leaderboard can delete a game";
+			return res.status(status.unauthorized).send(errorMessage);
+		}
+
+		// OK -> update and delete
+
+		// get last game
+		var { rows } = await dbQuery.query(getLastGameQuery, get_last_game_query);
+		var game_db = rows[0];
+
+		if (!game_db) {
+			errorMessage.error = "Leaderboard has no Games";
+			return res.status(status.notfound).send(errorMessage);
+		}
+
+		// get users last game
+		var get_users_last_game_query = [game_db.uuid];
+		var { rows } = await dbQuery.query(
+			getUsersLastGameQuery,
+			get_users_last_game_query
+		);
+		var users_game_db = rows;
+
+		if (!users_game_db) {
+			errorMessage.error = "Users last Game not found";
+			return res.status(status.notfound).send(errorMessage);
+		}
+
+		// delete game -> all transactional
+		await dbQuery.beginTransaction();
+
+		// update users with old mean and old variance
+		for (let i = 0; i < users_game_db.length; i++) {
+			var update_users_last_game_valued = [
+				users_game_db[i].mean_old,
+				users_game_db[i].variance_old,
+				modified_at,
+				modified_by,
+				users_game_db[i].user_uuid,
+				leaderboard_uuid,
+			];
+			var { rows } = await dbQuery.query(
+				updateUsersLastGameQuery,
+				update_users_last_game_valued
+			);
+		}
+
+		// delete user_game
+		var delete_user_game_values = [game_db.uuid];
+		var { rows } = await dbQuery.query(
+			deleteUserGameQuery,
+			delete_user_game_values
+		);
+
+		// delete game
+		var delete_last_game_values = [game_db.uuid];
+		var { rows } = await dbQuery.query(
+			deleteLastGameQuery,
+			delete_last_game_values
+		);
+
+		await dbQuery.commitTransaction();
+
+		successMessage.data = rows;
+		return res.status(status.created).send(successMessage);
+	} catch (error) {
+		errorMessage.error = "Operation was not successful";
+		return res.status(status.error).send(errorMessage);
+	}
+};
+
+export { createGame, getLeaderboardGames, deleteLastGame };
