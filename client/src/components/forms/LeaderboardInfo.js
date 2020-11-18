@@ -32,10 +32,10 @@ const Heading = tw(
 	SectionHeading
 )`mt-4 font-black text-center text-3xl sm:text-4xl lg:text-5xl text-center md:text-center leading-tight`;
 
-const HeadingInput = tw.input`mt-4 font-black text-center text-3xl sm:text-4xl lg:text-5xl text-center md:text-center leading-tight`;
+const HeadingInput = tw.input`mt-4 max-w-full font-black text-center text-3xl sm:text-4xl lg:text-5xl text-center md:text-center leading-tight`;
 
 const Description = tw.p`mt-4 mb-4 text-center md:text-center text-sm md:text-base lg:text-lg font-medium leading-relaxed text-secondary-100`;
-const DescriptionInput = tw.input`mt-4 mb-4 text-center md:text-center text-sm md:text-base lg:text-lg font-medium leading-relaxed text-secondary-100`;
+const DescriptionInput = tw.input`mt-4 max-w-full mb-4 text-center md:text-center text-sm md:text-base lg:text-lg font-medium leading-relaxed text-secondary-100`;
 
 const Input = tw.input`w-6/12 border-2 px-5 py-3 rounded focus:outline-none font-medium transition duration-300 hocus:border-primary-500`;
 

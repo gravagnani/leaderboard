@@ -10,7 +10,7 @@ import { PrimaryButton as PrimaryButtonBase } from "components/misc/Buttons.js";
 
 const Container = tw.div`relative`;
 const TwoColumn = tw.div`flex flex-col md:flex-row justify-between max-w-screen-xl mx-auto`;
-const Column = tw.div`w-full max-w-md mx-auto md:max-w-none md:mx-0`;
+const Column = tw.div`w-full max-w-screen-xl mx-auto`;
 const ImageColumn = tw(Column)`md:w-5/12 flex-shrink-0 h-80 md:h-auto`;
 const TextColumn = styled(Column)((props) => [
 	tw` mt-16 md:mt-0`,
@@ -31,9 +31,9 @@ const Heading = tw(
 )`mt-4 font-black text-center text-xl sm:text-2xl lg:text-3xl text-center md:text-center leading-tight`;
 const Description = tw.p`mt-4 mb-4 text-center md:text-center text-sm md:text-base lg:text-lg font-medium leading-relaxed text-secondary-100`;
 
-const Input = tw.input`w-6/12 border-2 px-5 py-3 rounded focus:outline-none font-medium transition duration-300 hocus:border-primary-500`;
+const Input = tw.input`lg:w-6/12 md:w-8/12 w-8/12 border-2 px-5 py-3 rounded focus:outline-none font-medium transition duration-300 hocus:border-primary-500`;
 
-const SubmitButton = tw(PrimaryButtonBase)`inline-block lg:ml-6 mt-6 sm:mt-3`;
+const SubmitButton = tw(PrimaryButtonBase)`inline-block lg:ml-6 mt-6 sm:mt-3 ml-1`;
 
 const copyClipboard = () => {
 	let copyText = document.getElementById("link-leaderboard");
@@ -53,7 +53,7 @@ export default () => {
 
 	return (
 		<Container>
-			<TwoColumn>
+			<Column>
 				<TextColumn textOnLeft={textOnLeft}>
 					<TextContent>
 						<Heading>
@@ -76,7 +76,7 @@ export default () => {
 						</SubmitButton>
 					</TextContent>
 				</TextColumn>
-			</TwoColumn>
+			</Column>
 		</Container>
 	);
 };

@@ -5,7 +5,7 @@ import { motion } from "framer-motion";
 import { SectionHeading } from "components/misc/Headings.js";
 import { Container, ContentWithPaddingXl } from "components/misc/Layouts.js";
 
-import { createGame } from "../../controllers/gameController";
+import { createGame, deleteLastGame } from "../../controllers/gameController";
 
 import { WIN_TEAM, LOSE_TEAM, DRAW_TEAM } from "../../constants";
 
@@ -15,9 +15,9 @@ import searchImage from "../../images/logo.svg";
 import ErrorAlert from "../../alerts/ErrorAlert";
 
 const Row = tw.div`flex flex-col lg:flex-row -mb-10`;
-const HeadingRow = tw.div`flex flex-col lg:flex-row items-center`;
-const Heading = tw(SectionHeading)`text-left lg:text-4xl xl:text-5xl`;
-const HeadingButton = tw.button`text-left hover:underline cursor-pointer ml-auto lg:text-2xl xl:text-3xl`;
+const HeadingRow = tw.div`flex flex-col flex-row items-center`;
+const Heading = tw(SectionHeading)`text-left text-2xl sm:text-4xl xl:text-5xl`;
+const HeadingButton = tw.button`text-left hover:underline cursor-pointer ml-auto lg:text-2xl xl:text-3xl text-2xl`;
 const HeadingButtonNoML = styled(HeadingButton)(() => [tw`ml-8`]);
 
 const GamesContainer = tw.div`mt-12 flex flex-col sm:flex-row sm:justify-between lg:justify-start`;
@@ -81,10 +81,10 @@ const LeaderboardContainer = styled.div`
 		${tw`flex flex-wrap lg:flex-col`}
 	}
 	${Image} {
-		${tw`h-20 w-20 flex-shrink-0 mx-10`}
+		${tw`md:h-20 md:w-20 sm:h-20 sm:w-20 h-10 w-10 flex-shrink-0 mx-10`}
 	}
 	${User} {
-		${tw`px-10 py-2 flex justify-start mb-4 shadow-md max-w-none w-full sm:w-1/2 md:w-full lg:w-auto`}
+		${tw`px-10 py-2 flex justify-start mb-4 shadow-md max-w-none w-full md:w-full lg:w-auto`}
 	}
 	${Position} {
 		${tw`mt-3 text-base xl:text-lg mt-0 mr-4 lg:max-w-xs`}
@@ -98,12 +98,12 @@ const LeaderboardContainer = styled.div`
 `;
 
 const LastGamesContainer = styled.div`
-	${tw`mt-24 lg:mt-0 lg:w-1/3`}
+	${tw`mt-24 lg:mt-0 lg:w-1/3 z-10`}
 	${GamesContainer} {
 		${tw`flex flex-wrap lg:flex-col`}
 	}
 	${Game} {
-		${tw`flex justify-between hover:bg-gray-300 bg-gray-200 px-10 py-2 mb-4 shadow-md max-w-none w-full lg:w-1/2 md:w-full lg:w-auto mr-0`}
+		${tw`flex justify-between items-center hover:bg-gray-300 bg-gray-200 xl:px-10 lg:px-5 px-10  py-2 mb-4 shadow-md max-w-none w-full lg:w-1/2 md:w-full lg:w-auto mr-0 cursor-default`}
 	}
 	${Player} {
 		${tw`text-base xl:text-lg mt-0 lg:max-w-xs my-1`}
@@ -118,7 +118,60 @@ const LastGamesContainer = styled.div`
 
 const GameTextContainer = styled(motion.div)((props) => [
 	tw`my-auto text-center`,
+	props.showDelete && tw`opacity-25`,
 ]);
+
+const GameDeleteIcon = styled(motion.div)((props) => [
+	tw`z-40 absolute inline-flex cursor-pointer font-bold text-white bg-red-500 hover:bg-red-700 p-2`,
+]);
+
+const GameComponent = ({
+	number,
+	game,
+	leaderboard_uuid,
+	setLoadParticipants,
+	setLoadGames,
+}) => {
+	const [showDelete, setShowDelete] = useState(false);
+
+	return (
+		<Game
+			className="group"
+			onHoverStart={() => {
+				number == 0 && setShowDelete(true);
+			}}
+			onHoverEnd={() => {
+				number == 0 && setShowDelete(false);
+			}}
+			onClick={() => {
+				number == 0 && setShowDelete(!showDelete);
+			}}
+		>
+			<GameTextContainer showDelete={showDelete}>
+				<GameDate>{game.date}</GameDate>
+			</GameTextContainer>
+			{game.users.map((user, index2) => (
+				<GameTextContainer key={index2} showDelete={showDelete}>
+					<Player>{user.user_full_name}</Player>
+					<GameScore gameResult={user.user_team}>
+						{user.user_delta}
+					</GameScore>
+				</GameTextContainer>
+			))}
+			{number == 0 && showDelete && (
+				<GameDeleteIcon
+					onClick={() => {
+						deleteLastGame(leaderboard_uuid);
+						setLoadGames(true);
+						setLoadParticipants(true);
+					}}
+				>
+					Delete
+				</GameDeleteIcon>
+			)}
+		</Game>
+	);
+};
 
 export default ({
 	user,
@@ -327,9 +380,20 @@ export default ({
 						<Heading>Last Games</Heading>
 						<GamesContainer>
 							{games.map((game, index) => (
-								<Game key={index} className="group">
+								/*<Game
+									key={index}
+									className="group"
+									onClick={() => {
+										console.log("click!");
+										setShowDelete(!showDelete);
+									}}
+								>
 									<GameTextContainer>
-										<GameDate>{game.date}</GameDate>
+										{!showDelete ? (
+											<GameDate>{game.date}</GameDate>
+										) : (
+											<GameDate>X</GameDate>
+										)}
 									</GameTextContainer>
 									{game.users.map((user, index2) => (
 										<GameTextContainer key={index2}>
@@ -339,7 +403,15 @@ export default ({
 											</GameScore>
 										</GameTextContainer>
 									))}
-								</Game>
+									</Game>*/
+								<GameComponent
+									key={index}
+									number={index}
+									game={game}
+									leaderboard_uuid={leaderboard.uuid}
+									setLoadGames={setLoadGames}
+									setLoadParticipants={setLoadParticipants}
+								/>
 							))}
 						</GamesContainer>
 					</LastGamesContainer>
