@@ -105,7 +105,7 @@ export default ({
 			>
 				Pricing
 			</NavLink>
-			<NavLink href="/#">Contact Us</NavLink>
+			<NavLink href="/contact-us">Contact Us</NavLink>
 			{!user && (
 				<>
 					<NavLink

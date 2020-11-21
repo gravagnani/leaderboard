@@ -17,6 +17,9 @@ import {
 import { ReactComponent as CheckboxIcon } from "feather-icons/dist/icons/check-circle.svg";
 import { ReactComponent as QuotesLeftIconBase } from "images/quotes-l.svg";
 import { ReactComponent as SvgDecoratorBlob1 } from "images/dot-pattern.svg";
+import { useHistory } from "react-router-dom";
+
+// import imageSrc from "images/hero-image.png";
 
 const Header = tw(HeaderBase)`max-w-none`;
 const Row = tw.div`flex flex-col lg:flex-row justify-between items-center lg:pt-16 max-w-screen-2xl mx-auto sm:px-8`;
@@ -26,18 +29,18 @@ const TextColumn = tw(
 )`mr-auto lg:mr-0 max-w-lg lg:max-w-xl xl:max-w-2xl`;
 const Heading = tw(
 	SectionHeading
-)`text-left text-primary-900 leading-snug xl:text-6xl`;
+)`sm:text-center md:text-left text-primary-900 leading-snug xl:text-6xl`;
 const Description = tw(
 	SectionDescription
 )`mt-4 lg:text-base text-gray-700 max-w-lg`;
 const PrimaryButton = tw(
 	PrimaryButtonBase
-)`mt-8 inline-block w-56 tracking-wide text-center py-5`;
+)`mt-8 inline-block sm:w-full md:w-56 tracking-wide text-center py-5`;
 const FeatureList = tw.ul`mt-12 leading-loose`;
 const Feature = tw.li`flex items-center`;
 const FeatureIcon = tw(CheckboxIcon)`w-5 h-5 text-primary-500`;
 const FeatureText = tw.p`ml-2 font-medium text-gray-700`;
-const ImageColumn = tw(Column)`ml-auto lg:mr-0 relative mt-16 lg:mt-0 lg:ml-32`;
+const ImageColumn = tw(Column)`ml-auto mr-auto md:mr-0 relative mt-16 lg:mt-0 lg:ml-32`;
 const ImageContainer = tw.div`relative z-40 transform xl:-translate-x-24 xl:-translate-y-16`;
 const Image = tw.img`max-w-full w-96 rounded-t sm:rounded relative z-20`;
 const Offsetbackground = tw.div`absolute inset-0 bg-gray-300 rounded xl:-mb-8`;
@@ -53,7 +56,7 @@ const CustomerName = tw.p`mt-4 font-bold`;
 const CustomerCompany = tw.p`mt-1 text-sm text-gray-500`;
 
 export default ({
-	heading = "Good competitions deserve brilliant leaderboards",
+	heading = "Good competitions deserve clever leaderboards",
 	description = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam.",
 	imageSrc = "https://images.unsplash.com/photo-1529271247619-1f9736e6e8ee?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=969&q=80",
 	imageDecoratorBlob = true,
@@ -72,7 +75,9 @@ export default ({
 		customerCompany: "Delos Inc.",
 	},
 }) => {
-	const buttonRoundedCss = buttonRounded && tw`rounded-full w-auto`;
+	const history = useHistory();
+
+	const buttonRoundedCss = buttonRounded && tw`rounded-full md:w-auto w-full`;
 	const navLinks = [
 		<NavLinks key={1}>
 			{/*<NavLink href="/#">About</NavLink>
@@ -90,6 +95,14 @@ export default ({
 			</PrimaryLink>
 		</NavLinks>,
 	];
+
+	const handleNewLeaderboardBtnClick = () => {
+		//sessionStorage.setItem('new-leaderboard-state', true);
+		history.push({
+			pathname: primaryButtonUrl,
+		});
+	};
+
 	return (
 		<>
 			<Header />
@@ -101,20 +114,23 @@ export default ({
 							<Heading>{heading}</Heading>
 							{false && <Description>{description}</Description>}
 							<PrimaryButton
-								as="a"
-								href={primaryButtonUrl}
+								onClick={() => {
+									handleNewLeaderboardBtnClick();
+								}}
 								css={buttonRoundedCss}
 							>
 								{primaryButtonText}
 							</PrimaryButton>
-							<FeatureList>
-								{features.map((feature, index) => (
-									<Feature key={index}>
-										<FeatureIcon />
-										<FeatureText>{feature}</FeatureText>
-									</Feature>
-								))}
-							</FeatureList>
+							{false && (
+								<FeatureList>
+									{features.map((feature, index) => (
+										<Feature key={index}>
+											<FeatureIcon />
+											<FeatureText>{feature}</FeatureText>
+										</Feature>
+									))}
+								</FeatureList>
+							)}
 						</TextColumn>
 						<ImageColumn>
 							<ImageContainer>
@@ -133,7 +149,7 @@ export default ({
 									</Testimonial>
 								)}
 							</ImageContainer>
-							<Offsetbackground />
+							{false && <Offsetbackground />}
 						</ImageColumn>
 					</Row>
 				</ContentWithVerticalPadding>

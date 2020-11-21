@@ -101,6 +101,7 @@ import NewLeaderboardPricing from "views/NewLeaderboardPricing.js";
 import NewLeaderboardUserInfo from "views/NewLeaderboardUserInfo.js";
 import TermsOfServicePage from "views/TermsOfService.js";
 import PrivacyPolicyPage from "views/PrivacyPolicy.js";
+import ContactUsPage from "views/ContactUs.js";
 import Profile from "views/Profile.js";
 import ChangePassword from "views/ChangePassword.js";
 
@@ -114,57 +115,81 @@ import ChangePassword from "views/ChangePassword.js";
 // import ComponentRenderer from "ComponentRenderer.js";
 // import MainLandingPage from "MainLandingPage.js";
 
-import { BrowserRouter as Router, Switch, Route, Redirect } from "react-router-dom";
+import {
+	BrowserRouter as Router,
+	Switch,
+	Route,
+	Redirect,
+} from "react-router-dom";
+
+const ConditionalRoute = (props) => {
+	return props.condition ? (
+		<Route path={props.path}>{props.children}</Route>
+	) : (
+		<Redirect to="/" />
+	);
+};
 
 export default function App() {
-  // return <AnimationRevealPage disabled></AnimationRevealPage>;
-  // TODO: creare route visibili solo se utente loggato
-  return (
-    <Router>
-      <Switch>
-        <Route path="/signin">
-          <LoginPage />
-        </Route>
-        <Route path="/signup">
-          <SignupPage />
-        </Route>
-        <Route path="/new/info">
-          <NewLeaderboardInfo />
-        </Route>
-        <Route path="/new/pricing">
-          <NewLeaderboardPricing />
-        </Route>
-        <Route path="/new/options">
-          <NewLeaderboardOptions />
-        </Route>
-        <Route path="/new/userinfo">
-          <NewLeaderboardUserInfo />
-        </Route>
-        <Route path="/new">
-          {/*<Redirect to="/new/info" />*/}
-          <Redirect to="/new/pricing" />
-        </Route>
-        <Route path="/leaderboard">
-          <LeaderboardPage />
-        </Route>
-        <Route path="/profile">
-          <Profile />
-        </Route>
-        <Route path="/changepw">
-          <ChangePassword />
-        </Route>
-        <Route path="/terms-of-service">
-          <TermsOfServicePage />
-        </Route>
-        <Route path="/privacy-policy">
-          <PrivacyPolicyPage />
-        </Route>
-        <Route path="/">
-          <LandingPage />
-        </Route>
-      </Switch>
-    </Router>
-  );
+	// TODO: creare route visibili solo se utente loggato
+	const user = JSON.parse(localStorage.getItem("user"));
+  const newLeaderboardState = sessionStorage.getItem("new-leaderboard-state");
+
+	return (
+		<Router>
+			<Switch>
+				<ConditionalRoute condition={!user} path="/signin">
+					<LoginPage />
+				</ConditionalRoute>
+				<Route path="/signup">
+					<SignupPage />
+				</Route>
+				<Route path="/new/info">
+					<NewLeaderboardInfo />
+				</Route>
+				<Route
+					path="/new/pricing"
+				>
+					<NewLeaderboardPricing />
+				</Route>
+				<Route
+					path="/new/options"
+				>
+					<NewLeaderboardOptions />
+				</Route>
+				<Route
+					path="/new/userinfo"
+				>
+					<NewLeaderboardUserInfo />
+				</Route>
+				<Route path="/new">
+					{/*<Redirect to="/new/info" />*/}
+					<Redirect to="/new/pricing" />
+				</Route>
+				<Route path="/leaderboard">
+					<LeaderboardPage />
+				</Route>
+				<ConditionalRoute condition={!!user} path="/profile">
+					<Profile />
+				</ConditionalRoute>
+				<ConditionalRoute condition={user} path="/changepw">
+					<ChangePassword />
+				</ConditionalRoute>
+				<Route path="/terms-of-service">
+					<TermsOfServicePage />
+				</Route>
+				<Route path="/privacy-policy">
+					<PrivacyPolicyPage />
+				</Route>
+				<Route path="/contact-us">
+					<ContactUsPage />
+				</Route>
+				<Route path="/">
+					<LandingPage />
+				</Route>
+			</Switch>
+		</Router>
+	);
 }
 
 // export default EventLandingPage;

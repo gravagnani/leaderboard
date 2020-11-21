@@ -120,14 +120,13 @@ export default () => {
 			setLocalStorage(email, full_name);
 			doCreateLeaderboard()
 				.then((e) => {
-					console.log(e);
 					if (e.status == "error") {
 						throw new Error(e.error);
 					}
-					/*const leaderboard_uuid = e.data.uuid;
+					const leaderboard_uuid = e.data.uuid;
 					history.push({
 						pathname: "/leaderboard/" + leaderboard_uuid,
-					});*/
+					});
 				})
 				.catch((e) => {
 					setErrorMessage(e);

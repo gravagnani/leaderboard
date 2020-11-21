@@ -122,7 +122,7 @@ const GameTextContainer = styled(motion.div)((props) => [
 ]);
 
 const GameDeleteIcon = styled(motion.div)((props) => [
-	tw`z-40 absolute inline-flex cursor-pointer font-bold text-white bg-red-500 hover:bg-red-700 p-2`,
+	tw`z-40 absolute inline-flex cursor-pointer font-bold text-white bg-red-500 hover:bg-red-700 p-2 rounded`,
 ]);
 
 const GameComponent = ({
@@ -131,6 +131,7 @@ const GameComponent = ({
 	leaderboard_uuid,
 	setLoadParticipants,
 	setLoadGames,
+	setErrorMessageGame,
 }) => {
 	const [showDelete, setShowDelete] = useState(false);
 
@@ -161,9 +162,17 @@ const GameComponent = ({
 			{number == 0 && showDelete && (
 				<GameDeleteIcon
 					onClick={() => {
-						deleteLastGame(leaderboard_uuid);
-						setLoadGames(true);
-						setLoadParticipants(true);
+						deleteLastGame(leaderboard_uuid)
+							.then((e) => {
+								if (e.status == "error") {
+									throw new Error(e.error);
+								}
+								setLoadGames(true);
+								setLoadParticipants(true);
+							})
+							.catch((e) => {
+								setErrorMessageGame(e);
+							});
 					}}
 				>
 					Delete
@@ -190,6 +199,7 @@ export default ({
 	const [drawList, setDrawList] = useState([]);
 
 	const [errorMessage, setErrorMessage] = useState(null);
+	const [errorMessageGame, setErrorMessageGame] = useState(null);
 
 	// none -> win -> lose -> draw -> none
 	const handleWinBtn = (user_uuid) => {
@@ -379,6 +389,12 @@ export default ({
 					<LastGamesContainer>
 						<Heading>Last Games</Heading>
 						<GamesContainer>
+							{errorMessageGame && (
+								<ErrorAlert
+									message={errorMessageGame}
+									setMessage={setErrorMessageGame}
+								/>
+							)}
 							{games.map((game, index) => (
 								/*<Game
 									key={index}
@@ -411,6 +427,7 @@ export default ({
 									leaderboard_uuid={leaderboard.uuid}
 									setLoadGames={setLoadGames}
 									setLoadParticipants={setLoadParticipants}
+									setErrorMessageGame={setErrorMessageGame}
 								/>
 							))}
 						</GamesContainer>

@@ -5,7 +5,7 @@ import AnimationRevealPage from "helpers/AnimationRevealPage.js";
 
 import Hero from "components/hero/TwoColumnWithFeaturesAndTestimonialLeaderboard.js";
 import LeaderboardList from "components/blogs/LeaderboardList.js";
-import Footer from "components/footers/MiniCenteredFooter.js";
+import Footer from "components/footers/LeaderboardFooter.js";
 import LeaderboardShare from "components/forms/LeaderboardShare.js";
 import LeaderboardInfo from "components/forms/LeaderboardInfo.js";
 import LeaderboardSignIn from "components/forms/LeaderboardSignIn.js";
@@ -92,6 +92,7 @@ const games = [
 ];*/
 
 export default () => {
+	sessionStorage.clear();
 	const user = JSON.parse(localStorage.getItem("user"));
 	const leaderboard_uuid = window.location.href.split("/").pop();
 	const [leaderboard, setLeaderboard] = useState(null);

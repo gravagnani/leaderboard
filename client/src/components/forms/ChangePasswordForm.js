@@ -13,7 +13,7 @@ const Container = tw.div`relative`;
 const Content = tw.div`max-w-screen-xl mx-auto py-20 lg:py-24`;
 
 const FormContainer = styled.div`
-	${tw`p-10 sm:p-12 md:p-16 bg-primary-500 text-gray-100 rounded-lg relative`}
+	${tw`p-10 sm:p-12 md:p-16 bg-primary-900 text-gray-100 rounded-lg relative`}
 	form {
 		${tw`mt-4`}
 	}
@@ -25,7 +25,7 @@ const FormContainer = styled.div`
 		${tw`w-full bg-transparent text-gray-100 text-base font-medium tracking-wide border-b-2 py-2 text-gray-100 hocus:border-pink-400 focus:outline-none transition duration-200`};
 
 		::placeholder {
-			${tw`text-gray-500`}
+			${tw`text-gray-900`}
 		}
 	}
 `;
