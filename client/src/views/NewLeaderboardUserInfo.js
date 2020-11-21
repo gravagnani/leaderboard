@@ -3,10 +3,10 @@ import AnimationRevealPage from "helpers/AnimationRevealPage.js";
 
 import Form from "components/forms/NewLeaderboadFormUserInfo";
 
-export default () => {
-  return (
-    <AnimationRevealPage>
-      <Form />
-    </AnimationRevealPage>
-  );
-}
+export default ({ setLeaderboardCreation }) => {
+	return (
+		<AnimationRevealPage>
+			<Form setLeaderboardCreation={setLeaderboardCreation} />
+		</AnimationRevealPage>
+	);
+};

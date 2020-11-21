@@ -7,7 +7,7 @@ import { useHistory } from "react-router-dom";
 const HighlightedText = tw.span`text-primary-500`;
 const HomeLink = tw.span`cursor-pointer hover:underline`;
 
-export default () => {
+export default ({ setLeaderboardCreation }) => {
 	const history = useHistory();
 	return (
 		<AnimationRevealPage>
@@ -24,6 +24,7 @@ export default () => {
 						<HighlightedText> Plans</HighlightedText>
 					</>
 				}
+				setLeaderboardCreation={setLeaderboardCreation}
 			/>
 		</AnimationRevealPage>
 	);

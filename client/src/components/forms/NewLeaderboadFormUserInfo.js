@@ -79,7 +79,7 @@ const doCreateLeaderboard = async () => {
 	});
 };
 
-export default () => {
+export default ({ setLeaderboardCreation }) => {
 	const history = useHistory();
 
 	const [errorMessage, setErrorMessage] = useState(null);
@@ -123,6 +123,7 @@ export default () => {
 					if (e.status == "error") {
 						throw new Error(e.error);
 					}
+					setLeaderboardCreation(false);
 					const leaderboard_uuid = e.data.uuid;
 					history.push({
 						pathname: "/leaderboard/" + leaderboard_uuid,

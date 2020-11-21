@@ -1,6 +1,6 @@
 import "tailwindcss/dist/base.css";
 import "styles/globalStyles.css";
-import React from "react";
+import React, { useState } from "react";
 import { css } from "styled-components/macro"; //eslint-disable-line
 
 /*
@@ -133,7 +133,9 @@ const ConditionalRoute = (props) => {
 export default function App() {
 	// TODO: creare route visibili solo se utente loggato
 	const user = JSON.parse(localStorage.getItem("user"));
-  const newLeaderboardState = sessionStorage.getItem("new-leaderboard-state");
+	// const newLeaderboardState = sessionStorage.getItem("new-leaderboard-state");
+
+	const [leaderboardCreation, setLeaderboardCreation] = useState(false);
 
 	return (
 		<Router>
@@ -144,28 +146,35 @@ export default function App() {
 				<Route path="/signup">
 					<SignupPage />
 				</Route>
-				<Route path="/new/info">
+				<ConditionalRoute condition={leaderboardCreation} path="/new/info">
 					<NewLeaderboardInfo />
-				</Route>
-				<Route
+				</ConditionalRoute>
+				<ConditionalRoute
+					condition={leaderboardCreation}
 					path="/new/pricing"
 				>
-					<NewLeaderboardPricing />
-				</Route>
-				<Route
+					<NewLeaderboardPricing
+						setLeaderboardCreation={setLeaderboardCreation}
+					/>
+				</ConditionalRoute>
+				<ConditionalRoute
+					condition={leaderboardCreation}
 					path="/new/options"
 				>
 					<NewLeaderboardOptions />
-				</Route>
-				<Route
+				</ConditionalRoute>
+				<ConditionalRoute
+					condition={leaderboardCreation}
 					path="/new/userinfo"
 				>
-					<NewLeaderboardUserInfo />
-				</Route>
-				<Route path="/new">
+					<NewLeaderboardUserInfo
+						setLeaderboardCreation={setLeaderboardCreation}
+					/>
+				</ConditionalRoute>
+				<ConditionalRoute condition={leaderboardCreation} path="/new">
 					{/*<Redirect to="/new/info" />*/}
 					<Redirect to="/new/pricing" />
-				</Route>
+				</ConditionalRoute>
 				<Route path="/leaderboard">
 					<LeaderboardPage />
 				</Route>
@@ -185,7 +194,7 @@ export default function App() {
 					<ContactUsPage />
 				</Route>
 				<Route path="/">
-					<LandingPage />
+					<LandingPage setLeaderboardCreation={setLeaderboardCreation} />
 				</Route>
 			</Switch>
 		</Router>

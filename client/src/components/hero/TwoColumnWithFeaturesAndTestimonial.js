@@ -40,7 +40,9 @@ const FeatureList = tw.ul`mt-12 leading-loose`;
 const Feature = tw.li`flex items-center`;
 const FeatureIcon = tw(CheckboxIcon)`w-5 h-5 text-primary-500`;
 const FeatureText = tw.p`ml-2 font-medium text-gray-700`;
-const ImageColumn = tw(Column)`ml-auto mr-auto md:mr-0 relative mt-16 lg:mt-0 lg:ml-32`;
+const ImageColumn = tw(
+	Column
+)`ml-auto mr-auto md:mr-0 relative mt-16 lg:mt-0 lg:ml-32`;
 const ImageContainer = tw.div`relative z-40 transform xl:-translate-x-24 xl:-translate-y-16`;
 const Image = tw.img`max-w-full w-96 rounded-t sm:rounded relative z-20`;
 const Offsetbackground = tw.div`absolute inset-0 bg-gray-300 rounded xl:-mb-8`;
@@ -74,6 +76,7 @@ export default ({
 		customerName: "Charlotte Hale",
 		customerCompany: "Delos Inc.",
 	},
+	setLeaderboardCreation
 }) => {
 	const history = useHistory();
 
@@ -97,7 +100,7 @@ export default ({
 	];
 
 	const handleNewLeaderboardBtnClick = () => {
-		//sessionStorage.setItem('new-leaderboard-state', true);
+		setLeaderboardCreation(true);
 		history.push({
 			pathname: primaryButtonUrl,
 		});

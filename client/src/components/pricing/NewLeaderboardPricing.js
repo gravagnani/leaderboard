@@ -89,6 +89,7 @@ export default ({
 	description = null, //"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
 	plans = null,
 	primaryButtonText = "Choose",
+	setLeaderboardCreation,
 }) => {
 	const history = useHistory();
 
@@ -137,6 +138,7 @@ export default ({
 	};
 
 	const handleNextBtnClick = (pricing) => {
+		setLeaderboardCreation(true);
 		setLocalStorage(pricing);
 		history.push({
 			pathname: "/new/info",

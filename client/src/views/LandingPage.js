@@ -17,12 +17,13 @@ import Footer from "components/footers/LeaderboardFooter.js";
 
 const HighlightedText = tw.span`text-primary-500`;
 
-export default () => {
+export default ({ setLeaderboardCreation }) => {
 	sessionStorage.clear();
+	setLeaderboardCreation(false);
 
 	return (
 		<AnimationRevealPage>
-			<Hero />
+			<Hero setLeaderboardCreation={setLeaderboardCreation} />
 			{false && <FeatureStats />}
 			<Features
 				heading={
@@ -56,6 +57,7 @@ export default () => {
 						Flexible <HighlightedText>Plans</HighlightedText>
 					</>
 				}
+				setLeaderboardCreation={setLeaderboardCreation}
 			/>
 			{false && (
 				<FAQ
