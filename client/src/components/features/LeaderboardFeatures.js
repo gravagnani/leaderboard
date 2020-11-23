@@ -18,6 +18,7 @@ import CleverIconImage from "images/clever.svg";
 import CustomizableIconImage from "images/browser.svg";
 import ReliableIconImage from "images/reliability.svg";
 import EasyIconImage from "images/easy.svg";
+import UpdatedIconImage from "images/updated.svg";
 
 const Container = tw.div`relative`;
 
@@ -104,6 +105,11 @@ export default ({
 			description:
 				"Create a leaderboard easily, and add games with just few clicks!",
 		},
+		{
+			imageSrc: UpdatedIconImage,
+			title: "New Features Upcoming",
+			description: "",
+		},
 	];
 
 	if (!cards) cards = defaultCards;
@@ -124,10 +130,7 @@ export default ({
 								<span className="title">
 									{card.title || "Fully Secure"}
 								</span>
-								<p className="description">
-									{card.description ||
-										"Lorem ipsum donor amet siti ceali ut enim ad minim veniam, quis nostrud."}
-								</p>
+								<p className="description">{card.description}</p>
 							</span>
 						</Card>
 					</Column>

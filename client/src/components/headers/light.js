@@ -100,9 +100,7 @@ export default ({
 		<NavLinks key={1}>
 			{/*<NavLink href="/#">About</NavLink>
 			<NavLink href="/#">Blog</NavLink>*/}
-			<NavLink
-				 href="/#pricing"
-			>
+			<NavLink href="/#pricing" onClick={() => toggleNavbar()}>
 				Pricing
 			</NavLink>
 			<NavLink href="/contact-us">Contact Us</NavLink>
@@ -149,7 +147,7 @@ export default ({
 	const defaultLogoLink = (
 		<LogoLink href="/">
 			<img src={logo} alt="logo" />
-			Leaderboard
+			Cleverboard
 		</LogoLink>
 	);
 

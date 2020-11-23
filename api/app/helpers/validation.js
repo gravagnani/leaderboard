@@ -95,7 +95,7 @@ const generateUUID = (type = "", len = 15) => {
 		uuid += characters.charAt(Math.floor(Math.random() * charactersLength));
 	}
 
-	return type * uuid;
+	return type + uuid;
 };
 
 /**

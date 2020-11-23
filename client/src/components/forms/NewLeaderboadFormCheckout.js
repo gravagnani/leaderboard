@@ -101,9 +101,9 @@ export default ({ setLeaderboardCreation }) => {
 		*/
 
 	const handleBackBtnClick = () => {
-		const full_name = document.getElementById("name-input").value;
-		const email = document.getElementById("email-input").value;
-		setLocalStorage(email, full_name);
+		//const full_name = document.getElementById("name-input").value;
+		//const email = document.getElementById("email-input").value;
+		//setLocalStorage(email, full_name);
 
 		history.push({
 			pathname: "/new/options",
@@ -111,30 +111,22 @@ export default ({ setLeaderboardCreation }) => {
 	};
 
 	const handleNextBtnClick = () => {
-		const full_name = document.getElementById("name-input").value;
-		const email = document.getElementById("email-input").value;
-
-		if (!full_name) {
-			setErrorMessage("Error: Full Name is required");
-		} else if (!email) {
-			setErrorMessage("Error: Email is required");
-		} else {
-			setLocalStorage(email, full_name);
-			doCreateLeaderboard()
-				.then((e) => {
-					if (e.status == "error") {
-						throw new Error(e.error);
-					}
-					setLeaderboardCreation(false);
-					const leaderboard_uuid = e.data.uuid;
-					history.push({
-						pathname: "/leaderboard/" + leaderboard_uuid,
-					});
-				})
-				.catch((e) => {
-					setErrorMessage(e);
+		//const full_name = document.getElementById("name-input").value;
+		//const email = document.getElementById("email-input").value;
+		doCreateLeaderboard()
+			.then((e) => {
+				if (e.status == "error") {
+					throw new Error(e.error);
+				}
+				setLeaderboardCreation(false);
+				const leaderboard_uuid = e.data.uuid;
+				history.push({
+					pathname: "/leaderboard/" + leaderboard_uuid,
 				});
-		}
+			})
+			.catch((e) => {
+				setErrorMessage(e);
+			});
 	};
 
 	useEffect(() => {

@@ -135,6 +135,7 @@ export default ({
 		sessionStorage.setItem("pricing-input", pricing);
 		sessionStorage.setItem("min-users-input", getMinUsers(pricing));
 		sessionStorage.setItem("max-users-input", getMaxUsers(pricing));
+		sessionStorage.setItem("new-leaderboard-state", true);
 	};
 
 	const handleNextBtnClick = (pricing) => {

@@ -136,7 +136,9 @@ export default function App() {
 	const user = JSON.parse(localStorage.getItem("user"));
 	// const newLeaderboardState = sessionStorage.getItem("new-leaderboard-state");
 
-	const [leaderboardCreation, setLeaderboardCreation] = useState(false);
+	const [leaderboardCreation, setLeaderboardCreation] = useState(
+		sessionStorage.getItem("new-leaderboard-state")
+	);
 
 	return (
 		<Router>
@@ -173,7 +175,7 @@ export default function App() {
 					/>
 				</ConditionalRoute>
 				<ConditionalRoute
-					condition={true || leaderboardCreation}
+					condition={leaderboardCreation}
 					path="/new/checkout"
 				>
 					<NewLeaderboardCheckout

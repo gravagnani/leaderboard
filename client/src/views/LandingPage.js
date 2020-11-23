@@ -54,7 +54,7 @@ export default ({ setLeaderboardCreation }) => {
 			<Pricing
 				heading={
 					<>
-						Flexible <HighlightedText>Plans</HighlightedText>
+						Pricing <HighlightedText>Options</HighlightedText>
 					</>
 				}
 				setLeaderboardCreation={setLeaderboardCreation}

@@ -64,7 +64,6 @@ export default ({
 			.value;
 		joinLeaderboard(user.uuid, leaderboard.uuid, user_full_name)
 			.then((e) => {
-				console.log(user_full_name);
 				if (e.status == "error") {
 					throw new Error(e.error);
 				}

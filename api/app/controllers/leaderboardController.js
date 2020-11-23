@@ -224,7 +224,6 @@ const validateLeaderboard = async (req, res) => {
 		successMessage.data = "Leaderoard input validated";
 		return res.status(status.created).send(successMessage);
 	} catch (error) {
-		console.log(error);
 		errorMessage.error = "Operation was not successful";
 		return res.status(status.error).send(errorMessage);
 	}
@@ -385,7 +384,6 @@ const createLeaderboard = async (req, res) => {
 
 		return res.status(status.created).send(successMessage);
 	} catch (error) {
-		console.log(error);
 		if (error.routine === "_bt_check_unique") {
 			errorMessage.error = "Create Leaderboard internal error";
 			return res.status(status.conflict).send(errorMessage);

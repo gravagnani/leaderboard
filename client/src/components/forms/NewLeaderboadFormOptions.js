@@ -68,12 +68,14 @@ export default ({
 		classical: {
 			mode: "Classic",
 			value: "C",
-			description: "Classic Description",
+			description:
+				"The classic scoring system: 3 points for a win, 1 for a draw and 0 for a loss.",
 		},
 		trueskill: {
-			mode: "TrueSkill",
+			mode: "Clever",
 			value: "T",
-			description: "TrueSkill Description",
+			description:
+				"The score is calculated evaluating the position of the players. Final points represents an estimate of the actual skill of the players.",
 		},
 	},
 }) => {
