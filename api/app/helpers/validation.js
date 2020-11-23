@@ -86,7 +86,7 @@ const empty = (input) => {
  * @param {string} input
  * @returns {string} uuid
  */
-const generateUUID = (input, len = 10) => {
+const generateUUID = (type = "", len = 15) => {
 	var uuid = "";
 
 	var characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
@@ -95,7 +95,7 @@ const generateUUID = (input, len = 10) => {
 		uuid += characters.charAt(Math.floor(Math.random() * charactersLength));
 	}
 
-	return uuid;
+	return type * uuid;
 };
 
 /**

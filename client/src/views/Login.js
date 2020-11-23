@@ -122,22 +122,27 @@ export default ({
 						<MainContent>
 							<Heading>{headingText}</Heading>
 							<FormContainer>
-								<SocialButtonsContainer>
-									{socialButtons.map((socialButton, index) => (
-										<SocialButton key={index} href={socialButton.url}>
-											<span className="iconContainer">
-												<img
-													src={socialButton.iconImageSrc}
-													className="icon"
-													alt=""
-												/>
-											</span>
-											<span className="text">
-												{socialButton.text}
-											</span>
-										</SocialButton>
-									))}
-								</SocialButtonsContainer>
+								{false && (
+									<SocialButtonsContainer>
+										{socialButtons.map((socialButton, index) => (
+											<SocialButton
+												key={index}
+												href={socialButton.url}
+											>
+												<span className="iconContainer">
+													<img
+														src={socialButton.iconImageSrc}
+														className="icon"
+														alt=""
+													/>
+												</span>
+												<span className="text">
+													{socialButton.text}
+												</span>
+											</SocialButton>
+										))}
+									</SocialButtonsContainer>
+								)}
 								<DividerTextContainer>
 									<DividerText>
 										Or Sign in with your e-mail

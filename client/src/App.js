@@ -99,6 +99,7 @@ import NewLeaderboardInfo from "views/NewLeaderboardInfo.js";
 import NewLeaderboardOptions from "views/NewLeaderboardOptions.js";
 import NewLeaderboardPricing from "views/NewLeaderboardPricing.js";
 import NewLeaderboardUserInfo from "views/NewLeaderboardUserInfo.js";
+import NewLeaderboardCheckout from "views/NewLeaderboardCheckout.js";
 import TermsOfServicePage from "views/TermsOfService.js";
 import PrivacyPolicyPage from "views/PrivacyPolicy.js";
 import ContactUsPage from "views/ContactUs.js";
@@ -171,8 +172,15 @@ export default function App() {
 						setLeaderboardCreation={setLeaderboardCreation}
 					/>
 				</ConditionalRoute>
+				<ConditionalRoute
+					condition={true || leaderboardCreation}
+					path="/new/checkout"
+				>
+					<NewLeaderboardCheckout
+						setLeaderboardCreation={setLeaderboardCreation}
+					/>
+				</ConditionalRoute>
 				<ConditionalRoute condition={leaderboardCreation} path="/new">
-					{/*<Redirect to="/new/info" />*/}
 					<Redirect to="/new/pricing" />
 				</ConditionalRoute>
 				<Route path="/leaderboard">

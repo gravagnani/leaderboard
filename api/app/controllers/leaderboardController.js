@@ -117,13 +117,127 @@ const getLeaderboardByTitle = async (req, res) => {
 };
 
 /**
+ *
+ * @param {*} req
+ * @param {*} res
+ */
+const validateLeaderboard = async (req, res) => {
+	try {
+		const {
+			title,
+			place,
+			note,
+			min_users,
+			max_users,
+			start_date,
+			end_date,
+			mode,
+			pricing,
+		} = req.body;
+
+		const min_users_check = min_users ? min_users : MIN_USERS_BASIC;
+		const max_users_check = max_users ? max_users : MAX_USERS_BASIC;
+		const place_check = place ? place : null;
+		const note_check = note ? note : null;
+		const start_date_check = start_date ? start_date : moment(new Date());
+		const end_date_check = end_date
+			? end_date
+			: moment(new Date("2099-12-31"));
+		const mode_check = mode ? mode : "C"; // C = Classical T = Trueskill
+		const flag_public_check = 1; // for when implementi public / private
+		const flag_active = 1;
+
+		if (isEmpty(title)) {
+			errorMessage.error = "Title must not be empty";
+			return res.status(status.bad).send(errorMessage);
+		}
+
+		// CHECK PRICING -> consistents min and max_users (for now)
+		switch (pricing) {
+			case PRICING_BASIC:
+				if (
+					!(
+						min_users_check >= MIN_USERS_BASIC &&
+						min_users_check <= MAX_USERS_BASIC &&
+						max_users_check >= MIN_USERS_BASIC &&
+						max_users_check <= MAX_USERS_BASIC
+					)
+				) {
+					errorMessage.error =
+						"In " +
+						pricing +
+						" pricing, users must be between " +
+						MIN_USERS_BASIC +
+						" and " +
+						MAX_USERS_BASIC;
+					return res.status(status.bad).send(errorMessage);
+				}
+				break;
+			case PRICING_MEDIUM:
+				if (
+					!(
+						min_users_check >= MIN_USERS_MEDIUM &&
+						min_users_check <= MAX_USERS_MEDIUM &&
+						max_users_check >= MIN_USERS_MEDIUM &&
+						max_users_check <= MAX_USERS_MEDIUM
+					)
+				) {
+					errorMessage.error =
+						"In " +
+						pricing +
+						" pricing, users must be between " +
+						MIN_USERS_MEDIUM +
+						" and " +
+						MAX_USERS_MEDIUM;
+					return res.status(status.bad).send(errorMessage);
+				}
+				break;
+			case PRICING_LARGE:
+				if (
+					!(
+						min_users_check >= MIN_USERS_LARGE &&
+						min_users_check <= MAX_USERS_LARGE &&
+						max_users_check >= MIN_USERS_LARGE &&
+						max_users_check <= MAX_USERS_LARGE
+					)
+				) {
+					errorMessage.error =
+						"In " +
+						pricing +
+						" pricing, users must be between " +
+						MIN_USERS_LARGE +
+						" and " +
+						MAX_USERS_LARGE;
+					return res.status(status.bad).send(errorMessage);
+				}
+				break;
+			default:
+				errorMessage.error = "Pricing plan does not exists";
+				return res.status(status.bad).send(errorMessage);
+		}
+
+		if (min_users_check > max_users_check) {
+			errorMessage.error = "Max users must be more than Min users";
+			return res.status(status.bad).send(errorMessage);
+		}
+
+		successMessage.data = "Leaderoard input validated";
+		return res.status(status.created).send(successMessage);
+	} catch (error) {
+		console.log(error);
+		errorMessage.error = "Operation was not successful";
+		return res.status(status.error).send(errorMessage);
+	}
+};
+
+/**
  * Create A Leaderboard
  * @param {object} req
  * @param {object} res
  * @returns {object} reflection object
  */
 const createLeaderboard = async (req, res) => {
-	console.log(req);
+	// EXECUTE VALIDATION BEFORE CREATE LEADERBOARD (FOR PAYPAL)
 	const {
 		title,
 		place,
@@ -133,8 +247,6 @@ const createLeaderboard = async (req, res) => {
 		start_date,
 		end_date,
 		mode,
-		full_name,
-		email,
 		pricing,
 	} = req.body;
 
@@ -229,7 +341,7 @@ const createLeaderboard = async (req, res) => {
 		return res.status(status.bad).send(errorMessage);
 	}
 
-	const leaderboard_uuid = generateUUID(title + created_by);
+	const leaderboard_uuid = generateUUID("L");
 
 	// todo: manda mail con link laderboard
 	// parametro email (eventualmente full_name)
@@ -538,6 +650,7 @@ const getLeaderboardParticipants = async (req, res) => {
 };
 
 export {
+	validateLeaderboard,
 	createLeaderboard,
 	getAllLeaderboards,
 	getLeaderboardByUUID,

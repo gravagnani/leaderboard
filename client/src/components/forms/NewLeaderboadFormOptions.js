@@ -61,10 +61,6 @@ const setLocalStorage = (min_users, max_users, start_date, end_date) => {
 	sessionStorage.setItem("max-users-input", max_users);
 	sessionStorage.setItem("start-date-input", start_date);
 	sessionStorage.setItem("end-date-input", end_date);
-	//sessionStorage.setItem(
-	//	"mode",
-	//	tabs[activeTab].description.value
-	//);
 };
 
 export default ({
@@ -129,7 +125,8 @@ export default ({
 		} else {
 			setLocalStorage(min_users, max_users, start_date, end_date);
 			history.push({
-				pathname: "/new/userinfo",
+				//pathname: "/new/userinfo",
+				pathname: "/new/checkout",
 			});
 		}
 	};

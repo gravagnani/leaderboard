@@ -51,6 +51,31 @@ const getMaxUsers = (pricing) => {
  * @param {object} body -> {title, place, note, min_users, max_users, start_date, end_date, mode, full_name, email}
  * @returns {object} -> {}
  */
+const validateLeaderboard = async (body) => {
+	const user = JSON.parse(localStorage.getItem("user"));
+	const response = await fetch(BASE_URL + "/api/v1/leaderboard/validate", {
+		//const response = await fetch(BASE_URL + "/api/v1/pay", {
+		method: "POST", // *GET, POST, PUT, DELETE, etc.
+		crossDomain: true,
+		mode: "cors", // no-cors, *cors, same-origin
+		cache: "no-cache", // *default, no-cache, reload, force-cache, only-if-cached
+		credentials: "same-origin", // include, *same-origin, omit
+		headers: {
+			"Content-Type": "application/json",
+			// 'Content-Type': 'application/x-www-form-urlencoded',
+		},
+		redirect: "follow", // manual, *follow, error
+		referrerPolicy: "no-referrer", // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url
+		body: JSON.stringify(body), // body data type must match "Content-Type" header
+	});
+	return response.json();
+};
+
+/**
+ * Create a leaderboard
+ * @param {object} body -> {title, place, note, min_users, max_users, start_date, end_date, mode, full_name, email}
+ * @returns {object} -> {}
+ */
 const createLeaderboard = async (body) => {
 	const user = JSON.parse(localStorage.getItem("user"));
 	const response = await fetch(BASE_URL + "/api/v1/leaderboard", {
@@ -171,6 +196,7 @@ const modifyLeadeboardTitleNote = async (leaderboard, title, note) => {
 export {
 	getMinUsers,
 	getMaxUsers,
+	validateLeaderboard,
 	createLeaderboard,
 	getLeaderboardByUUID,
 	joinLeaderboard,

@@ -9,8 +9,6 @@ import leaderboardRoute from "./app/routes/leaderboardRoute";
 import gameRoute from "./app/routes/gameRoute";
 import paymentRoute from "./app/routes/paymentRoute";
 
-//import adminRoute from "./app/routes/adminRoute";
-
 const app = express();
 
 app.use(cors());
@@ -23,8 +21,6 @@ app.use("/api/v1", userRoute);
 app.use("/api/v1", leaderboardRoute);
 app.use("/api/v1", gameRoute);
 app.use("/api/v1", paymentRoute);
-
-//app.use("/api/v1", adminRoute);
 
 app.listen(env.port).on("listening", () => {
 	console.log(`🚀 are live on ${env.port}`);

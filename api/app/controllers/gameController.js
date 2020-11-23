@@ -114,7 +114,7 @@ const createGame = async (req, res) => {
 		) RETURNING 
 			uuid, leaderboard_uuid, created_at, created_by
 	`;
-	const new_game_uuid = generateUUID(user.uuid + new Date());
+	const new_game_uuid = generateUUID("G");
 	const create_game_values = [
 		new_game_uuid,
 		leaderboard_uuid,

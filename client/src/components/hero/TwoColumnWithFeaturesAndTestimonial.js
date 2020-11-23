@@ -76,7 +76,7 @@ export default ({
 		customerName: "Charlotte Hale",
 		customerCompany: "Delos Inc.",
 	},
-	setLeaderboardCreation
+	setLeaderboardCreation,
 }) => {
 	const history = useHistory();
 

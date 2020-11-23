@@ -48,7 +48,7 @@ const createUser = async (req, res) => {
 	}
 
 	const hashed_password = hashPassword(password);
-	const user_uuid = generateUUID(email + full_name);
+	const user_uuid = generateUUID("U");
 
 	const createUserQuery = `INSERT INTO users 
 		(uuid, email, full_name, password, image, flag_active, created_at, modified_at, modified_by) 
@@ -247,10 +247,7 @@ const modifyUser = async (req, res) => {
 
 	const checkMailQuery = `SELECT * from users 
 		WHERE email = $1 AND id <> $2`;
-	const values_mail = [
-		email_check,
-		req_user_id,
-	];
+	const values_mail = [email_check, req_user_id];
 
 	// check mail already used
 	try {

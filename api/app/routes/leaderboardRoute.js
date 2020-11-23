@@ -1,6 +1,7 @@
 import express from "express";
 
 import {
+	validateLeaderboard,
 	createLeaderboard,
 	getAllLeaderboards,
 	getLeaderboardByUUID,
@@ -21,6 +22,7 @@ router.get("/leaderboard/title/:title", getLeaderboardByTitle);
 router.get("/leaderboard/:uuid/users", getLeaderboardParticipants);
 
 router.post("/leaderboard/", verifyAuth, createLeaderboard);
+router.post("/leaderboard/validate", validateLeaderboard);
 
 router.post("/leaderboard/join/", verifyAuth, joinLeaderboard);
 
