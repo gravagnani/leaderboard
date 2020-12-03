@@ -1,6 +1,6 @@
 import jwt, { decode } from "jsonwebtoken";
-import env from "../../env";
-import { errorMessage, status } from "../helpers/status";
+import env from "../../env.js";
+import { errorMessage, status } from "../helpers/status.js";
 
 /**
  * Verify Auth

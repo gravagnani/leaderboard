@@ -9,8 +9,8 @@ import {
 	modifyLeaderboard,
 	joinLeaderboard,
 	getLeaderboardParticipants,
-} from "../controllers/leaderboardController";
-import verifyAuth from "../middlewares/verifyAuth";
+} from "../controllers/leaderboardController.js";
+import verifyAuth from "../middlewares/verifyAuth.js";
 
 const router = express.Router();
 

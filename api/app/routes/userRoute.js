@@ -8,8 +8,8 @@ import {
 	deleteUser,
 	getUserByUUID,
 	getUsersOfLeaderboardUUID,
-} from "../controllers/userController";
-import verifyAuth from "../middlewares/verifyAuth";
+} from "../controllers/userController.js";
+import verifyAuth from "../middlewares/verifyAuth.js";
 
 const router = express.Router();
 

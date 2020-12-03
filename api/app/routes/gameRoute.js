@@ -1,7 +1,7 @@
 import express from "express";
 
-import { createGame, deleteLastGame, getLeaderboardGames } from "../controllers/gameController";
-import verifyAuth from "../middlewares/verifyAuth";
+import { createGame, deleteLastGame, getLeaderboardGames } from "../controllers/gameController.js";
+import verifyAuth from "../middlewares/verifyAuth.js";
 
 const router = express.Router();
 

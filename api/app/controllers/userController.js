@@ -1,6 +1,6 @@
 import moment from "moment";
 
-import dbQuery from "../db/dbQuery";
+import dbQuery from "../db/dbQuery.js";
 
 import {
 	hashPassword,
@@ -11,9 +11,9 @@ import {
 	isEmpty,
 	generateUUID,
 	generateUserToken,
-} from "../helpers/validation";
+} from "../helpers/validation.js";
 
-import { errorMessage, successMessage, status } from "../helpers/status";
+import { errorMessage, successMessage, status } from "../helpers/status.js";
 
 /**
  * Create A User

@@ -1,11 +1,12 @@
 {
 	"name": "api",
 	"version": "1.0.0",
+	"type": "module",
 	"description": "",
 	"main": "server.js",
 	"scripts": {
 		"test": "mocha --require babel-core/register ./test/**/*.js --timeout 10000",
-		"start": "nodemon --watch . --exec babel-node -- server"
+		"start": "nodemon --experimental-modules --watch . --exec babel-node -- server"
 	},
 	"author": "",
 	"license": "ISC",

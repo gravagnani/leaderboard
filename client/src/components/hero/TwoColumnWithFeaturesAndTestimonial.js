@@ -44,7 +44,7 @@ const ImageColumn = tw(
 	Column
 )`ml-auto mr-auto md:mr-0 relative mt-16 lg:mt-0 lg:ml-32`;
 const ImageContainer = tw.div`relative z-40 transform xl:-translate-x-24 xl:-translate-y-16`;
-const Image = tw.img`max-w-full w-auto rounded-t sm:rounded relative z-20`;
+const Image = tw.img`max-w-full md:w-auto lg:w-96 rounded-t sm:rounded relative z-20`;
 const Offsetbackground = tw.div`absolute inset-0 bg-gray-300 rounded xl:-mb-8`;
 const ImageDecoratorBlob = styled(SvgDecoratorBlob1)`
 	${tw`pointer-events-none z-10 absolute right-0 bottom-0 transform translate-x-10 translate-y-10 h-32 w-32 opacity-25 text-gray-900 fill-current`}

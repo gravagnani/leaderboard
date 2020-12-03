@@ -1,7 +1,10 @@
-import { Pool } from "pg";
-import env from "../../env";
+//import { Pool } from "pg";
+import pkg from 'pg';
+import env from "../../env.js";
 
 const databaseConfig = { connectionString: env.database_url };
+
+const { Pool } = pkg;
 const pool = new Pool(databaseConfig);
 
 pool.on("connect", (client) => {

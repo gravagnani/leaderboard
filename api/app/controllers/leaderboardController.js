@@ -1,12 +1,10 @@
 import moment from "moment";
 
-import dbQuery from "../db/dbQuery";
+import dbQuery from "../db/dbQuery.js";
 
-import { isEmpty, generateUUID } from "../helpers/validation";
+import { isEmpty, generateUUID } from "../helpers/validation.js";
 
-import { errorMessage, successMessage, status } from "../helpers/status";
-
-import { createPayment, doPayment } from "./paymentController";
+import { errorMessage, successMessage, status } from "../helpers/status.js";
 
 import {
 	PRICING_BASIC,
@@ -22,7 +20,7 @@ import {
 	DEFAULT_CLASSIC_VARIANCE,
 	DEFAULT_TRUESKILL_MEAN,
 	DEFAULT_TRUESKILL_VARIANCE,
-} from "../constants";
+} from "../constants.js";
 
 /**
  * Get all Leaderboards
