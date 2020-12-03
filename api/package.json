@@ -6,7 +6,7 @@
 	"main": "server.js",
 	"scripts": {
 		"test": "mocha --require babel-core/register ./test/**/*.js --timeout 10000",
-		"start": "nodemon --experimental-modules --watch . --exec babel-node -- server"
+		"start": "nodemon --watch . --exec babel-node -- server"
 	},
 	"author": "",
 	"license": "ISC",
