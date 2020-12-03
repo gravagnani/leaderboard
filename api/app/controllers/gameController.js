@@ -1,5 +1,7 @@
 import moment from "moment";
 
+import trueskill from "trueskill";
+
 import dbQuery from "../db/dbQuery.js";
 
 import { isEmpty, generateUUID } from "../helpers/validation.js";
@@ -217,8 +219,7 @@ const createGame = async (req, res) => {
 
 		// trueskill doc https://github.com/freethenation/node-trueskill
 		var team_all = [];
-		var trueskill = require("trueskill");
-		//import trueskill from "trueskill";
+		//var trueskill = require("trueskill");
 
 		switch (leaderboard_db.mode) {
 			case "C":
