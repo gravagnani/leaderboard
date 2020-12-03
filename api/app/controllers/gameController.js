@@ -218,6 +218,7 @@ const createGame = async (req, res) => {
 		// trueskill doc https://github.com/freethenation/node-trueskill
 		var team_all = [];
 		var trueskill = require("trueskill");
+		//import trueskill from "trueskill";
 
 		switch (leaderboard_db.mode) {
 			case "C":
@@ -313,6 +314,7 @@ const createGame = async (req, res) => {
 		successMessage.data = team_all_upd_db;
 		return res.status(status.created).send(successMessage);
 	} catch (error) {
+		console.log(error);
 		dbQuery.rollbackTransaction();
 		if (error.routine === "_bt_check_unique") {
 			errorMessage.error = "Create Game internal error";
