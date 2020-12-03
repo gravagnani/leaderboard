@@ -141,6 +141,7 @@ const siginUser = async (req, res) => {
 
 		return res.status(status.success).send(successMessage);
 	} catch (error) {
+		console.log(error);
 		errorMessage.error = "Operation was not successful";
 		return res.status(status.error).send(errorMessage);
 	}
