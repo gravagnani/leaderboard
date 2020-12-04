@@ -177,7 +177,7 @@ export default ({
 										type="password"
 										placeholder="Password"
 										id="signup_password"
-										defaultValue="gercegumni"
+										defaultValue="password"
 									/>
 									<SubmitButton
 										onClick={() => {

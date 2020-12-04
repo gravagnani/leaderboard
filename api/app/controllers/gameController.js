@@ -235,7 +235,7 @@ const createGame = async (req, res) => {
 					p.user_mean_new = p.user_mean + CLASSIC_DRAW_POINTS;
 					p.team = DRAW_TEAM;
 				});
-				team_all = team_win_db.concat(team_lose_db);
+				team_all = team_win_db.concat(team_lose_db).concat(team_draw_db);
 				break;
 			case "T":
 				team_win_db.forEach((p) => {
