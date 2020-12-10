@@ -17,7 +17,7 @@ function AnimationReveal({ disabled, children }) {
   const directions = ["left", "right"];
   const childrenWithAnimation = children.map((child, i) => {
     return (
-      <AnimatedSlideInComponent key={i} direction={directions[i % directions.length]}>
+      <AnimatedSlideInComponent key={i} direction={directions[0]}>
         {child}
       </AnimatedSlideInComponent>
     );

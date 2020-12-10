@@ -100,7 +100,7 @@ export default ({
 			price: ["$0", ".00"],
 			//oldPrice: "$11.99",
 			description:
-				"Perfect for when you want to host your personal blog or a hobby side project.",
+				"Perfect for small long term competitions with your mates.",
 			features: [
 				"All Scoring Systems",
 				"Unlimited Games",
@@ -114,7 +114,7 @@ export default ({
 			price: ["$9", ".99"],
 			//oldPrice: "$19.99",
 			description:
-				"Perfect for hosting blogs with lots of traffic or heavy development projects. In addition to Basic plan",
+				"Perfect for competitions where a large group of people is involved",
 			features: ["Up to 30 players", "No Ads"],
 			//featured: "Most Popular"
 		},
@@ -124,7 +124,7 @@ export default ({
 			price: ["$19", ".99"],
 			//oldPrice: "$29.99",
 			description:
-				"Perfect for hosting production websites & API services with high traffic load. In addition to Medium plan",
+				"The right option for compete with your whole city :)",
 			features: ["Up to 100 players"],
 		},
 	];

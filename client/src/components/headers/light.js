@@ -88,6 +88,14 @@ export default ({
 		history.go(0);
 	};
 
+	const handleSignUp = () => {
+		history.push({
+			// if coming from new leaderboard -> history.push with parameter calling_page
+			pathname: "/signup",
+			calling_page: location.pathname,
+		});
+	};
+
 	const handleLogin = () => {
 		history.push({
 			// if coming from new leaderboard -> history.push with parameter calling_page
@@ -116,7 +124,9 @@ export default ({
 					</NavLink>
 					<PrimaryLink
 						css={roundedHeaderButton && tw`rounded-full`}
-						href="/signup"
+						onClick={() => {
+							handleSignUp();
+						}}
 					>
 						Sign Up
 					</PrimaryLink>

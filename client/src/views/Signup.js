@@ -90,6 +90,7 @@ export default ({
 	signInUrl = "/signin",
 }) => {
 	const history = useHistory();
+	const location = useLocation();
 
 	const [errorMessage, setErrorMessage] = useState(null);
 
@@ -105,13 +106,23 @@ export default ({
 				if (e.status == "error") {
 					throw new Error(e.error);
 				}
+				localStorage.setItem("user", JSON.stringify(e.data));
 				history.push({
-					pathname: "/",
+					//pathname: "/",
+					pathname: location.calling_page ? location.calling_page : "/",
 				});
 			})
 			.catch((e) => {
 				setErrorMessage(e);
 			});
+	};
+
+	const handleSignInClick = () => {
+		history.push({
+			// if coming from new leaderboard -> history.push with parameter calling_page
+			pathname: signInUrl,
+			calling_page: location.calling_page ? location.calling_page : "/",
+		});
 	};
 
 	return (
@@ -206,12 +217,14 @@ export default ({
 
 									<p tw="mt-8 text-sm text-gray-600 text-center">
 										Already have an account?{" "}
-										<a
-											href={signInUrl}
-											tw="border-b border-gray-500 border-dotted"
+										<span
+											onClick={() => {
+												handleSignInClick();
+											}}
+											tw="border-b border-gray-500 border-dotted cursor-pointer hover:text-primary-500"
 										>
 											Sign In
-										</a>
+										</span>
 									</p>
 								</Form>
 							</FormContainer>

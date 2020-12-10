@@ -277,7 +277,7 @@ export default ({ setLeaderboardCreation }) => {
 								onClick={(e) => {
 									history.push({
 										pathname: "/signin",
-										calling_page: "/new/userinfo",
+										calling_page: "/new/checkout",
 									});
 								}}
 							>

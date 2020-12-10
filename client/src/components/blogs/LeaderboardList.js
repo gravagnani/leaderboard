@@ -132,6 +132,7 @@ const GameComponent = ({
 	setLoadParticipants,
 	setLoadGames,
 	setErrorMessageGame,
+	userIsCreator,
 }) => {
 	const [showDelete, setShowDelete] = useState(false);
 
@@ -139,7 +140,7 @@ const GameComponent = ({
 		<Game
 			className="group"
 			onHoverStart={() => {
-				number == 0 && setShowDelete(true);
+				number == 0 && setShowDelete(true && userIsCreator);
 			}}
 			onHoverEnd={() => {
 				number == 0 && setShowDelete(false);
@@ -159,7 +160,7 @@ const GameComponent = ({
 					</GameScore>
 				</GameTextContainer>
 			))}
-			{number == 0 && showDelete && (
+			{number == 0 && userIsCreator && showDelete && (
 				<GameDeleteIcon
 					onClick={() => {
 						deleteLastGame(leaderboard_uuid)
@@ -428,6 +429,7 @@ export default ({
 									setLoadGames={setLoadGames}
 									setLoadParticipants={setLoadParticipants}
 									setErrorMessageGame={setErrorMessageGame}
+									userIsCreator={userIsCreator}
 								/>
 							))}
 						</GamesContainer>

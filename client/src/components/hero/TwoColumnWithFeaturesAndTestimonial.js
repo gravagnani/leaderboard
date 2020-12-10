@@ -26,16 +26,16 @@ const Row = tw.div`flex flex-col lg:flex-row justify-between items-center lg:pt-
 const Column = tw.div``;
 const TextColumn = tw(
 	Column
-)`mr-auto lg:mr-0 max-w-lg lg:max-w-xl xl:max-w-2xl`;
+)`mr-auto lg:mr-0 md:ml-auto lg:ml-0 max-w-lg lg:max-w-xl xl:max-w-2xl`;
 const Heading = tw(
 	SectionHeading
-)`sm:text-center md:text-left text-primary-900 leading-snug xl:text-6xl`;
+)`sm:text-center lg:text-left md:text-center text-primary-900 leading-snug xl:text-6xl`;
 const Description = tw(
 	SectionDescription
 )`mt-4 lg:text-base text-gray-700 max-w-lg`;
 const PrimaryButton = tw(
 	PrimaryButtonBase
-)`mt-8 inline-block sm:w-full md:w-56 tracking-wide text-center py-5 `;
+)`mt-8 inline-block sm:w-full md:w-56 tracking-wide text-center py-5 text-xl`;
 const FeatureList = tw.ul`mt-12 leading-loose`;
 const Feature = tw.li`flex items-center`;
 const FeatureIcon = tw(CheckboxIcon)`w-5 h-5 text-primary-500`;

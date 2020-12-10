@@ -97,7 +97,7 @@ export default ({
 			imageSrc: ReliableIconImage,
 			title: "Reliable",
 			description:
-				"No more papers for keepling track of all your mates' games.",
+				"No more papers for keeping track of all your mates' games.",
 		},
 		{
 			imageSrc: EasyIconImage,

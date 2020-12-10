@@ -105,6 +105,14 @@ export default ({
 			});
 	};
 
+	const handleSignUpClick = () => {
+		history.push({
+			// if coming from new leaderboard -> history.push with parameter calling_page
+			pathname: signupUrl,
+			calling_page: location.calling_page ? location.calling_page : "/",
+		});
+	};
+
 	return (
 		<AnimationRevealPage>
 			<Container>
@@ -180,12 +188,14 @@ export default ({
 								</p>
 								<p tw="mt-8 text-sm text-gray-600 text-center">
 									Dont have an account?{" "}
-									<a
-										href={signupUrl}
-										tw="border-b border-gray-500 border-dotted"
+									<span
+										onClick={() => {
+											handleSignUpClick();
+										}}
+										tw="border-b border-gray-500 border-dotted cursor-pointer hover:text-primary-500"
 									>
 										Sign Up
-									</a>
+									</span>
 								</p>
 							</FormContainer>
 						</MainContent>
