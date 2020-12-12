@@ -6,6 +6,8 @@ import { isEmpty, generateUUID } from "../helpers/validation.js";
 
 import { errorMessage, successMessage, status } from "../helpers/status.js";
 
+import { newLeaderboard } from "./mailController.js";
+
 import {
 	PRICING_BASIC,
 	PRICING_MEDIUM,
@@ -380,8 +382,12 @@ const createLeaderboard = async (req, res) => {
 		const dbResponse = rows[0];
 		successMessage.data = dbResponse;
 
+		// send mail
+		newLeaderboard(req.user, dbResponse, req.headers.origin + '/leaderboard/' + dbResponse.uuid);
+
 		return res.status(status.created).send(successMessage);
 	} catch (error) {
+		console.log(error);
 		if (error.routine === "_bt_check_unique") {
 			errorMessage.error = "Create Leaderboard internal error";
 			return res.status(status.conflict).send(errorMessage);

@@ -13,6 +13,8 @@ import {
 	generateUserToken,
 } from "../helpers/validation.js";
 
+import { signUpEmail } from "./mailController.js";
+
 import { errorMessage, successMessage, status } from "../helpers/status.js";
 
 /**
@@ -79,6 +81,10 @@ const createUser = async (req, res) => {
 		);
 		successMessage.data = dbResponse;
 		successMessage.data.token = token;
+
+		// send transactional mail
+		await signUpEmail(dbResponse);
+
 		return res.status(status.created).send(successMessage);
 	} catch (error) {
 		if (error.routine === "_bt_check_unique") {
