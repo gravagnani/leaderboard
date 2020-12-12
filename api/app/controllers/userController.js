@@ -83,7 +83,7 @@ const createUser = async (req, res) => {
 		successMessage.data.token = token;
 
 		// send transactional mail
-		await signUpEmail(dbResponse);
+		signUpEmail(dbResponse, req.headers.origin + '/new/pricing/');
 
 		return res.status(status.created).send(successMessage);
 	} catch (error) {

@@ -113,7 +113,7 @@ const generateUserToken = (id, email, uuid, full_name, password) => {
 			password: password,
 		},
 		env.secret,
-		{ expiresIn: "3d" }
+		//{ expiresIn: "3d" }
 	);
 	return token;
 };

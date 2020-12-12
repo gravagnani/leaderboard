@@ -10,7 +10,7 @@ const mailjet = mailjet_client.connect(
 const FROM_EMAIL = "giuseppe.ravagnani@gmail.com";
 const FROM_NAME = "Cleverboard";
 
-const signUpEmail = (user) => {
+const signUpEmail = (user, new_leaderboard_url) => {
 	const request = mailjet.post("send", { version: "v3.1" }).request({
 		Messages: [
 			{
